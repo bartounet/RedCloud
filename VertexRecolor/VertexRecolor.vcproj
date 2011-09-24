@@ -165,6 +165,14 @@
 				RelativePath=".\main.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\octree.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\octree.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
