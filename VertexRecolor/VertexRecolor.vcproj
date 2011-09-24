@@ -162,6 +162,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\geometry.h"
+				>
+			</File>
+			<File
 				RelativePath=".\main.cpp"
 				>
 			</File>
@@ -171,6 +175,18 @@
 			</File>
 			<File
 				RelativePath=".\octree.h"
+				>
+			</File>
+			<File
+				RelativePath=".\types.h"
+				>
+			</File>
+			<File
+				RelativePath=".\vertex_recolor.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\vertex_recolor.h"
 				>
 			</File>
 		</Filter>
