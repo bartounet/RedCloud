@@ -1,43 +1,33 @@
-#ifndef GEOMETRY_H_
-#define GEOMETRY_H_
 
-
-#include "types.h"
-#include <vector>
+#include "mesh_file_helper.h"
 
 
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
-
-struct Vertex
+namespace MeshFileHelper
 {
-	float x, y, z; // position
-	float nx, ny, nz; // normal
-	float r, g, b; // color
-};
-
 // ----------------------------------------------------------------------------
-
-struct Face
+const Mesh* LoadMeshFromAsciiPlyFileWithPosNormCol(const std::string& parFilename)
 {
-	uint v0, v1, v2; // vertex indices
-};
+	// FIXME
 
+	return 0;
+}
 // ----------------------------------------------------------------------------
-
-struct Mesh
+const Mesh* LoadMeshFromBinaryPlyFileWithPosAndTri(const std::string& parFilename)
 {
-	uint nbVertices;
-	std::vector<Vertex> vertices;
+	// FIXME
 
-	uint nbFaces;
-	std::vector<Face> faces;
-};
-
+	return 0;
+}
+// ----------------------------------------------------------------------------
+void SaveMeshToBinaryPlyFile(const Mesh& parMesh, const std::string& parFilename)
+{
+	// FIXME
+}
+// ----------------------------------------------------------------------------
+}
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
-
-
-#endif

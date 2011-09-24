@@ -170,6 +170,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\mesh_file_helper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\mesh_file_helper.h"
+				>
+			</File>
+			<File
 				RelativePath=".\octree.cpp"
 				>
 			</File>
