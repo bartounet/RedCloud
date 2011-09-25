@@ -3,6 +3,7 @@
 
 
 #include "geometry.h"
+#include <string>
 
 
 // ============================================================================
@@ -11,9 +12,9 @@
 namespace MeshFileHelper
 {
 // ----------------------------------------------------------------------------
-Mesh* LoadMeshFromAsciiPlyFileWithPosNormCol(const std::string& parFilename);
-Mesh* LoadMeshFromBinaryPlyFileWithPosAndTri(const std::string& parFilename);
-void SaveMeshToBinaryPlyFile(const Mesh& parMesh, const std::string& parFilename);
+Mesh* LoadMeshFromAsciiPlyFileWithPosNormCol(char* parFilename);
+Mesh* LoadMeshFromBinaryPlyFileWithPosAndTri(char* parFilename);
+void SaveMeshToBinaryPlyFile(const Mesh& parMesh, char* parFilename);
 // ----------------------------------------------------------------------------
 }
 // ============================================================================

@@ -84,6 +84,8 @@ int main(int argc, char* argv[])
 		printf("[+] Colored & Triangularized mesh is saved\n");
 	delete finalMesh;
 
+	if (verbose)
+		printf("[+] Quitting!\n");
 	return 0;
 }
 

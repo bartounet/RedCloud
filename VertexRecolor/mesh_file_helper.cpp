@@ -1,7 +1,6 @@
 
 #include "mesh_file_helper.h"
-#include <fstream>
-#include <stdio.h>
+#include "ply.h"
 #include <assert.h>
 
 
@@ -11,64 +10,62 @@
 namespace MeshFileHelper
 {
 // ----------------------------------------------------------------------------
-#define CHECK_STRING(parStr, parStream, parBuff, parMaxLen) \
-	parStream.getline(parBuff, parMaxLen, '\n');\
-	assert(strcmp(parBuff, parStr) == 0);
-#define CHECK_N_STRING(parStr, parStream, parBuff, parMaxLen) \
-	parStream.getline(parBuff, parMaxLen, '\n');\
-	assert(strncmp(parBuff, parStr, strlen(parStr)) == 0);
-// ----------------------------------------------------------------------------
-Mesh* LoadMeshFromAsciiPlyFileWithPosNormCol(const std::string& parFilename)
+Mesh* LoadMeshFromAsciiPlyFileWithPosNormCol(char* parFilename)
 {
-	std::ifstream fileStream(parFilename.c_str(), std::ifstream::in);
-	if (!fileStream.is_open())
-		return 0;
+	assert(parFilename);
 
-	int nbVertices = -1;
+	int nelems;
+	char** elem_names;
+	int file_type;
+	float version;
+	PlyFile* plyFile = ply_open_for_reading(parFilename, &nelems, &elem_names, &file_type, &version);
+	assert(plyFile);
+	assert(plyFile->file_type == PLY_ASCII);
+	assert(plyFile->version == 1.0f);
+	assert(plyFile->nelems == 1);
+	assert(equal_strings(plyFile->elems[0]->name, "vertex"));
 
-	char buff[512];
-	CHECK_STRING("ply", fileStream, buff, 512);
-	CHECK_STRING("format ascii 1.0", fileStream, buff, 512);
-	CHECK_N_STRING("element vertex ", fileStream, buff, 512);
+	PlyProperty vertProps[] =
 	{
-		char* dummy;
-		nbVertices = strtol(buff + strlen("element vertex "), &dummy, 10);
-	}
-	CHECK_STRING("property float x", fileStream, buff, 512);
-	CHECK_STRING("property float y", fileStream, buff, 512);
-	CHECK_STRING("property float z", fileStream, buff, 512);
-	CHECK_STRING("property float nx", fileStream, buff, 512);
-	CHECK_STRING("property float ny", fileStream, buff, 512);
-	CHECK_STRING("property float nz", fileStream, buff, 512);
-	CHECK_STRING("property uchar diffuse_red", fileStream, buff, 512);
-	CHECK_STRING("property uchar diffuse_green", fileStream, buff, 512);
-	CHECK_STRING("property uchar diffuse_blue", fileStream, buff, 512);
-	CHECK_STRING("end_header", fileStream, buff, 512);
+		{"x", PLY_FLOAT, PLY_FLOAT, offsetof(Vertex,x), 0, 0, 0, 0},
+		{"y", PLY_FLOAT, PLY_FLOAT, offsetof(Vertex,y), 0, 0, 0, 0},
+		{"z", PLY_FLOAT, PLY_FLOAT, offsetof(Vertex,z), 0, 0, 0, 0},
+		{"nx", PLY_FLOAT, PLY_FLOAT, offsetof(Vertex,nx), 0, 0, 0, 0},
+		{"ny", PLY_FLOAT, PLY_FLOAT, offsetof(Vertex,ny), 0, 0, 0, 0},
+		{"nz", PLY_FLOAT, PLY_FLOAT, offsetof(Vertex,nz), 0, 0, 0, 0},
+		{"diffuse_red", PLY_UCHAR, PLY_UCHAR, offsetof(Vertex,r), 0, 0, 0, 0},
+		{"diffuse_green", PLY_UCHAR, PLY_UCHAR, offsetof(Vertex,g), 0, 0, 0, 0},
+		{"diffuse_blue", PLY_UCHAR, PLY_UCHAR, offsetof(Vertex,b), 0, 0, 0, 0},
+	};
+	
+	int nbVertices;
+	int nbProps;
+	ply_get_element_description(plyFile, "vertex", &nbVertices, &nbProps);
+	assert(nbVertices > 0);
+	assert(nbProps == 9);
+	for (int prop = 0; prop < nbProps; ++prop)
+		ply_get_property(plyFile, "vertex", &vertProps[prop]);
 
 	Mesh* mesh = new Mesh;
-	assert(mesh);
-
-	assert(nbVertices > 0);
 	for (int vertex = 0; vertex < nbVertices; ++vertex)
 	{
-		Vertex v;
-		fileStream >> v.x >> v.y >> v.z >> v.nx >> v.ny >> v.nz >> v.r >> v.g >> v.b;
-		mesh->vertices.push_back(v);
+		Vertex curVertex;
+		ply_get_element(plyFile, (void*) &curVertex);
+		mesh->vertices.push_back(curVertex);
 	}
-	assert(mesh->vertices.size() == nbVertices);
 
-	fileStream.close();
 	return mesh;
 }
 // ----------------------------------------------------------------------------
-Mesh* LoadMeshFromBinaryPlyFileWithPosAndTri(const std::string& parFilename)
+Mesh* LoadMeshFromBinaryPlyFileWithPosAndTri(char* parFilename)
 {
 	// FIXME
 
-	return 0;
+	Mesh* mesh = new Mesh;
+	return mesh;
 }
 // ----------------------------------------------------------------------------
-void SaveMeshToBinaryPlyFile(const Mesh& parMesh, const std::string& parFilename)
+void SaveMeshToBinaryPlyFile(const Mesh& parMesh, char* parFilename)
 {
 	// FIXME
 }

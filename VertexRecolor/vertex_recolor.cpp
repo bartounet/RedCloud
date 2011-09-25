@@ -1,3 +1,4 @@
+
 #include "vertex_recolor.h"
 
 
@@ -11,7 +12,8 @@ Mesh* RecoverColor(const Mesh& parColoredMesh, const Mesh& parTriMesh, bool parV
 {
 	// FIXME
 
-	return 0;
+	Mesh* mesh = new Mesh;
+	return mesh;
 }
 // ----------------------------------------------------------------------------
 }
