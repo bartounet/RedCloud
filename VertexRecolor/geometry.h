@@ -28,10 +28,7 @@ struct Face
 
 struct Mesh
 {
-	uint nbVertices;
 	std::vector<Vertex> vertices;
-
-	uint nbFaces;
 	std::vector<Face> faces;
 };
 

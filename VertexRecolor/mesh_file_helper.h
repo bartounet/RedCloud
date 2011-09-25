@@ -11,8 +11,8 @@
 namespace MeshFileHelper
 {
 // ----------------------------------------------------------------------------
-const Mesh* LoadMeshFromAsciiPlyFileWithPosNormCol(const std::string& parFilename);
-const Mesh* LoadMeshFromBinaryPlyFileWithPosAndTri(const std::string& parFilename);
+Mesh* LoadMeshFromAsciiPlyFileWithPosNormCol(const std::string& parFilename);
+Mesh* LoadMeshFromBinaryPlyFileWithPosAndTri(const std::string& parFilename);
 void SaveMeshToBinaryPlyFile(const Mesh& parMesh, const std::string& parFilename);
 // ----------------------------------------------------------------------------
 }

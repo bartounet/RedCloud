@@ -1,7 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
+
 #include "mesh_file_helper.h"
 #include "vertex_recolor.h"
+#include <stdio.h>
+#include <stdlib.h>
 	
 
 // ============================================================================
@@ -43,7 +44,7 @@ int main(int argc, char* argv[])
 		printf("[+] Loading meshes...\n");
 	}
 
-	const Mesh* coloredMesh = MeshFileHelper::LoadMeshFromAsciiPlyFileWithPosNormCol(argv[1 + argOffset]);
+	Mesh* coloredMesh = MeshFileHelper::LoadMeshFromAsciiPlyFileWithPosNormCol(argv[1 + argOffset]);
 	if (!coloredMesh)
 	{
 		if (verbose)
@@ -53,11 +54,12 @@ int main(int argc, char* argv[])
 	else if (verbose)
 		printf("[+] Colored Mesh loaded\n");
 
-	const Mesh* triMesh = MeshFileHelper::LoadMeshFromBinaryPlyFileWithPosAndTri(argv[2 + argOffset]);
+	Mesh* triMesh = MeshFileHelper::LoadMeshFromBinaryPlyFileWithPosAndTri(argv[2 + argOffset]);
 	if (!triMesh)
 	{
 		if (verbose)
 			printf("[-] Failed to load triangularized mesh '%s'\n", argv[2 + argOffset]);
+		delete coloredMesh;
 		exit(3);
 	}
 	else if (verbose)
@@ -66,6 +68,8 @@ int main(int argc, char* argv[])
 	if (verbose)
 		printf("[+] Recovering color...\n");
 	Mesh* finalMesh = VertexRecolor::RecoverColor(*coloredMesh, *triMesh, verbose);
+	delete coloredMesh;
+	delete triMesh;
 	if (!finalMesh)
 	{
 		if (verbose)
@@ -78,6 +82,7 @@ int main(int argc, char* argv[])
 	MeshFileHelper::SaveMeshToBinaryPlyFile(*finalMesh, argv[3 + argOffset]);
 	if (verbose)
 		printf("[+] Colored & Triangularized mesh is saved\n");
+	delete finalMesh;
 
 	return 0;
 }
