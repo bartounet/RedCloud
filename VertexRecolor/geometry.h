@@ -14,7 +14,7 @@ struct Vertex
 {
 	float x, y, z; // position
 	float nx, ny, nz; // normal
-	float r, g, b; // color
+	uint r, g, b; // color
 };
 
 // ----------------------------------------------------------------------------

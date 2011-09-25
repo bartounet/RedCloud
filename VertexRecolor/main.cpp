@@ -19,6 +19,8 @@ void Usage(const std::string& parExecFilename)
 
 int main(int argc, char* argv[])
 {
+	printf("=== VERTEX RECOLOR ===\n");
+
 	if (argc < 4 || argc > 5)
 		Usage(argv[0]);
 
@@ -39,11 +41,7 @@ int main(int argc, char* argv[])
 	}
 	
 	if (verbose)
-	{
-		printf("=== VERTEX RECOLOR ===\n");
-		printf("[+] Loading meshes...\n");
-	}
-
+		printf("[ ] Loading colored mesh...\n");
 	Mesh* coloredMesh = MeshFileHelper::LoadMeshFromAsciiPlyFileWithPosNormCol(argv[1 + argOffset]);
 	if (!coloredMesh)
 	{
@@ -54,6 +52,8 @@ int main(int argc, char* argv[])
 	else if (verbose)
 		printf("[+] Colored Mesh loaded\n");
 
+	if (verbose)
+		printf("[ ] Loading triangularized mesh...\n");
 	Mesh* triMesh = MeshFileHelper::LoadMeshFromBinaryPlyFileWithPosAndTri(argv[2 + argOffset]);
 	if (!triMesh)
 	{
