@@ -5,12 +5,9 @@
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
-Mesh* VertexRecolor(const Mesh& parColoredMesh, const Mesh& parTriMesh, bool parVerbose)
+bool VertexRecolor(Mesh& parColoredTrilMesh, const Mesh& parColoredMesh, const Mesh& parTriMesh)
 {
-	// FIXME
-
-	Mesh* mesh = new Mesh;
-	return mesh;
+	return true;
 }
 // ============================================================================
 // ----------------------------------------------------------------------------
