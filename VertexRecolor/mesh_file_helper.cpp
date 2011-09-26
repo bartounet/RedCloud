@@ -141,6 +141,31 @@ bool SaveMeshToPlyFile(const Mesh& parMesh, char* parFilename)
 
 	return true;
 }
+// ----------------------------------------------------------------------------
+void DeepCopyMesh(Mesh& parMeshDst, const Mesh& parMeshSrc)
+{
+	int nbVertices = parMeshSrc.vertices.size();
+	assert(nbVertices > 0);
+	for (int curVertex = 0; curVertex < nbVertices; ++curVertex)
+		parMeshDst.vertices.push_back(parMeshSrc.vertices[curVertex]);
+
+	int nbFaces = parMeshSrc.faces.size();
+	for (int curFace = 0; curFace < nbFaces; ++curFace)
+	{
+		const Face& srcFace = parMeshSrc.faces[curFace];
+		assert(srcFace.nbVertices == 3); // only triangles
+
+		Face dstFace;
+		dstFace.nbVertices = 3;
+		dstFace.vertices = (int*) malloc(sizeof(int) * 3);
+		assert(dstFace.vertices);
+		dstFace.vertices[0] = srcFace.vertices[0];
+		dstFace.vertices[1] = srcFace.vertices[1];
+		dstFace.vertices[2] = srcFace.vertices[2];
+
+		parMeshDst.faces.push_back(dstFace);
+	}
+}
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================

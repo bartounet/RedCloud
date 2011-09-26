@@ -72,8 +72,8 @@ int main(int argc, char* argv[])
 	// compute the final mesh
 	if (verbose)
 		printf("[ ] Recovering color...\n");
-	Mesh coloredTriMesh;
-	result = VertexRecolor(coloredTriMesh, coloredMesh, triMesh);
+	Mesh finalMesh;
+	result = VertexRecolor(finalMesh, coloredMesh, triMesh);
 	if (!result)
 	{
 		if (verbose)
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 	else if (verbose)
 		printf("[+] Color recovered\n");
 
-	//result = MeshFileHelper::SaveMeshToPlyFile(coloredTriMesh, argv[3 + argOffset]);
+	result = MeshFileHelper::SaveMeshToPlyFile(finalMesh, argv[3 + argOffset]);
 	if (!result)
 	{
 		if (verbose)
