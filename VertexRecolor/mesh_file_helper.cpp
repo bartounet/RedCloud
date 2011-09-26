@@ -106,8 +106,8 @@ Mesh* LoadMeshFromAsciiPlyFileWithPosAndFace(char* parFilename)
 		{"vertex_indices", PLY_INT, PLY_INT, offsetof(Face,vertices),
 			1, PLY_UCHAR, PLY_UCHAR, offsetof(Face,nbVertices)},
 	};
-	int nbFaces;
-	int nbFaceProps;
+	int nbFaces = 0;
+	int nbFaceProps = 0;
 	PlyProperty** facesProps = ply_get_element_description(plyFile, "face", &nbFaces, &nbFaceProps);
 	assert(nbFaces > 0);
 	assert(nbFaceProps == 1);

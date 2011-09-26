@@ -29,7 +29,7 @@ struct Mesh
 	std::vector<Vertex> vertices;
 	std::vector<Face> faces;
 
-	~Mesh()
+	~Mesh() // because the ply loader allocate
 	{
 		for (size_t face = 0; face < faces.size(); ++face)
 			delete faces[face].vertices;

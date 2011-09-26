@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
 
 	if (verbose)
 		printf("[ ] Recovering color...\n");
-	Mesh* finalMesh = VertexRecolor::RecoverColor(*coloredMesh, *triMesh, verbose);
+	Mesh* finalMesh = VertexRecolor(*coloredMesh, *triMesh, verbose);
 	delete coloredMesh;
 	delete triMesh;
 	if (!finalMesh)
