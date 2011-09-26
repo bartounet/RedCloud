@@ -13,8 +13,8 @@ namespace MeshFileHelper
 {
 // ----------------------------------------------------------------------------
 Mesh* LoadMeshFromAsciiPlyFileWithPosNormCol(char* parFilename);
-Mesh* LoadMeshFromBinaryPlyFileWithPosAndTri(char* parFilename);
-void SaveMeshToBinaryPlyFile(const Mesh& parMesh, char* parFilename);
+Mesh* LoadMeshFromAsciiPlyFileWithPosAndFace(char* parFilename);
+void SaveMeshToAsciiPlyFile(const Mesh& parMesh, char* parFilename);
 // ----------------------------------------------------------------------------
 }
 // ============================================================================

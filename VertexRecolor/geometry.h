@@ -16,15 +16,24 @@ struct Vertex
 	uchar r, g, b; // color
 };
 // ----------------------------------------------------------------------------
-struct Face
+// Bart: As we only work with triangles I would prefer another form, but we have
+// to follow the ply file format style (... then the parsing is easier ...)
+struct Face 
 {
-	uint v0, v1, v2; // vertex indices
+	int *vertices;
+	uchar nbVertices;
 };
 // ----------------------------------------------------------------------------
 struct Mesh
 {
 	std::vector<Vertex> vertices;
 	std::vector<Face> faces;
+
+	~Mesh()
+	{
+		for (size_t face = 0; face < faces.size(); ++face)
+			delete faces[face].vertices;
+	}
 };
 // ============================================================================
 // ----------------------------------------------------------------------------

@@ -189,11 +189,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ply.h"
+				RelativePath=".\ply.c"
 				>
 			</File>
 			<File
-				RelativePath=".\plyfile.c"
+				RelativePath=".\ply.h"
 				>
 			</File>
 			<File
