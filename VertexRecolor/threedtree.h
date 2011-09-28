@@ -33,20 +33,20 @@ public:
 class ThreeDNode : public Node
 {
 public:
-	ThreeDNode(const Vertex& parVertex, AlignedAxisDir parDir);
+	ThreeDNode(const Vertex* parVertex, AlignedAxisDir parDir);
 	virtual ~ThreeDNode();
 
 public:
-	static Node* BuildTree(const std::vector<Vertex>& parVertices, int parDepth);
+	static Node* BuildTree(const std::vector<const Vertex*>& parVertices, int parDepth);
 	static void NearestNeighbor(const Node* parNode,
 								const Vertex& parTarget,
 								int parDepth,
 								float& minDist,
-								Vertex& minVertex);
+								const Vertex** minVertex);
 
 private:
 	AlignedAxisDir dir_;
-	const Vertex& vertex_;
+	const Vertex* vertex_;
 	Node* left_; // lesser and equal
 	Node* right_; // greater
 };
@@ -56,13 +56,13 @@ private:
 class LeafNode : public Node
 {
 public:
-	LeafNode(const std::vector<Vertex> parVertices);
+	LeafNode(const std::vector<const Vertex*> parVertices);
 	virtual ~LeafNode();
 
-	const std::vector<Vertex>& Vertices() const { return vertices_; }
+	const std::vector<const Vertex*>& Vertices() const { return vertices_; }
 
 private:
-	std::vector<Vertex> vertices_;
+	std::vector<const Vertex*> vertices_;
 };
 // ============================================================================
 // ----------------------------------------------------------------------------
