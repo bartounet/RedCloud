@@ -180,19 +180,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\octree.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\octree.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ply.c"
 				>
 			</File>
 			<File
 				RelativePath=".\ply.h"
+				>
+			</File>
+			<File
+				RelativePath=".\threedtree.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\threedtree.h"
 				>
 			</File>
 			<File
@@ -208,6 +208,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\TODO.txt"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
