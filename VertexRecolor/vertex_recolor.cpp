@@ -9,32 +9,7 @@
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
-// At the moment, done by an exhaustive research in O(N)
-static const Vertex& FindNearestVertex(const Mesh& parMesh, const Vertex& parTarget)
-{
-	int nbVertices = parMesh.vertices.size();
-	assert(nbVertices > 0);
-
-	float minDist = 1000000.f;
-	const Vertex* nearest = &parMesh.vertices[0];
-
-	for (int curVertex = 0; curVertex < nbVertices; ++curVertex)
-	{
-		const Vertex& v = parMesh.vertices[curVertex];
-		float dist = (parTarget.x - v.x) * (parTarget.x - v.x);
-		dist += (parTarget.y - v.y) * (parTarget.y - v.y);
-		dist += (parTarget.z - v.z) * (parTarget.z - v.z);
-
-		if (dist < minDist)
-		{
-			minDist = dist;
-			nearest = &v;
-		}
-	}
-
-	return *nearest;
-}
-// ----------------------------------------------------------------------------
+#if 1
 void VertexRecolor(Mesh& parFinalMesh, const Mesh& parColoredMesh, const Mesh& parTriMesh)
 {
 	assert(parFinalMesh.vertices.size() == 0);
@@ -78,8 +53,33 @@ void VertexRecolor(Mesh& parFinalMesh, const Mesh& parColoredMesh, const Mesh& p
 
 	delete tree;
 }
-#if 0
-bool VertexRecolor(Mesh& parFinalMesh, const Mesh& parColoredMesh, const Mesh& parTriMesh)
+#else
+static const Vertex& FindNearestVertex(const Mesh& parMesh, const Vertex& parTarget)
+{
+	int nbVertices = parMesh.vertices.size();
+	assert(nbVertices > 0);
+
+	float minDist = 1000000.f;
+	const Vertex* nearest = &parMesh.vertices[0];
+
+	for (int curVertex = 0; curVertex < nbVertices; ++curVertex)
+	{
+		const Vertex& v = parMesh.vertices[curVertex];
+		float dist = (parTarget.x - v.x) * (parTarget.x - v.x);
+		dist += (parTarget.y - v.y) * (parTarget.y - v.y);
+		dist += (parTarget.z - v.z) * (parTarget.z - v.z);
+
+		if (dist < minDist)
+		{
+			minDist = dist;
+			nearest = &v;
+		}
+	}
+
+	return *nearest;
+}
+// ----------------------------------------------------------------------------
+void VertexRecolor(Mesh& parFinalMesh, const Mesh& parColoredMesh, const Mesh& parTriMesh)
 {
 	assert(parFinalMesh.vertices.size() == 0);
 	assert(parFinalMesh.faces.size() == 0);
@@ -107,8 +107,6 @@ bool VertexRecolor(Mesh& parFinalMesh, const Mesh& parColoredMesh, const Mesh& p
 		dstVertex.g = nearestVertex.g;
 		dstVertex.b = nearestVertex.b;
 	}
-
-	return true;
 }
 #endif
 // ============================================================================

@@ -1,6 +1,7 @@
 
 #include "mesh_file_helper.h"
 #include "vertex_recolor.h"
+#include "easy_cleaner.h"
 #include <stdio.h>
 #include <stdlib.h>
 	
@@ -87,6 +88,19 @@ int main(int argc, char* argv[])
 	}
 	else if (verbose)
 		printf("[+] Colored & Triangularized mesh is saved\n");
+
+	if (verbose)
+		printf("[ ] Cleaning Mesh\n");
+	EasyClean(finalMesh);
+	if (verbose)
+	{
+		printf("[+] Mesh cleaned\n");
+		printf("[ ] Save cleaned mesh...\n");
+	}
+	MeshFileHelper::SaveMeshToPlyFile(finalMesh, "easy_cleaned.ply");
+	if (verbose)
+		printf("[+] Cleaned mesh saved\n");
+
 
 	if (verbose)
 		printf("[+] Quitting!\n");

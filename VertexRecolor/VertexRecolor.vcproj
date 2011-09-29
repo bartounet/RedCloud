@@ -164,6 +164,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\easy_cleaner.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\easy_cleaner.h"
+				>
+			</File>
+			<File
 				RelativePath=".\geometry.h"
 				>
 			</File>
