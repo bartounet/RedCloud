@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VertexRecolor", "VertexRecolor\VertexRecolor.vcproj", "{4EACBC51-2DD4-4335-B1B3-F5A930B31E3E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QuadricsBasedMeshSimplifier", "QuadricsBasedMeshSimplifier\QuadricsBasedMeshSimplifier.vcproj", "{76AB4DE1-0525-4F7A-AC62-423A1E1E0E44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +15,10 @@ Global
 		{4EACBC51-2DD4-4335-B1B3-F5A930B31E3E}.Debug|Win32.Build.0 = Debug|Win32
 		{4EACBC51-2DD4-4335-B1B3-F5A930B31E3E}.Release|Win32.ActiveCfg = Release|Win32
 		{4EACBC51-2DD4-4335-B1B3-F5A930B31E3E}.Release|Win32.Build.0 = Release|Win32
+		{76AB4DE1-0525-4F7A-AC62-423A1E1E0E44}.Debug|Win32.ActiveCfg = Debug|Win32
+		{76AB4DE1-0525-4F7A-AC62-423A1E1E0E44}.Debug|Win32.Build.0 = Debug|Win32
+		{76AB4DE1-0525-4F7A-AC62-423A1E1E0E44}.Release|Win32.ActiveCfg = Release|Win32
+		{76AB4DE1-0525-4F7A-AC62-423A1E1E0E44}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
