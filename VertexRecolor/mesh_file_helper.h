@@ -1,7 +1,6 @@
 #ifndef MESH_FILE_HELPER_
 #define MESH_FILE_HELPER_
 
-
 #include "geometry.h"
 
 
