@@ -162,15 +162,35 @@
 			Name="Source Files"
 			>
 			<File
+				RelativePath=".\edge.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\face.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\main.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\VertexRecolor\mesh_file_helper.cpp"
+				RelativePath=".\matrix.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\VertexRecolor\ply.c"
+				RelativePath=".\mesh.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\simplifier.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\vertex.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\vertex_pair.cpp"
 				>
 			</File>
 		</Filter>
@@ -180,14 +200,38 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\VertexRecolor\mesh_file_helper.h"
+				RelativePath=".\edge.h"
 				>
 			</File>
 			<File
-				RelativePath="..\VertexRecolor\ply.h"
+				RelativePath=".\face.h"
+				>
+			</File>
+			<File
+				RelativePath=".\matrix.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mesh.h"
+				>
+			</File>
+			<File
+				RelativePath=".\simplifier.h"
+				>
+			</File>
+			<File
+				RelativePath=".\vertex.h"
+				>
+			</File>
+			<File
+				RelativePath=".\vertex_pair.h"
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\TODO.txt"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

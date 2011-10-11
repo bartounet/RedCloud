@@ -1,0 +1,13 @@
+Data structure (with operators overload):
+- vertex
+- edge
+- face
+- matrix
+
+- Mesh loading/saving
+- Quadric computation
+- Valid pair selection
+- vertex contraction cost and pos
+- vertex contraction
+- general algorithm
+- vertices cost update

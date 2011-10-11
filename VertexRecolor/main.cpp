@@ -45,8 +45,8 @@ int main(int argc, char* argv[])
 	// colored mesh
 	if (verbose)
 		printf("[ ] Loading colored mesh...\n");
-	Mesh coloredMesh;
-	result = MeshFileHelper::LoadMeshFromPlyFile(coloredMesh, argv[1 + argOffset]);
+	VR::Mesh coloredMesh;
+	result = VR::MeshFileHelper::LoadMeshFromPlyFile(coloredMesh, argv[1 + argOffset]);
 	if (!result)
 	{
 		if (verbose)
@@ -59,8 +59,8 @@ int main(int argc, char* argv[])
 	// triangularized mesh
 	if (verbose)
 		printf("[ ] Loading triangularized mesh...\n");
-	Mesh triMesh;
-	result = MeshFileHelper::LoadMeshFromPlyFile(triMesh, argv[2 + argOffset]);
+	VR::Mesh triMesh;
+	result = VR::MeshFileHelper::LoadMeshFromPlyFile(triMesh, argv[2 + argOffset]);
 	if (!result)
 	{
 		if (verbose)
@@ -73,13 +73,13 @@ int main(int argc, char* argv[])
 	// compute the final mesh
 	if (verbose)
 		printf("[ ] Recovering color...\n");
-	Mesh finalMesh;
+	VR::Mesh finalMesh;
 	srand(0);
-	VertexRecolor(finalMesh, coloredMesh, triMesh);
+	VR::VertexRecolor(finalMesh, coloredMesh, triMesh);
 	if (verbose)
 		printf("[+] Color recovered\n");
 
-	result = MeshFileHelper::SaveMeshToPlyFile(finalMesh, argv[3 + argOffset]);
+	result = VR::MeshFileHelper::SaveMeshToPlyFile(finalMesh, argv[3 + argOffset]);
 	if (!result)
 	{
 		if (verbose)
@@ -91,13 +91,13 @@ int main(int argc, char* argv[])
 
 	if (verbose)
 		printf("[ ] Cleaning Mesh\n");
-	EasyClean(finalMesh);
+	VR::EasyClean(finalMesh);
 	if (verbose)
 	{
 		printf("[+] Mesh cleaned\n");
 		printf("[ ] Save cleaned mesh...\n");
 	}
-	MeshFileHelper::SaveMeshToPlyFile(finalMesh, "easy_cleaned.ply");
+	VR::MeshFileHelper::SaveMeshToPlyFile(finalMesh, "easy_cleaned.ply");
 	if (verbose)
 		printf("[+] Cleaned mesh saved\n");
 

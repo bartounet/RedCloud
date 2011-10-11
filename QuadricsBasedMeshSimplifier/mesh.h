@@ -1,24 +1,21 @@
-#ifndef MESH_FILE_HELPER_
-#define MESH_FILE_HELPER_
-
-
-#include "geometry.h"
-
+#ifndef MESH_H_
+#define MESH_H_
 
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
-namespace VR
+namespace QBMS
 {
 // ----------------------------------------------------------------------------
-namespace MeshFileHelper
+class Mesh
 {
-// ----------------------------------------------------------------------------
-bool LoadMeshFromPlyFile(Mesh& parMesh, char* parFilename);
-bool SaveMeshToPlyFile(const Mesh& parMesh, char* parFilename);
-void DeepCopyMesh(Mesh& parMeshDst, const Mesh& parMeshSrc);
-// ----------------------------------------------------------------------------
-}
+public:
+	Mesh();
+	~Mesh();
+
+private:
+	// FIXME
+};
 // ----------------------------------------------------------------------------
 }
 // ============================================================================
@@ -26,4 +23,4 @@ void DeepCopyMesh(Mesh& parMeshDst, const Mesh& parMeshSrc);
 // ============================================================================
 
 
-#endif
+#endif 

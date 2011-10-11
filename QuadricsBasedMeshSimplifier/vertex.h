@@ -1,24 +1,22 @@
-#ifndef MESH_FILE_HELPER_
-#define MESH_FILE_HELPER_
-
-
-#include "geometry.h"
+#ifndef VERTEX_H_
+#define VERTEX_H_
 
 
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
-namespace VR
+namespace QBMS
 {
 // ----------------------------------------------------------------------------
-namespace MeshFileHelper
+class Vertex
 {
-// ----------------------------------------------------------------------------
-bool LoadMeshFromPlyFile(Mesh& parMesh, char* parFilename);
-bool SaveMeshToPlyFile(const Mesh& parMesh, char* parFilename);
-void DeepCopyMesh(Mesh& parMeshDst, const Mesh& parMeshSrc);
-// ----------------------------------------------------------------------------
-}
+public:
+	Vertex();
+	~Vertex();
+
+private:
+	// FIXME
+};
 // ----------------------------------------------------------------------------
 }
 // ============================================================================
