@@ -14,7 +14,7 @@ namespace MeshFileHelper
 {
 // ----------------------------------------------------------------------------
 bool LoadMeshFromPlyFile(Mesh& parMesh, char* parFilename);
-bool SaveMeshToPlyFile(const Mesh& parMesh, char* parFilename);
+bool SaveMeshToPlyFile(const Mesh& parMesh, char* parFilename, bool parOnlyPos);
 void DeepCopyMesh(Mesh& parMeshDst, const Mesh& parMeshSrc);
 // ----------------------------------------------------------------------------
 }

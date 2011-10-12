@@ -1,6 +1,10 @@
 #ifndef SIMPLIFIER_H_
 #define SIMPLIFIER_H_
 
+
+#include "mesh.h"
+
+
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
@@ -12,6 +16,8 @@ class Simplifier
 public:
 	Simplifier();
 	~Simplifier();
+
+	void Simplify(const Mesh& parSrc, Mesh& dst);
 
 private:
 	// FIXME

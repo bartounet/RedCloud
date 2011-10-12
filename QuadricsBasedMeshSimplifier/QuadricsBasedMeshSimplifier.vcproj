@@ -174,10 +174,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\matrix.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\mesh.cpp"
 				>
 			</File>
@@ -187,6 +183,10 @@
 			</File>
 			<File
 				RelativePath="..\VertexRecolor\ply.c"
+				>
+			</File>
+			<File
+				RelativePath=".\quadric.cpp"
 				>
 			</File>
 			<File
@@ -220,10 +220,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\matrix.h"
-				>
-			</File>
-			<File
 				RelativePath=".\mesh.h"
 				>
 			</File>
@@ -233,6 +229,10 @@
 			</File>
 			<File
 				RelativePath="..\VertexRecolor\ply.h"
+				>
+			</File>
+			<File
+				RelativePath=".\quadric.h"
 				>
 			</File>
 			<File

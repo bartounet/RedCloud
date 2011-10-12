@@ -4,6 +4,7 @@
 
 #include "types.h"
 #include <vector>
+#include <stdio.h>
 
 
 // ============================================================================
@@ -34,8 +35,10 @@ struct Mesh
 
 	~Mesh() // because the ply loader allocate
 	{
+		printf("[ ] Freeing mesh memory\n");
 		for (size_t face = 0; face < faces.size(); ++face)
 			delete faces[face].vertices;
+		printf("[+] Mesh freed\n");
 	}
 };
 // ----------------------------------------------------------------------------

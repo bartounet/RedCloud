@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
 	if (verbose)
 		printf("[+] Color recovered\n");
 
-	result = VR::MeshFileHelper::SaveMeshToPlyFile(finalMesh, argv[3 + argOffset]);
+	result = VR::MeshFileHelper::SaveMeshToPlyFile(finalMesh, argv[3 + argOffset], false);
 	if (!result)
 	{
 		if (verbose)
@@ -89,6 +89,7 @@ int main(int argc, char* argv[])
 	else if (verbose)
 		printf("[+] Colored & Triangularized mesh is saved\n");
 
+#if 0
 	if (verbose)
 		printf("[ ] Cleaning Mesh\n");
 	VR::EasyClean(finalMesh);
@@ -97,10 +98,10 @@ int main(int argc, char* argv[])
 		printf("[+] Mesh cleaned\n");
 		printf("[ ] Save cleaned mesh...\n");
 	}
-	VR::MeshFileHelper::SaveMeshToPlyFile(finalMesh, "easy_cleaned.ply");
+	VR::MeshFileHelper::SaveMeshToPlyFile(finalMesh, "easy_cleaned.ply", false);
 	if (verbose)
 		printf("[+] Cleaned mesh saved\n");
-
+#endif
 
 	if (verbose)
 		printf("[+] Quitting!\n");
