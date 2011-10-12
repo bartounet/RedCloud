@@ -26,15 +26,9 @@ int main(int argc, char **argv)
 	printf("[+] Mesh loaded\n");
 
 	QBMS::Mesh detailedMesh(srcMesh);
-	//QBMS::Mesh simplifiedMesh; 
-
-	//QBMS::Simplifier simplifier;
-	//simplifier.Simplify(detailedMesh, simplifiedMesh);
+	detailedMesh.ComputeInitialQuadrics();
 
 	VR::Mesh* dstMesh = detailedMesh.ExportToVRMesh();
-
-	//VR::Mesh dstMesh; // FIXME : Convert to the old mesh format
-	//VR::MeshFileHelper::DeepCopyMesh(dstMesh, srcMesh); // FIXME : delete me
 
 	printf("[ ] Saving mesh\n");
 	VR::MeshFileHelper::SaveMeshToPlyFile(*dstMesh, argv[2], true);

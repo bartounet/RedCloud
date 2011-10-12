@@ -29,6 +29,7 @@ public:
 
 public:
 	VR::Mesh* ExportToVRMesh() const;
+	void ComputeInitialQuadrics();
 
 private:
 	void GenerateAdjacency_();

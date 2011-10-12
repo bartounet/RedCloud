@@ -1,5 +1,7 @@
 
 #include "vertex.h"
+#include "../VertexRecolor/types.h"
+#include <vector>
 
 
 // ============================================================================
@@ -9,13 +11,20 @@ namespace QBMS
 {
 // ----------------------------------------------------------------------------
 Vertex::Vertex(float parX, float parY, float parZ) :
-  pos_(parX, parY, parZ)
+	pos_(parX, parY, parZ, 1.f),
+	associatedQuadric_(0)
 {
 }
 // ----------------------------------------------------------------------------
-  Vertex::Vertex(const VR::Vertex& parVertex) :
-	pos_(parVertex.x, parVertex.y, parVertex.z)
+Vertex::Vertex(const VR::Vertex& parVertex) :
+	pos_(parVertex.x, parVertex.y, parVertex.z, 1.f),
+	associatedQuadric_(0)
 {
+}
+// ----------------------------------------------------------------------------
+void Vertex::AddIncidentFace(const Face* parFace)
+{
+	incidentFaces_.push_back(parFace);
 }
 // ----------------------------------------------------------------------------
 Vertex::~Vertex()
