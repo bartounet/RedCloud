@@ -3,6 +3,7 @@
 
 
 #include "../VertexRecolor/types.h"
+#include "../VertexRecolor/geometry.h"
 
 
 // ============================================================================
@@ -14,8 +15,12 @@ namespace QBMS
 class Vertex
 {
 public:
-	Vertex();
+	Vertex(float parX, float parY, float parZ);
+	Vertex(const VR::Vertex& parVertex);
 	~Vertex();
+
+public:
+	const VR::Vec4& Pos() const { return pos_; }
 
 private:
 	VR::Vec4 pos_;

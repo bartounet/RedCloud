@@ -1,5 +1,6 @@
 
 #include "face.h"
+#include <assert.h>
 
 
 // ============================================================================
@@ -10,6 +11,16 @@ namespace QBMS
 // ----------------------------------------------------------------------------
 Face::Face()
 {
+}
+// ----------------------------------------------------------------------------
+Face::Face(const VR::Face& parFace)
+{
+	assert(parFace.vertices);
+	assert(parFace.nbVertices == 3);
+
+	v0_ = (size_t) parFace.vertices[0];
+	v1_ = (size_t) parFace.vertices[1];
+	v2_ = (size_t) parFace.vertices[2];
 }
 // ----------------------------------------------------------------------------
 Face::~Face()

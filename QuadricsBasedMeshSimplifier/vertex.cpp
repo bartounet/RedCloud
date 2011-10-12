@@ -8,7 +8,13 @@
 namespace QBMS
 {
 // ----------------------------------------------------------------------------
-Vertex::Vertex()
+Vertex::Vertex(float parX, float parY, float parZ) :
+  pos_(parX, parY, parZ)
+{
+}
+// ----------------------------------------------------------------------------
+  Vertex::Vertex(const VR::Vertex& parVertex) :
+	pos_(parVertex.x, parVertex.y, parVertex.z)
 {
 }
 // ----------------------------------------------------------------------------

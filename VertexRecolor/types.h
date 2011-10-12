@@ -23,8 +23,8 @@ struct Vec4
 	{
 	}
 
-	Vec4(float parX, float parY, float parZ, float parW) :
-		x(parX), y(parY), z(parZ), w(parW)
+	Vec4(float parX, float parY, float parZ) :
+		x(parX), y(parY), z(parZ), w(1.f)
 	{
 	}
 

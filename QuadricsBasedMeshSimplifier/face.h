@@ -1,6 +1,10 @@
 #ifndef FACE_H_
 #define FACE_H_
 
+
+#include "../VertexRecolor/geometry.h"
+
+
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
@@ -11,10 +15,18 @@ class Face
 {
 public:
 	Face();
+	Face(const VR::Face& parFace);
 	~Face();
 
+public:
+	size_t V0() const { return v0_; }
+	size_t V1() const { return v1_; }
+	size_t V2() const { return v2_; }
+
 private:
-	// FIXME
+	size_t v0_;
+	size_t v1_;
+	size_t v2_;
 };
 // ----------------------------------------------------------------------------
 }
