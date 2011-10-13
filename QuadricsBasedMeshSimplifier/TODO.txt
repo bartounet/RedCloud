@@ -4,6 +4,8 @@ Data structure (with operators overload):
 - face
 - quadric
 
+- BIG BUG : Eliminer les edges/faces degeneré
+
 - GenerateMesh Adjacency
 - Quadric computation
 - Valid pair selection

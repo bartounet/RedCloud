@@ -162,10 +162,6 @@
 			Name="Source Files"
 			>
 			<File
-				RelativePath=".\edge.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\face.cpp"
 				>
 			</File>
@@ -190,10 +186,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\simplifier.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\vertex.cpp"
 				>
 			</File>
@@ -207,10 +199,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\edge.h"
-				>
-			</File>
 			<File
 				RelativePath=".\face.h"
 				>
@@ -233,10 +221,6 @@
 			</File>
 			<File
 				RelativePath=".\quadric.h"
-				>
-			</File>
-			<File
-				RelativePath=".\simplifier.h"
 				>
 			</File>
 			<File
