@@ -40,6 +40,11 @@ struct Vec4
 	{
 	}
 
+	float Length() const
+	{
+		return sqrt((x * x) + (y * y) + (z * z));
+	}
+
 	static Vec4 CrossProduct(const Vec4& parFirst, const Vec4& parSecond)
 	{
 		float x = parFirst.y * parSecond.z - parFirst.z * parSecond.y;
@@ -50,7 +55,7 @@ struct Vec4
 
 	static Vec4 Normalize(const Vec4& parVec4)
 	{
-		float length = sqrt((parVec4.x * parVec4.x) + (parVec4.y * parVec4.y) + (parVec4.z * parVec4.z));
+		float length = parVec4.Length();
 		assert(length > 0.f);
 		return Vec4(parVec4.x / length, parVec4.y / length, parVec4.z / length, 1.f);
 	}
