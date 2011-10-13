@@ -1,6 +1,9 @@
 #ifndef QUADRIC_H_
 #define QUADRIC_H_
 
+
+#define MAX_VALUES 10 // the matrix is symetric
+
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
@@ -11,10 +14,18 @@ class Quadric
 {
 public:
 	Quadric();
+	Quadric(float parValues[]);
 	~Quadric();
 
+public:
+	void Add(const Quadric& parQuadric);
+	void Add(const float parValues[]);
+
+public:
+	const float* Values() const { return values_; }
+
 private:
-	// FIXME
+	float values_[10];
 };
 // ----------------------------------------------------------------------------
 }

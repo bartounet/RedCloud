@@ -10,10 +10,31 @@ namespace QBMS
 // ----------------------------------------------------------------------------
 Quadric::Quadric()
 {
+	for (size_t val = 0; val < MAX_VALUES; ++val)
+		values_[val] = 0.f;
+}
+// ----------------------------------------------------------------------------
+Quadric::Quadric(float parValues[])
+{
+	for (size_t val = 0; val < MAX_VALUES; ++val)
+		values_[val] = parValues[val];
 }
 // ----------------------------------------------------------------------------
 Quadric::~Quadric()
 {
+}
+// ----------------------------------------------------------------------------
+void Quadric::Add(const Quadric& parQuadric)
+{
+	//for (size_t val = 0; val < MAX_VALUES; ++val)
+//		values_[val] += parQuadric.values_[val];
+	Add(parQuadric.Values());
+}
+// ----------------------------------------------------------------------------
+void Quadric::Add(const float parValues[])
+{
+	for (size_t val = 0; val < MAX_VALUES; ++val)
+		values_[val] += parValues[val];
 }
 // ----------------------------------------------------------------------------
 }
