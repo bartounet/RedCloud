@@ -25,6 +25,7 @@ public:
 
 public:
 	void AddIncidentFace(const Face* parFace);
+	float QuadricError() const;
 
 public:
 	const VR::Vec4& Pos() const { return pos_; }
