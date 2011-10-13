@@ -2,7 +2,7 @@
 
 #include "../VertexRecolor/geometry.h"
 #include "../VertexRecolor/mesh_file_helper.h"
-#include "simplifier.h"
+#include "mesh.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -20,17 +20,18 @@ int main(int argc, char **argv)
 	if (argc != 3)
 		Usage(argv[0]);
 
-	printf("[ ] Loading mesh\n");
+	printf("[ ] Loading '%s' mesh file\n", argv[1]);
 	VR::Mesh srcMesh;
 	VR::MeshFileHelper::LoadMeshFromPlyFile(srcMesh, argv[1]);
 	printf("[+] Mesh loaded\n");
 
-	QBMS::Mesh detailedMesh(srcMesh);
-	detailedMesh.ComputeInitialQuadrics();
+	QBMS::Mesh mesh(srcMesh);
+	mesh.ComputeInitialQuadrics();
+	mesh.SelectValidPairs();
 
-	VR::Mesh* dstMesh = detailedMesh.ExportToVRMesh();
+	VR::Mesh* dstMesh = mesh.ExportToVRMesh();
 
-	printf("[ ] Saving mesh\n");
+	printf("[ ] Saving '%s' mesh file\n", argv[2]);
 	VR::MeshFileHelper::SaveMeshToPlyFile(*dstMesh, argv[2], true);
 	printf("[+] Mesh saved\n");
 

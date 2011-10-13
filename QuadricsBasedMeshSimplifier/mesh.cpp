@@ -2,6 +2,8 @@
 #include "mesh.h"
 #include <assert.h>
 #include <stdio.h>
+#include <algorithm>
+#include <set>
 
 
 // ============================================================================
@@ -16,19 +18,18 @@ Mesh::Mesh()
 // ----------------------------------------------------------------------------
 Mesh::Mesh(const VR::Mesh& parVRMesh)
 {
-	printf("[ ] Construction Mesh from VRMesh\n");
+	printf("[ ] Constructing Mesh from VRMesh\n");
 
 	size_t nbVertices = parVRMesh.vertices.size();
 	assert(nbVertices > 0);
-
-	printf("\t[ ] Copying Vertices\n");
+	printf("\t[ ] Copying %d Vertices\n", nbVertices);
 	for (size_t curVertex = 0; curVertex < nbVertices; ++curVertex)
 		vertices_.push_back(Vertex(parVRMesh.vertices[curVertex]));
 	printf("\t[+] Vertices copied\n");
 
-	printf("\t[ ] Copying Faces\n");
 	size_t nbFaces = parVRMesh.faces.size();
 	assert(nbFaces > 0);
+	printf("\t[ ] Copying %d Faces\n", nbFaces);
 	for (size_t curFace = 0; curFace < nbFaces; ++curFace)
 		faces_.push_back(Face(parVRMesh.faces[curFace]));
 	printf("\t[+] Faces copied\n");
@@ -50,13 +51,17 @@ void Mesh::GenerateAdjacency_()
 
 	printf("\t[ ] Generating adjacency\n");
 
-	// incident face
+	// incident face + edges
 	for (size_t curFace = 0; curFace < faces_.size(); ++curFace)
 	{
 		const Face* face = &faces_[curFace];
 		vertices_[face->V0()].AddIncidentFace(face);
 		vertices_[face->V1()].AddIncidentFace(face);
 		vertices_[face->V2()].AddIncidentFace(face);
+
+		edges_.insert(EdgeType(std::min(face->V0(), face->V1()), std::max(face->V0(), face->V1())));
+		edges_.insert(EdgeType(std::min(face->V0(), face->V2()), std::max(face->V0(), face->V2())));
+		edges_.insert(EdgeType(std::min(face->V1(), face->V2()), std::max(face->V1(), face->V2())));
 	}
 
 	printf("\t[+] Adjacency generated\n");
@@ -89,7 +94,7 @@ void Mesh::ComputeInitialQuadrics()
 		Vertex& vertex = vertices_[curVertex];
 		std::vector<VR::Vec4> planes;
 
-		// for each incident faces
+		// for each incident faces, compute the plane
 		for (size_t curFace = 0; curFace < vertex.IncidentFaces().size(); ++curFace)
 		{
 			const Face* face = vertex.IncidentFaces()[curFace];
@@ -99,7 +104,9 @@ void Mesh::ComputeInitialQuadrics()
 			const Vertex& v2 = vertices_[face->V2()];
 
 			VR::Vec4 edge1(v0.Pos(), v1.Pos());
+			assert(edge1.Length() > 0.f); // no degenerated edged ?
 			VR::Vec4 edge2(v0.Pos(), v2.Pos());
+			assert(edge2.Length() > 0.f); // no degenerated edged ?
 
 			VR::Vec4 normal = VR::Vec4::CrossProduct(edge1, edge2);
 			normal = VR::Vec4::Normalize(normal);
@@ -109,14 +116,34 @@ void Mesh::ComputeInitialQuadrics()
 			dPlaneComponent += normal.z * vertex.Pos().z;
 			dPlaneComponent *= -1.f;
 			VR::Vec4 newPlane(normal.x, normal.y, normal.z, dPlaneComponent);
-
 			planes.push_back(newPlane);
 		}
 
-		// FIXME : Fill the quadric
+		// sum the fundamental error quadric for each plane
+		Quadric* quadric = new Quadric();
+		for (size_t curPlane = 0; curPlane < planes.size(); ++curPlane)
+		{
+			const VR::Vec4& p = planes[curPlane];
+			float vals[] = {p.x*p.x, p.x*p.y, p.x*p.z, p.x*p.w,
+							p.y*p.y, p.y*p.z, p.y*p.w, 
+							p.z*p.z, p.z*p.w,
+							p.w*p.w};
+			quadric->Add(vals);
+		}
+		vertex.SetAssociatedQuadric(quadric);
+		//printf("vertex: %d\t error: %f\n", curVertex, vertex.QuadricError());
 	}
 
 	printf("[+] Initial quadrics computed\n");
+}
+// ----------------------------------------------------------------------------
+void Mesh::SelectValidPairs()
+{
+	printf("[ ] Selecting valid pairs\n");
+
+	// FIXME
+
+	printf("[+] Valid pairs selected\n");
 }
 // ----------------------------------------------------------------------------
 }
