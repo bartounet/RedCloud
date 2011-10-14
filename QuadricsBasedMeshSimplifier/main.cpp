@@ -28,6 +28,7 @@ int main(int argc, char **argv)
 	QBMS::Mesh mesh(srcMesh);
 	mesh.ComputeInitialQuadrics();
 	mesh.SelectAndComputeVertexPairs();
+	mesh.Simplify();
 
 	VR::Mesh* dstMesh = mesh.ExportToVRMesh();
 

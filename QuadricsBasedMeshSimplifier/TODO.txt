@@ -1,4 +1,4 @@
-- BIG BUG : Eliminer les edges/faces degeneré
+- BIG BUG : Eliminer les edges/faces degeneré avant la simplification
 - vertex contraction
 - general algorithm
 - vertices cost update

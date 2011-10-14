@@ -38,6 +38,7 @@ public:
 	VR::Mesh* ExportToVRMesh() const;
 	void ComputeInitialQuadrics();
 	void SelectAndComputeVertexPairs();
+	void Simplify(); // FIXME: stop criterions in args
 
 private:
 	void GenerateAdjacency_();

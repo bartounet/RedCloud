@@ -169,7 +169,29 @@ void Mesh::SelectAndComputeVertexPairs()
 
 	assert(pairs_.size() >= edges_.size()); // there is at least all edges
 }
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+void Mesh::Simplify()
+{
+	size_t nbContractions = 3000; // FIXME: define REAL criteria
+
+	printf("[ ] Simplifying mesh...\n");
+
+	printf("nbPairs: %d\n", pairs_.size());
+
+	while (!pairs_.empty() && (nbContractions > 0))
+	{
+		VertexPair* pair = pairs_.top();
+		pairs_.pop();
+
+		pair->Contract();
+		nbContractions--;
+
+		delete pair;
+	}
+
+	printf("[+] Mesh Simplified\n");
+}
+// ---------------------------------------------------------------------------
 }
 // ============================================================================
 // ----------------------------------------------------------------------------

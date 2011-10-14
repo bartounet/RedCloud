@@ -28,6 +28,9 @@ public:
 	~VertexPair();
 
 public:
+	void Contract();
+
+public:
 	const Vertex& OptimalVertex() const { return optimalVertex_; }
 
 private:

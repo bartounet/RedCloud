@@ -36,6 +36,16 @@ void VertexPair::ComputeOptimalVertex_()
 	optimalVertex_.SetAssociatedQuadric(quadric);
 }
 // ----------------------------------------------------------------------------
+// (v0, v1) -> ^v
+// move v0 to new position
+// connect all incidents edges of v2 to v1
+// delete v2
+// remove degenerated Edges/Faces (only when (v0,v1) is an edge)
+void VertexPair::Contract()
+{
+	// FIXME
+}
+// ----------------------------------------------------------------------------
 }
 // ============================================================================
 // ----------------------------------------------------------------------------
