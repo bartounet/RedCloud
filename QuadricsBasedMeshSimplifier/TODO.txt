@@ -1,15 +1,6 @@
-Data structure (with operators overload):
-- vertex
-- edge
-- face
-- quadric
-
 - BIG BUG : Eliminer les edges/faces degeneré
-
-- GenerateMesh Adjacency
-- Quadric computation
-- Valid pair selection
-- vertex contraction cost and pos
 - vertex contraction
 - general algorithm
 - vertices cost update
+- clean du code
+- optim du code

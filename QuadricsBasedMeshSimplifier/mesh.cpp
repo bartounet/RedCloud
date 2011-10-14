@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <algorithm>
 #include <set>
+#include <stdlib.h> // FIXME: delete me
 
 
 // ============================================================================
@@ -11,10 +12,6 @@
 // ============================================================================
 namespace QBMS
 {
-// ----------------------------------------------------------------------------
-Mesh::Mesh()
-{
-}
 // ----------------------------------------------------------------------------
 Mesh::Mesh(const VR::Mesh& parVRMesh)
 {
@@ -59,9 +56,9 @@ void Mesh::GenerateAdjacency_()
 		vertices_[face->V1()].AddIncidentFace(face);
 		vertices_[face->V2()].AddIncidentFace(face);
 
-		edges_.insert(EdgeType(std::min(face->V0(), face->V1()), std::max(face->V0(), face->V1())));
-		edges_.insert(EdgeType(std::min(face->V0(), face->V2()), std::max(face->V0(), face->V2())));
-		edges_.insert(EdgeType(std::min(face->V1(), face->V2()), std::max(face->V1(), face->V2())));
+		edges_.insert(PairType(std::min(face->V0(), face->V1()), std::max(face->V0(), face->V1())));
+		edges_.insert(PairType(std::min(face->V0(), face->V2()), std::max(face->V0(), face->V2())));
+		edges_.insert(PairType(std::min(face->V1(), face->V2()), std::max(face->V1(), face->V2())));
 	}
 
 	printf("\t[+] Adjacency generated\n");
@@ -104,9 +101,9 @@ void Mesh::ComputeInitialQuadrics()
 			const Vertex& v2 = vertices_[face->V2()];
 
 			VR::Vec4 edge1(v0.Pos(), v1.Pos());
-			assert(edge1.Length() > 0.f); // no degenerated edged ?
+			assert(edge1.Length() > 0.f); // no degenerated edge ?
 			VR::Vec4 edge2(v0.Pos(), v2.Pos());
-			assert(edge2.Length() > 0.f); // no degenerated edged ?
+			assert(edge2.Length() > 0.f); // no degenerated edge ?
 
 			VR::Vec4 normal = VR::Vec4::CrossProduct(edge1, edge2);
 			normal = VR::Vec4::Normalize(normal);
@@ -131,19 +128,46 @@ void Mesh::ComputeInitialQuadrics()
 			quadric->Add(vals);
 		}
 		vertex.SetAssociatedQuadric(quadric);
-		//printf("vertex: %d\t error: %f\n", curVertex, vertex.QuadricError());
+		vertex.QuadricError();
 	}
 
 	printf("[+] Initial quadrics computed\n");
 }
 // ----------------------------------------------------------------------------
-void Mesh::SelectValidPairs()
+void Mesh::SelectAndComputeVertexPairs()
 {
-	printf("[ ] Selecting valid pairs\n");
+	assert(pairs_.size() == 0);
 
-	// FIXME
+	printf("[ ] Selecting and computing valid pairs\n");
 
-	printf("[+] Valid pairs selected\n");
+	std::set<PairType>::const_iterator it = edges_.begin();
+	std::set<PairType>::const_iterator end = edges_.end();
+	for (; it != end; ++it)
+	{
+		Vertex* v0 = &vertices_[it->first];
+		Vertex* v1 = &vertices_[it->second];
+		
+		VertexPair* newPair = new VertexPair(v0, v1);
+
+		pairs_.push(newPair);
+	}
+
+	// FIXME: free vertex pair when popping
+
+#if 0
+	while (!pairs_.empty())
+	{
+		VertexPair* pair = pairs_.top();
+		float error = pair->OptimalVertex().QuadricError();
+		printf("error: %f\n", error);
+		pairs_.pop();
+	}
+	system("pause");
+#endif
+
+	printf("[+] Valid pairs selected and computed\n");
+
+	assert(pairs_.size() >= edges_.size()); // there is at least all edges
 }
 // ----------------------------------------------------------------------------
 }
