@@ -11,22 +11,23 @@
 namespace QBMS
 {
 // ----------------------------------------------------------------------------
+class Vertex;
 class Face
 {
 public:
 	Face();
-	Face(const VR::Face& parFace);
+	Face(Vertex* parV0, Vertex* parV1, Vertex* parV2);
 	~Face();
 
 public:
-	size_t V0() const { return v0_; }
-	size_t V1() const { return v1_; }
-	size_t V2() const { return v2_; }
+	Vertex* V0() const { return v0_; }
+	Vertex* V1() const { return v1_; }
+	Vertex* V2() const { return v2_; }
 
 private:
-	size_t v0_;
-	size_t v1_;
-	size_t v2_;
+	Vertex* v0_;
+	Vertex* v1_;
+	Vertex* v2_;
 };
 // ----------------------------------------------------------------------------
 }

@@ -9,18 +9,21 @@
 namespace QBMS
 {
 // ----------------------------------------------------------------------------
-Face::Face()
+Face::Face() :
+	v0_(0),
+	v1_(0),
+	v2_(0)
 {
 }
 // ----------------------------------------------------------------------------
-Face::Face(const VR::Face& parFace)
+Face::Face(Vertex* parV0, Vertex* parV1, Vertex* parV2) :
+	v0_(parV0),
+	v1_(parV1),
+	v2_(parV2)
 {
-	assert(parFace.vertices);
-	assert(parFace.nbVertices == 3);
-
-	v0_ = (size_t) parFace.vertices[0];
-	v1_ = (size_t) parFace.vertices[1];
-	v2_ = (size_t) parFace.vertices[2];
+	assert(v0_);
+	assert(v1_);
+	assert(v2_);
 }
 // ----------------------------------------------------------------------------
 Face::~Face()

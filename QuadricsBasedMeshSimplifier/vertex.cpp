@@ -18,11 +18,12 @@ Vertex::Vertex(float parX, float parY, float parZ) :
 {
 }
 // ----------------------------------------------------------------------------
-Vertex::Vertex(const VR::Vertex& parVertex) :
+Vertex::Vertex(const VR::Vertex& parVertex, size_t parId) :
 	pos_(parVertex.x, parVertex.y, parVertex.z, 1.f),
 	associatedQuadric_(0),
 	quadricErrorComputed_(false),
-	quadricError_(0.f)
+	quadricError_(0.f),
+	id_(parId)
 {
 }
 // ----------------------------------------------------------------------------

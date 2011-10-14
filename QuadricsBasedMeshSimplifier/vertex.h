@@ -21,7 +21,7 @@ class Vertex
 public:
 	Vertex();
 	Vertex(float parX, float parY, float parZ);
-	Vertex(const VR::Vertex& parVertex);
+	Vertex(const VR::Vertex& parVertex, size_t parId);
 	~Vertex();
 
 public:
@@ -33,10 +33,12 @@ public:
 	const VR::Vec4& Pos() const { return pos_; }
 	const std::vector<const Face*>& IncidentFaces() const { return incidentFaces_; }
 	const Quadric& AssociatedQuadric() const { assert(associatedQuadric_); return *associatedQuadric_; }
+	size_t Id() const { return id_; }
 
 public:
 	void SetAssociatedQuadric(Quadric* parQuadric);
 	void SetPos(const VR::Vec4& parPos);
+	void SetId(size_t parId) { id_ = parId; }
 
 private:
 	VR::Vec4 pos_;
@@ -44,6 +46,7 @@ private:
 	Quadric* associatedQuadric_;
 	bool quadricErrorComputed_;
 	float quadricError_;
+	size_t id_;
 };
 // ----------------------------------------------------------------------------
 }

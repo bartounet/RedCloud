@@ -1,5 +1,6 @@
 
 #include "mesh.h"
+#include "vertex.h"
 #include <assert.h>
 #include <stdio.h>
 #include <algorithm>
@@ -21,14 +22,19 @@ Mesh::Mesh(const VR::Mesh& parVRMesh)
 	assert(nbVertices > 0);
 	printf("\t[ ] Copying %d Vertices\n", nbVertices);
 	for (size_t curVertex = 0; curVertex < nbVertices; ++curVertex)
-		vertices_.push_back(Vertex(parVRMesh.vertices[curVertex]));
+		vertices_.push_back(Vertex(parVRMesh.vertices[curVertex], curVertex));
 	printf("\t[+] Vertices copied\n");
 
 	size_t nbFaces = parVRMesh.faces.size();
 	assert(nbFaces > 0);
 	printf("\t[ ] Copying %d Faces\n", nbFaces);
 	for (size_t curFace = 0; curFace < nbFaces; ++curFace)
-		faces_.push_back(Face(parVRMesh.faces[curFace]));
+	{
+		Vertex* v0 = &vertices_[parVRMesh.faces[curFace].vertices[0]];
+		Vertex* v1 = &vertices_[parVRMesh.faces[curFace].vertices[1]];
+		Vertex* v2 = &vertices_[parVRMesh.faces[curFace].vertices[2]];
+		faces_.push_back(Face(v0, v1, v2));
+	}
 	printf("\t[+] Faces copied\n");
 
 	GenerateAdjacency_();
@@ -52,9 +58,10 @@ void Mesh::GenerateAdjacency_()
 	for (size_t curFace = 0; curFace < faces_.size(); ++curFace)
 	{
 		const Face* face = &faces_[curFace];
-		vertices_[face->V0()].AddIncidentFace(face);
-		vertices_[face->V1()].AddIncidentFace(face);
-		vertices_[face->V2()].AddIncidentFace(face);
+
+		face->V0()->AddIncidentFace(face);
+		face->V1()->AddIncidentFace(face);
+		face->V2()->AddIncidentFace(face);
 
 		edges_.insert(PairType(std::min(face->V0(), face->V1()), std::max(face->V0(), face->V1())));
 		edges_.insert(PairType(std::min(face->V0(), face->V2()), std::max(face->V0(), face->V2())));
@@ -75,8 +82,8 @@ VR::Mesh* Mesh::ExportToVRMesh() const
 	size_t nbFaces = faces_.size();
 	for (size_t curFace = 0; curFace < nbFaces; ++curFace)
 	{
-		newMesh->faces.push_back(VR::Face(faces_[curFace].V0(), 
-			faces_[curFace].V1(), faces_[curFace].V2()));
+		newMesh->faces.push_back(VR::Face(faces_[curFace].V0()->Id(), 
+			faces_[curFace].V1()->Id(), faces_[curFace].V2()->Id()));
 	}
 
 	return newMesh;
@@ -96,9 +103,9 @@ void Mesh::ComputeInitialQuadrics()
 		{
 			const Face* face = vertex.IncidentFaces()[curFace];
 
-			const Vertex& v0 = vertices_[face->V0()];
-			const Vertex& v1 = vertices_[face->V1()];
-			const Vertex& v2 = vertices_[face->V2()];
+			const Vertex& v0 = *face->V0();
+			const Vertex& v1 = *face->V1();
+			const Vertex& v2 = *face->V2();
 
 			VR::Vec4 edge1(v0.Pos(), v1.Pos());
 			assert(edge1.Length() > 0.f); // no degenerated edge ?
@@ -144,26 +151,9 @@ void Mesh::SelectAndComputeVertexPairs()
 	std::set<PairType>::const_iterator end = edges_.end();
 	for (; it != end; ++it)
 	{
-		Vertex* v0 = &vertices_[it->first];
-		Vertex* v1 = &vertices_[it->second];
-		
-		VertexPair* newPair = new VertexPair(v0, v1);
-
+		VertexPair* newPair = new VertexPair(it->first, it->second);
 		pairs_.push(newPair);
 	}
-
-	// FIXME: free vertex pair when popping
-
-#if 0
-	while (!pairs_.empty())
-	{
-		VertexPair* pair = pairs_.top();
-		float error = pair->OptimalVertex().QuadricError();
-		printf("error: %f\n", error);
-		pairs_.pop();
-	}
-	system("pause");
-#endif
 
 	printf("[+] Valid pairs selected and computed\n");
 
@@ -176,7 +166,7 @@ void Mesh::Simplify()
 
 	printf("[ ] Simplifying mesh...\n");
 
-	printf("nbPairs: %d\n", pairs_.size());
+	printf("\t nbPairs: %d\n", pairs_.size());
 
 	while (!pairs_.empty() && (nbContractions > 0))
 	{
