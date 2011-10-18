@@ -20,7 +20,7 @@ struct Vertex
 	uchar r, g, b; // color
 
 	Vertex(const Vec4& parPos) :
-		x(parPos.x), y(parPos.y), z(parPos.z),
+		x((float)parPos.x), y((float)parPos.y), z((float)parPos.z),
 		nx(0.0f), ny(0.0f), nz(0.0f),
 		r(255), g(0), b(0)
 	{

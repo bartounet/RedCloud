@@ -47,21 +47,21 @@ void VertexPair::ComputeQuadricError()
 	assert(!quadricErrorComputed_);
 	assert(quadric_);
 
-	float x = pos_.x;
-	float y = pos_.y;
-	float z = pos_.z;
-	float w = pos_.w;
-	const float* q = quadric_->Values();
+	double x = pos_.x;
+	double y = pos_.y;
+	double z = pos_.z;
+	double w = pos_.w;
+	const double* q = quadric_->Values();
 
 	quadricError_ = 0.0f;
 	quadricError_ += (x*q[0] + y*q[1] + z*q[2] + w*q[3]) * x;
 	quadricError_ += (x*q[1] + y*q[4] + z*q[5] + w*q[6]) * y;
 	quadricError_ += (x*q[2] + y*q[5] + z*q[7] + w*q[8]) * z;
 	quadricError_ += (x*q[3] + y*q[6] + z*q[8] + w*q[9]) * w;
-	quadricError_ = std::max(0.0f, quadricError_);
-
+	
+	// FIXME: Stabilite numerique (on passe dans le negatif tres proche de 0)
 	if (quadricError_ < 0.0)
-		int a = 0;
+		quadricError_ = 0.0;
 
 	quadricErrorComputed_ = true;
 }

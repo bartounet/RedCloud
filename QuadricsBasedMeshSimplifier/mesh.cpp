@@ -23,7 +23,12 @@ Mesh::Mesh(const VR::Mesh& parVRMesh)
 	assert(nbVertices > 0);
 	printf("\t[ ] Copying %d Vertices\n", nbVertices);
 	for (size_t curVertex = 0; curVertex < nbVertices; ++curVertex)
+	{
+#if 0
+		printf("%d\n", curVertex);
+#endif
 		vertices_.push_back(Vertex(parVRMesh.vertices[curVertex], curVertex));
+	}
 	printf("\t[+] Vertices copied\n");
 
 	size_t nbFaces = parVRMesh.faces.size();
@@ -135,10 +140,10 @@ void Mesh::ComputeInitialQuadrics()
 			VR::Vec4 normal = VR::Vec4::CrossProduct(edge1, edge2);
 			normal = VR::Vec4::Normalize(normal);
 
-			float dPlaneComponent = normal.x * vertex.Pos().x;
+			double dPlaneComponent = normal.x * vertex.Pos().x;
 			dPlaneComponent += normal.y * vertex.Pos().y;
 			dPlaneComponent += normal.z * vertex.Pos().z;
-			dPlaneComponent *= -1.f;
+			dPlaneComponent *= -1.0;
 			VR::Vec4 newPlane(normal.x, normal.y, normal.z, dPlaneComponent);
 			planes.push_back(newPlane);
 		}
@@ -148,7 +153,7 @@ void Mesh::ComputeInitialQuadrics()
 		for (size_t curPlane = 0; curPlane < planes.size(); ++curPlane)
 		{
 			const VR::Vec4& p = planes[curPlane];
-			float vals[] = {p.x*p.x, p.x*p.y, p.x*p.z, p.x*p.w,
+			double vals[] = {p.x*p.x, p.x*p.y, p.x*p.z, p.x*p.w,
 							p.y*p.y, p.y*p.z, p.y*p.w, 
 							p.z*p.z, p.z*p.w,
 							p.w*p.w};
@@ -176,7 +181,7 @@ void Mesh::SelectAndComputeVertexPairs()
 #if 0
 		printf("Pair(%d, %d) -> ERROR = \t\t\t\t%f\n", newPair->V0()->Id(), newPair->V1()->Id(), newPair->QuadricError());
 #endif
-		assert(newPair->QuadricError() >= 0.f);
+		assert(newPair->QuadricError() >= 0.0);
 		pairs_.push_back(newPair);
 
 		newPair->V0()->AddPair(newPair);
@@ -191,7 +196,9 @@ void Mesh::SelectAndComputeVertexPairs()
 void Mesh::Simplify()
 {
 #if 1
-	size_t nbContractions = 3000; // FIXME: define REAL criteria
+	size_t nbContractions = 100000; // FIXME: define REAL criteria
+	//10000 = 50% pour le bart_depth8
+	//15000 = 80%
 #else
 	size_t nbContractions = 1000; // FIXME: define REAL criteria
 #endif
@@ -204,7 +211,7 @@ void Mesh::Simplify()
 	{
 		VertexPair* pair = ExtractCostlessVertexPair_();
 		assert(pair);
-		//assert(pair->QuadricError() >= 0.f);
+		assert(pair->QuadricError() >= 0.0);
 
 		pair->Contract();
 		printf("nbContractLeft: %d\n", nbContractions);
@@ -220,17 +227,12 @@ VertexPair* Mesh::ExtractCostlessVertexPair_()
 {
 	assert(pairs_.size() > 0);
 
-	float minCost = std::numeric_limits<float>::max();
+	double minCost = std::numeric_limits<double>::max();
 	VertexPair* minPair = 0;
 
 	for (size_t curPair = 0; curPair < pairs_.size(); ++curPair)
 	{
 		VertexPair* pair = pairs_[curPair];
-
-#if 0
-		if (!pair->DeleteMe())
-			printf("Pair(%d, %d) -> ERROR = \t%f\n", pair->V0()->Id(), pair->V1()->Id(), pair->QuadricError());
-#endif
 
 		if (!pair->DeleteMe() && (pair->QuadricError() < minCost))
 		{
@@ -241,7 +243,9 @@ VertexPair* Mesh::ExtractCostlessVertexPair_()
 
 	pairs_.erase(std::find(pairs_.begin(), pairs_.end(), minPair));
 
-	printf("error: %f\n", minCost);
+#if 0
+	printf("error: %e\n", minCost);
+#endif
 
 	assert(minPair);
 	return minPair;

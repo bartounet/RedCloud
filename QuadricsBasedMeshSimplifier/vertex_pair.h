@@ -33,7 +33,7 @@ public:
 	Vertex* V1() { return v1_; }
 	void SetVertices(Vertex* parV0, Vertex* parV1);
 	void RemoveOnRelatedVertex();
-	float QuadricError() const { assert(quadricErrorComputed_); return quadricError_; }
+	double QuadricError() const { assert(quadricErrorComputed_); return quadricError_; }
 
 private:
 	Vertex* v0_;
@@ -43,7 +43,7 @@ private:
 	Quadric* quadric_;
 
 	bool quadricErrorComputed_;
-	float quadricError_;
+	double quadricError_;
 
 	bool deleteMe_;
 };

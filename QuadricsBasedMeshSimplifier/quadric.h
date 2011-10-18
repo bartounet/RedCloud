@@ -14,18 +14,18 @@ class Quadric
 {
 public:
 	Quadric();
-	Quadric(float parValues[]);
+	Quadric(double parValues[]);
 	~Quadric();
 
 public:
 	void Add(const Quadric& parQuadric);
-	void Add(const float parValues[]);
+	void Add(const double parValues[]);
 
 public:
-	const float* Values() const { return values_; }
+	const double* Values() const { return values_; }
 
 private:
-	float values_[10];
+	double values_[10];
 };
 // ----------------------------------------------------------------------------
 }

@@ -25,7 +25,7 @@ public:
 
 public:
 	Vertex();
-	Vertex(float parX, float parY, float parZ);
+	Vertex(double parX, double parY, double parZ);
 	Vertex(const VR::Vertex& parVertex, size_t parId);
 	~Vertex();
 

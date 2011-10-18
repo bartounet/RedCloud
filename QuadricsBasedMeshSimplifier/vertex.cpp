@@ -23,12 +23,11 @@ Vertex::Vertex(float parX, float parY, float parZ) :
 	quadricError_(0.f)
 #endif
 {
-	int a = 0;
 }
 #endif
 // ----------------------------------------------------------------------------
 Vertex::Vertex(const VR::Vertex& parVertex, size_t parId) :
-	pos_(parVertex.x, parVertex.y, parVertex.z, 1.0f),
+	pos_((double)parVertex.x, (double)parVertex.y, (double)parVertex.z, 1.0f),
 	associatedQuadric_(0),
 	id_(parId),
 	deleteMe_(false)
@@ -37,7 +36,6 @@ Vertex::Vertex(const VR::Vertex& parVertex, size_t parId) :
 	quadricError_(0.f)
 #endif
 {
-	int a = 0;
 }
 // ----------------------------------------------------------------------------
 #if 0
@@ -51,7 +49,6 @@ Vertex::Vertex() :
 	quadricError_(0.f)
 #endif
 {
-	int a = 0;
 }
 #endif
 // ----------------------------------------------------------------------------

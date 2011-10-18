@@ -17,17 +17,17 @@ typedef unsigned char uchar;
 
 struct Vec4
 {
-	float x;
-	float y;
-	float z;
-	float w;
+	double x;
+	double y;
+	double z;
+	double w;
 
 	Vec4() :
-		x(0.0f), y(0.0f), z(0.0f), w(1.0f)
+		x(0.0), y(0.0), z(0.0), w(1.0)
 	{
 	}
 
-	Vec4(float parX, float parY, float parZ, float parW) :
+	Vec4(double parX, double parY, double parZ, double parW) :
 		x(parX), y(parY), z(parZ), w(parW)
 	{
 	}
@@ -40,22 +40,22 @@ struct Vec4
 	{
 	}
 
-	float Length() const
+	double Length() const
 	{
 		return sqrt((x * x) + (y * y) + (z * z));
 	}
 
 	static Vec4 CrossProduct(const Vec4& parFirst, const Vec4& parSecond)
 	{
-		float x = parFirst.y * parSecond.z - parFirst.z * parSecond.y;
-		float y = parFirst.z * parSecond.x - parFirst.x * parSecond.z;
-		float z = parFirst.x * parSecond.y - parFirst.y * parSecond.x;
-		return Vec4(x, y, z, 1.0f);
+		double x = parFirst.y * parSecond.z - parFirst.z * parSecond.y;
+		double y = parFirst.z * parSecond.x - parFirst.x * parSecond.z;
+		double z = parFirst.x * parSecond.y - parFirst.y * parSecond.x;
+		return Vec4(x, y, z, 1.0);
 	}
 
 	static Vec4 Normalize(const Vec4& parVec4)
 	{
-		float length = parVec4.Length();
+		double length = parVec4.Length();
 		assert(length > 0.0f);
 		return Vec4(parVec4.x / length, parVec4.y / length, parVec4.z / length, 1.0);
 	}
