@@ -23,7 +23,7 @@ struct Vec4
 	float w;
 
 	Vec4() :
-		x(0.f), y(0.f), z(0.f), w(1.f)
+		x(0.0f), y(0.0f), z(0.0f), w(1.0f)
 	{
 	}
 
@@ -36,7 +36,7 @@ struct Vec4
 		x(parSecond.x - parFirst.x),
 		y(parSecond.y - parFirst.y),
 		z(parSecond.z - parFirst.z),
-		w(1.f) // ok ?
+		w(1.0)
 	{
 	}
 
@@ -50,14 +50,14 @@ struct Vec4
 		float x = parFirst.y * parSecond.z - parFirst.z * parSecond.y;
 		float y = parFirst.z * parSecond.x - parFirst.x * parSecond.z;
 		float z = parFirst.x * parSecond.y - parFirst.y * parSecond.x;
-		return Vec4(x, y, z, 1.f);
+		return Vec4(x, y, z, 1.0f);
 	}
 
 	static Vec4 Normalize(const Vec4& parVec4)
 	{
 		float length = parVec4.Length();
-		assert(length > 0.f);
-		return Vec4(parVec4.x / length, parVec4.y / length, parVec4.z / length, 1.f);
+		assert(length > 0.0f);
+		return Vec4(parVec4.x / length, parVec4.y / length, parVec4.z / length, 1.0);
 	}
 
 	// FIXME: Dot product

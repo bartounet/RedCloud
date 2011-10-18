@@ -14,16 +14,6 @@ namespace QBMS
 class VertexPair
 {
 public:
-	struct Cmp
-	{
-		bool operator()(VertexPair* parLeft, VertexPair* parRight)
-		{
-			return (parLeft->OptimalVertex().QuadricError() > 
-				parRight->OptimalVertex().QuadricError());
-		}
-	};
-
-public:
 	VertexPair(Vertex* parV0, Vertex* parV1);
 	~VertexPair();
 
@@ -31,15 +21,31 @@ public:
 	void Contract();
 
 public:
-	const Vertex& OptimalVertex() const { return optimalVertex_; }
+	void ComputePosAndQuadric();
+	void ComputeQuadricError();
+	bool IsDegenerated() const { return (v0_ == v1_); }
 
-private:
-	void ComputeOptimalVertex_();
+public:
+	bool DeleteMe() const { return deleteMe_; }
+	void SetDeleteMe() { assert(!deleteMe_); deleteMe_ = true; }
+	void UnsetQuadricErrorComputed() { assert(quadricErrorComputed_); quadricErrorComputed_ = false; }
+	Vertex* V0() { return v0_; }
+	Vertex* V1() { return v1_; }
+	void SetVertices(Vertex* parV0, Vertex* parV1);
+	void RemoveOnRelatedVertex();
+	float QuadricError() const { assert(quadricErrorComputed_); return quadricError_; }
 
 private:
 	Vertex* v0_;
 	Vertex* v1_;
-	Vertex optimalVertex_;
+
+	VR::Vec4 pos_;
+	Quadric* quadric_;
+
+	bool quadricErrorComputed_;
+	float quadricError_;
+
+	bool deleteMe_;
 };
 // ----------------------------------------------------------------------------
 }

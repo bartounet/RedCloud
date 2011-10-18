@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <set>
 #include <stdlib.h> // FIXME: delete me
+#include <limits>
 
 
 // ============================================================================
@@ -57,7 +58,7 @@ void Mesh::GenerateAdjacency_()
 	// incident face + edges
 	for (size_t curFace = 0; curFace < faces_.size(); ++curFace)
 	{
-		const Face* face = &faces_[curFace];
+		Face* face = &faces_[curFace];
 
 		face->V0()->AddIncidentFace(face);
 		face->V1()->AddIncidentFace(face);
@@ -71,19 +72,38 @@ void Mesh::GenerateAdjacency_()
 	printf("\t[+] Adjacency generated\n");
 }
 // ----------------------------------------------------------------------------
-VR::Mesh* Mesh::ExportToVRMesh() const
+VR::Mesh* Mesh::ExportToVRMesh()
 {
 	VR::Mesh* newMesh = new VR::Mesh();
 
+	size_t deleteOffset = 0;
 	size_t nbVertices = vertices_.size();
 	for (size_t curVertex = 0; curVertex < nbVertices; ++curVertex)
-		newMesh->vertices.push_back(VR::Vertex(vertices_[curVertex].Pos()));
+	{
+		Vertex* vertex = &vertices_[curVertex];
+
+		// FIXME !!!!
+#if 0
+		if (vertex->DeleteMe()) 
+			deleteOffset++;
+		else
+#endif
+		{
+			newMesh->vertices.push_back(VR::Vertex(vertices_[curVertex].Pos()));
+			vertex->SetId(vertex->Id() - deleteOffset);
+		}
+	}
 
 	size_t nbFaces = faces_.size();
 	for (size_t curFace = 0; curFace < nbFaces; ++curFace)
 	{
-		newMesh->faces.push_back(VR::Face(faces_[curFace].V0()->Id(), 
-			faces_[curFace].V1()->Id(), faces_[curFace].V2()->Id()));
+		Face* face = &faces_[curFace];
+
+		if (!face->IsDegenerated())
+		{
+			newMesh->faces.push_back(VR::Face(faces_[curFace].V0()->Id(), 
+				faces_[curFace].V1()->Id(), faces_[curFace].V2()->Id()));
+		}
 	}
 
 	return newMesh;
@@ -108,9 +128,9 @@ void Mesh::ComputeInitialQuadrics()
 			const Vertex& v2 = *face->V2();
 
 			VR::Vec4 edge1(v0.Pos(), v1.Pos());
-			assert(edge1.Length() > 0.f); // no degenerated edge ?
+			assert(edge1.Length() > 0.0); // no degenerated edge ?
 			VR::Vec4 edge2(v0.Pos(), v2.Pos());
-			assert(edge2.Length() > 0.f); // no degenerated edge ?
+			assert(edge2.Length() > 0.0); // no degenerated edge ?
 
 			VR::Vec4 normal = VR::Vec4::CrossProduct(edge1, edge2);
 			normal = VR::Vec4::Normalize(normal);
@@ -135,7 +155,6 @@ void Mesh::ComputeInitialQuadrics()
 			quadric->Add(vals);
 		}
 		vertex.SetAssociatedQuadric(quadric);
-		vertex.QuadricError();
 	}
 
 	printf("[+] Initial quadrics computed\n");
@@ -152,7 +171,16 @@ void Mesh::SelectAndComputeVertexPairs()
 	for (; it != end; ++it)
 	{
 		VertexPair* newPair = new VertexPair(it->first, it->second);
-		pairs_.push(newPair);
+		newPair->ComputePosAndQuadric();
+		newPair->ComputeQuadricError();
+#if 0
+		printf("Pair(%d, %d) -> ERROR = \t\t\t\t%f\n", newPair->V0()->Id(), newPair->V1()->Id(), newPair->QuadricError());
+#endif
+		assert(newPair->QuadricError() >= 0.f);
+		pairs_.push_back(newPair);
+
+		newPair->V0()->AddPair(newPair);
+		newPair->V1()->AddPair(newPair);
 	}
 
 	printf("[+] Valid pairs selected and computed\n");
@@ -162,7 +190,11 @@ void Mesh::SelectAndComputeVertexPairs()
 // ---------------------------------------------------------------------------
 void Mesh::Simplify()
 {
+#if 1
 	size_t nbContractions = 3000; // FIXME: define REAL criteria
+#else
+	size_t nbContractions = 1000; // FIXME: define REAL criteria
+#endif
 
 	printf("[ ] Simplifying mesh...\n");
 
@@ -170,16 +202,49 @@ void Mesh::Simplify()
 
 	while (!pairs_.empty() && (nbContractions > 0))
 	{
-		VertexPair* pair = pairs_.top();
-		pairs_.pop();
+		VertexPair* pair = ExtractCostlessVertexPair_();
+		assert(pair);
+		//assert(pair->QuadricError() >= 0.f);
 
 		pair->Contract();
+		printf("nbContractLeft: %d\n", nbContractions);
 		nbContractions--;
 
 		delete pair;
 	}
 
 	printf("[+] Mesh Simplified\n");
+}
+// ---------------------------------------------------------------------------
+VertexPair* Mesh::ExtractCostlessVertexPair_()
+{
+	assert(pairs_.size() > 0);
+
+	float minCost = std::numeric_limits<float>::max();
+	VertexPair* minPair = 0;
+
+	for (size_t curPair = 0; curPair < pairs_.size(); ++curPair)
+	{
+		VertexPair* pair = pairs_[curPair];
+
+#if 0
+		if (!pair->DeleteMe())
+			printf("Pair(%d, %d) -> ERROR = \t%f\n", pair->V0()->Id(), pair->V1()->Id(), pair->QuadricError());
+#endif
+
+		if (!pair->DeleteMe() && (pair->QuadricError() < minCost))
+		{
+			minCost = pair->QuadricError();
+			minPair = pair;
+		}
+	}
+
+	pairs_.erase(std::find(pairs_.begin(), pairs_.end(), minPair));
+
+	printf("error: %f\n", minCost);
+
+	assert(minPair);
+	return minPair;
 }
 // ---------------------------------------------------------------------------
 }

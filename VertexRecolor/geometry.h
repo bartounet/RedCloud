@@ -21,14 +21,14 @@ struct Vertex
 
 	Vertex(const Vec4& parPos) :
 		x(parPos.x), y(parPos.y), z(parPos.z),
-		nx(0.f), ny(0.f), nz(0.f),
+		nx(0.0f), ny(0.0f), nz(0.0f),
 		r(255), g(0), b(0)
 	{
 	}
 
 	Vertex() :
-		x(0.f), y(0.f), z(0.f),
-		nx(0.f), ny(0.f), nz(0.f),
+		x(0.0f), y(0.0f), z(0.0f),
+		nx(0.0f), ny(0.0f), nz(0.0f),
 		r(255), g(0), b(0)
 	{
 	}

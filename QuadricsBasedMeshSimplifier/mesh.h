@@ -21,27 +21,28 @@ class Vertex;
 class Mesh
 {
 public:
-	typedef std::pair<Vertex*, Vertex*> PairType;
-	typedef std::priority_queue<VertexPair*, std::vector<VertexPair*>, VertexPair::Cmp> HeapType;
+	typedef std::pair<Vertex*, Vertex*> PairType;	
 
 public:
 	Mesh(const VR::Mesh& parVRMesh);
 	~Mesh();
 
 public:
-	VR::Mesh* ExportToVRMesh() const;
+	VR::Mesh* ExportToVRMesh();
 	void ComputeInitialQuadrics();
 	void SelectAndComputeVertexPairs();
 	void Simplify(); // FIXME: stop criterions in args
 
 private:
 	void GenerateAdjacency_();
+	VertexPair* ExtractCostlessVertexPair_();
 
 private:
 	std::vector<Vertex> vertices_;
 	std::vector<Face> faces_;
 	std::set<PairType> edges_;
-	HeapType pairs_;
+	
+	std::vector<VertexPair*> pairs_;
 };
 // ----------------------------------------------------------------------------
 }

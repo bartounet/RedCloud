@@ -1,5 +1,6 @@
 
 #include "face.h"
+#include "vertex.h"
 #include <assert.h>
 
 
@@ -28,6 +29,21 @@ Face::Face(Vertex* parV0, Vertex* parV1, Vertex* parV2) :
 // ----------------------------------------------------------------------------
 Face::~Face()
 {
+}
+// ----------------------------------------------------------------------------
+void Face::RemoveOnRelatedVertex()
+{
+	assert(IsDegenerated());
+
+	if (v0_ == v1_)
+	{
+		if (v0_ != v2_)
+			v2_->RemoveIncidentFace(this);
+	}
+	else
+		v1_->RemoveIncidentFace(this);
+
+	v0_->RemoveIncidentFace(this);
 }
 // ----------------------------------------------------------------------------
 }

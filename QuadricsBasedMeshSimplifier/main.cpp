@@ -33,9 +33,9 @@ int main(int argc, char **argv)
 	VR::Mesh* dstMesh = mesh.ExportToVRMesh();
 
 	printf("\t[.] Vertices reduction: %.2f percent\n",
-		100.f * ((float)dstMesh->vertices.size() / (float)srcMesh.vertices.size() - 1.f));
+		100.f * (1.f - (float)dstMesh->vertices.size() / (float)srcMesh.vertices.size()));
 	printf("\t[.] Faces reduction: %.2f percent\n",
-		100.f * ((float)dstMesh->faces.size() / (float)srcMesh.faces.size() - 1.f));
+		100.f * (1.f - (float)dstMesh->faces.size() / (float)srcMesh.faces.size()));
 
 	printf("[ ] Saving '%s' mesh file (vertices: %d, faces: %d)\n", argv[2], dstMesh->vertices.size(), dstMesh->faces.size());
 	VR::MeshFileHelper::SaveMeshToPlyFile(*dstMesh, argv[2], true);
