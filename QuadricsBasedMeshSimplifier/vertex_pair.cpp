@@ -35,9 +35,10 @@ void VertexPair::ComputePosAndQuadric()
 	pos_ = v0_->Pos();  // FIXME: Try a more optimal position...
 
 	// compute the new quadric
-	if (quadric_)
-		delete quadric_;
-	quadric_ = new Quadric();
+	if (!quadric_)
+		quadric_ = new Quadric();
+	else
+		quadric_->Init();
 	quadric_->Add(v0_->AssociatedQuadric());
 	quadric_->Add(v1_->AssociatedQuadric());
 }

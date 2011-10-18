@@ -195,12 +195,12 @@ void Mesh::SelectAndComputeVertexPairs()
 // ---------------------------------------------------------------------------
 void Mesh::Simplify()
 {
-#if 1
+#if 0
 	size_t nbContractions = 100000; // FIXME: define REAL criteria
 	//10000 = 50% pour le bart_depth8
 	//15000 = 80%
 #else
-	size_t nbContractions = 1000; // FIXME: define REAL criteria
+	size_t nbContractions = 15000; // FIXME: define REAL criteria
 #endif
 
 	printf("[ ] Simplifying mesh...\n");

@@ -20,6 +20,7 @@ public:
 public:
 	void Add(const Quadric& parQuadric);
 	void Add(const double parValues[]);
+	void Init();
 
 public:
 	const double* Values() const { return values_; }
