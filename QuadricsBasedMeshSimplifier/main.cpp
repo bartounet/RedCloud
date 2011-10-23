@@ -3,6 +3,7 @@
 #include "../VertexRecolor/geometry.h"
 #include "../VertexRecolor/mesh_file_helper.h"
 #include "mesh.h"
+#include "updatable_heap.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,6 +16,30 @@ void Usage(const char* parProgName)
 
 int main(int argc, char **argv)
 {
+#if 1
+	QBMS::UpdatableHeap<int> heap;
+	heap.Insert(2);
+	heap.Insert(1);
+	heap.Insert(5);
+	heap.Insert(4);
+	heap.Insert(3);
+	heap.Insert(3);
+	assert(heap.IsValid());
+
+	printf("extract: %d\n", heap.ExtractMin());
+	assert(heap.IsValid());
+
+	printf("extract: %d\n", heap.ExtractMin());
+	assert(heap.IsValid());
+
+	heap.Insert(10);
+	heap.Insert(1);
+	heap.Insert(0);
+	assert(heap.IsValid());
+
+	// FIXME: Tester la mise a jour
+
+#else
 	printf("=== Quadrics based mesh simplifier ===\n");
 
 	if (argc != 3)
@@ -44,5 +69,6 @@ int main(int argc, char **argv)
 	delete dstMesh;
 
 	system("pause");
+#endif
 	return 0;
 }

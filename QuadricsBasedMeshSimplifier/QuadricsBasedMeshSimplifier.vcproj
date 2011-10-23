@@ -228,6 +228,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\updatable_heap.h"
+				>
+			</File>
+			<File
+				RelativePath=".\updatable_heap.hpp"
+				>
+			</File>
+			<File
 				RelativePath=".\vertex.h"
 				>
 			</File>

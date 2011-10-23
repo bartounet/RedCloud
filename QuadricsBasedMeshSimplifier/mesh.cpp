@@ -200,7 +200,7 @@ void Mesh::Simplify()
 	//10000 = 50% pour le bart_depth8
 	//15000 = 80%
 #else
-	size_t nbContractions = 15000; // FIXME: define REAL criteria
+	size_t nbContractions = 12000; // FIXME: define REAL criteria
 #endif
 
 	printf("[ ] Simplifying mesh...\n");
@@ -241,13 +241,9 @@ VertexPair* Mesh::ExtractCostlessVertexPair_()
 		}
 	}
 
-	pairs_.erase(std::find(pairs_.begin(), pairs_.end(), minPair));
-
-#if 0
-	printf("error: %e\n", minCost);
-#endif
-
 	assert(minPair);
+	pairs_.erase(std::find(pairs_.begin(), pairs_.end(), minPair));
+	
 	return minPair;
 }
 // ---------------------------------------------------------------------------
