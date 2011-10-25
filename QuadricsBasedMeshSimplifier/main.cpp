@@ -26,6 +26,8 @@ int main(int argc, char **argv)
 	heap.Insert(3);
 	assert(heap.IsValid());
 
+oijfdsoijfdsoijfdsoij
+
 	printf("extract: %d\n", heap.ExtractMin());
 	assert(heap.IsValid());
 
