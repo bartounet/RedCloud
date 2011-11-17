@@ -1,6 +1,8 @@
-- BIG BUG : Eliminer les edges/faces degeneré avant la simplification
-- vertex contraction
-- general algorithm
-- vertices cost update
-- clean du code
-- optim du code
+- BIG BUG : Eliminer les edges/faces degeneré avant la simplification + Faire un check
+- Ameliorer la position lors d'une contraction
+- Prevenir le face flip
+- Gerer les vertex pairs qui ne sont pas des edges
+- Critere d'arret de la simplification (version exacte)
+- Optimisation du chargement
+- Gerer un export propre (au niveau des vertices)
+- Clean du code

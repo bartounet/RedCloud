@@ -24,8 +24,6 @@ public:
 	typedef std::vector<Face*> FaceListType;
 
 public:
-	Vertex();
-	Vertex(double parX, double parY, double parZ);
 	Vertex(const VR::Vertex& parVertex, size_t parId);
 	~Vertex();
 
@@ -34,18 +32,20 @@ public:
 	void AddIncidentFaces(const FaceListType& parFaceList);
 	void AddPair(VertexPair* parPair);
 	void AddPairs(const PairListType& parPairList);
-#if 0
-	float QuadricError();
-	float QuadricError() const;
-#endif
 	void UpdateIncidentFaces(Vertex* parNewVertex);
 	void RemoveIncidentFace(Face* parFace);
 	void RemoveDegeneratedFaces();
 	void UpdatePairWithThis(const Vertex* parOldVertex);
+	void RemovePair(VertexPair* parPair);
+#ifdef OPTIMIZE
+	void RemoveInvalidPair(std::vector<VertexPair*>& parDeletePairs);
+	void RemoveDuplicatedPair(std::vector<VertexPair*>& parDeletePairs);
+	void UpdatePairPosAndQuadric(std::vector<VertexPair*>& parUpdatePairs);
+#else
 	void RemoveInvalidPair();
 	void RemoveDuplicatedPair();
-	void RemovePair(VertexPair* parPair);
 	void UpdatePairPosAndQuadric();
+#endif
 
 public:
 	const VR::Vec4& Pos() const { return pos_; }
@@ -67,10 +67,6 @@ private:
 
 	VR::Vec4 pos_;
 	Quadric* associatedQuadric_;
-#if 0
-	bool quadricErrorComputed_;
-	float quadricError_;
-#endif
 	
 	size_t id_;
 	bool deleteMe_;

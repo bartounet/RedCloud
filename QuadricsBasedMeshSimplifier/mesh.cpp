@@ -5,16 +5,14 @@
 #include <stdio.h>
 #include <algorithm>
 #include <set>
-#include <stdlib.h> // FIXME: delete me
 #include <limits>
 
 
-// ============================================================================
-// ----------------------------------------------------------------------------
-// ============================================================================
 namespace QBMS
 {
+// ============================================================================
 // ----------------------------------------------------------------------------
+// ============================================================================
 Mesh::Mesh(const VR::Mesh& parVRMesh)
 {
 	printf("[ ] Constructing Mesh from VRMesh\n");
@@ -167,7 +165,11 @@ void Mesh::ComputeInitialQuadrics()
 // ----------------------------------------------------------------------------
 void Mesh::SelectAndComputeVertexPairs()
 {
+#ifdef OPTIMIZE
+	assert(pairsHeap_.Size() == 0);
+#else
 	assert(pairs_.size() == 0);
+#endif
 
 	printf("[ ] Selecting and computing valid pairs\n");
 
@@ -182,7 +184,11 @@ void Mesh::SelectAndComputeVertexPairs()
 		printf("Pair(%d, %d) -> ERROR = \t\t\t\t%f\n", newPair->V0()->Id(), newPair->V1()->Id(), newPair->QuadricError());
 #endif
 		assert(newPair->QuadricError() >= 0.0);
+#ifdef OPTIMIZE
+		pairsHeap_.Insert(newPair);
+#else
 		pairs_.push_back(newPair);
+#endif
 
 		newPair->V0()->AddPair(newPair);
 		newPair->V1()->AddPair(newPair);
@@ -190,39 +196,99 @@ void Mesh::SelectAndComputeVertexPairs()
 
 	printf("[+] Valid pairs selected and computed\n");
 
+#ifdef OPTIMIZE
+	assert(pairsHeap_.Size() >= edges_.size());
+#else
 	assert(pairs_.size() >= edges_.size()); // there is at least all edges
+#endif
 }
 // ---------------------------------------------------------------------------
-void Mesh::Simplify()
+size_t Mesh::NbValidFaces_() const
 {
-#if 0
-	size_t nbContractions = 100000; // FIXME: define REAL criteria
-	//10000 = 50% pour le bart_depth8
-	//15000 = 80%
-#else
-	size_t nbContractions = 12000; // FIXME: define REAL criteria
-#endif
+	size_t nbValidFaces = 0;
+
+	std::vector<Face>::const_iterator it = faces_.begin();
+	std::vector<Face>::const_iterator end = faces_.end();
+	for (; it != end; ++it)
+		if (!it->IsDegenerated())
+			nbValidFaces++;
+
+	return nbValidFaces;
+}
+// ---------------------------------------------------------------------------
+void Mesh::Simplify(size_t parMaxFaces)
+{
+	assert(parMaxFaces > 0); // the simpliest mesh will be a triangle
+	assert(faces_.size() > parMaxFaces);
 
 	printf("[ ] Simplifying mesh...\n");
 
+#ifdef OPTIMIZE
+	printf("\t nbPairs: %d\n", pairsHeap_.Size());
+#else
 	printf("\t nbPairs: %d\n", pairs_.size());
+#endif
 
+	// FIXME: Attention, si on contract un bord, on ne perd qu'une face !!
+	size_t nbContractions = (faces_.size() - parMaxFaces) / 2; // a chaque contraction on supprime 2 faces (OU PLUS !)
+#ifdef OPTIMIZE
+	while (!pairsHeap_.Empty() && (nbContractions > 0))
+#else
 	while (!pairs_.empty() && (nbContractions > 0))
+#endif
 	{
-		VertexPair* pair = ExtractCostlessVertexPair_();
+		VertexPair* pair = 0;
+
+#ifdef OPTIMIZE
+		pair = pairsHeap_.ExtractMin();
+#else
+		pair = ExtractCostlessVertexPair_();
+#endif
+
 		assert(pair);
+		assert(!pair->DeleteMe());
 		assert(pair->QuadricError() >= 0.0);
 
-		pair->Contract();
+#if 0
 		printf("nbContractLeft: %d\n", nbContractions);
-		nbContractions--;
+		//printf("contracting: %d -> %d\n", pair->V0()->Id(), pair->V1()->Id());
+#endif
 
+#ifdef OPTIMIZE
+		std::vector<VertexPair*> deletePairs;
+		std::vector<VertexPair*> updatePairs;
+		pair->Contract(deletePairs, updatePairs);
+
+		deletePairs.erase(std::find(deletePairs.begin(), deletePairs.end(), pair)); // ignore the current pair
+		pairsHeap_.Delete(deletePairs);
+		pairsHeap_.Update(updatePairs);
+#else
+		pair->Contract(); // ici, on sait quelles paires vont etre mises a jours et celles qui sont modifs
+#endif
+
+#if 0
+		if ((nbContractions & 127) == 0)
+			printf("\tfaces: %d\n", NbValidFaces_());
+#endif
+
+		nbContractions--;
+		assert(pair);
 		delete pair;
+
+		// === DELETE ME ===
+		// FIXME: Hack pour tomber en dessous du nombre de face necessaire. On 
+		// devrait calculer le nombre de contraction necessaire en amont !!
+		if ((nbContractions <= 0) && (NbValidFaces_() > parMaxFaces))
+			nbContractions = 1;
+		// === DELETE ME ===
 	}
+
+	assert(NbValidFaces_() <= parMaxFaces);
 
 	printf("[+] Mesh Simplified\n");
 }
 // ---------------------------------------------------------------------------
+#ifndef OPTIMIZE
 VertexPair* Mesh::ExtractCostlessVertexPair_()
 {
 	assert(pairs_.size() > 0);
@@ -246,8 +312,8 @@ VertexPair* Mesh::ExtractCostlessVertexPair_()
 	
 	return minPair;
 }
-// ---------------------------------------------------------------------------
-}
+#endif
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
+}

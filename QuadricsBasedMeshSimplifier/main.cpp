@@ -3,9 +3,9 @@
 #include "../VertexRecolor/geometry.h"
 #include "../VertexRecolor/mesh_file_helper.h"
 #include "mesh.h"
-#include "updatable_heap.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <windows.h> // GetTickCount()
 
 
 void Usage(const char* parProgName)
@@ -16,32 +16,6 @@ void Usage(const char* parProgName)
 
 int main(int argc, char **argv)
 {
-#if 1
-	QBMS::UpdatableHeap<int> heap;
-	heap.Insert(2);
-	heap.Insert(1);
-	heap.Insert(5);
-	heap.Insert(4);
-	heap.Insert(3);
-	heap.Insert(3);
-	assert(heap.IsValid());
-
-oijfdsoijfdsoijfdsoij
-
-	printf("extract: %d\n", heap.ExtractMin());
-	assert(heap.IsValid());
-
-	printf("extract: %d\n", heap.ExtractMin());
-	assert(heap.IsValid());
-
-	heap.Insert(10);
-	heap.Insert(1);
-	heap.Insert(0);
-	assert(heap.IsValid());
-
-	// FIXME: Tester la mise a jour
-
-#else
 	printf("=== Quadrics based mesh simplifier ===\n");
 
 	if (argc != 3)
@@ -53,9 +27,23 @@ oijfdsoijfdsoijfdsoij
 	printf("[+] Mesh loaded\n");
 
 	QBMS::Mesh mesh(srcMesh);
+
+	size_t beforeSimplyTime = GetTickCount();
+
 	mesh.ComputeInitialQuadrics();
 	mesh.SelectAndComputeVertexPairs();
-	mesh.Simplify();
+	mesh.Simplify(20000);
+
+	size_t afterSimplyTime = GetTickCount();
+	size_t elapsedSimplyTime = (afterSimplyTime - beforeSimplyTime) / 1000; // in seconds
+
+	size_t hours = elapsedSimplyTime / 3600;
+	elapsedSimplyTime -= hours * 3600;
+	size_t minutes = elapsedSimplyTime / 60;
+	elapsedSimplyTime -= minutes * 60;
+	size_t seconds = elapsedSimplyTime;
+	
+	printf("[+] Simplification done in %dh %dm %ds\n", hours, minutes, seconds);
 
 	VR::Mesh* dstMesh = mesh.ExportToVRMesh();
 
@@ -71,6 +59,5 @@ oijfdsoijfdsoijfdsoij
 	delete dstMesh;
 
 	system("pause");
-#endif
 	return 0;
 }

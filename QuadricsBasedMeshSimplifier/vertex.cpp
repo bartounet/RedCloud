@@ -6,51 +6,18 @@
 #include <algorithm>
 
 
-// ============================================================================
-// ----------------------------------------------------------------------------
-// ============================================================================
 namespace QBMS
 {
+// ============================================================================
 // ----------------------------------------------------------------------------
-#if 0
-Vertex::Vertex(float parX, float parY, float parZ) :
-	pos_(parX, parY, parZ, 1.0f),
-	associatedQuadric_(0),
-	id_((size_t) -1),
-	deleteMe_(false)	
-#if 0
-	,quadricErrorComputed_(false),
-	quadricError_(0.f)
-#endif
-{
-}
-#endif
-// ----------------------------------------------------------------------------
+// ============================================================================
 Vertex::Vertex(const VR::Vertex& parVertex, size_t parId) :
 	pos_((double)parVertex.x, (double)parVertex.y, (double)parVertex.z, 1.0f),
 	associatedQuadric_(0),
 	id_(parId),
 	deleteMe_(false)
-#if 0
-	,quadricErrorComputed_(false),
-	quadricError_(0.f)
-#endif
 {
 }
-// ----------------------------------------------------------------------------
-#if 0
-Vertex::Vertex() :
-	pos_(0.0f, 0.0f, 0.0f, 1.0f),
-	associatedQuadric_(0),
-	id_((size_t) -1),
-	deleteMe_(false)
-#if 0
-	,quadricErrorComputed_(false),
-	quadricError_(0.f)
-#endif
-{
-}
-#endif
 // ----------------------------------------------------------------------------
 Vertex::~Vertex()
 {
@@ -65,9 +32,6 @@ void Vertex::SetAssociatedQuadric(Quadric* parQuadric)
 	if (associatedQuadric_)
 		delete associatedQuadric_;
 	associatedQuadric_ = parQuadric;
-#if 0
-	quadricErrorComputed_ = false;
-#endif
 
 	PairListType::const_iterator curPair = pairs_.begin();
 	PairListType::const_iterator pairEnd = pairs_.end();
@@ -113,7 +77,7 @@ void Vertex::UpdateIncidentFaces(Vertex* parNewVertex)
 		else if (face->V2() == this)
 			face->SetV2(parNewVertex);
 		else
-			assert(false); /// WTF !!!!
+			assert(false); // This vertex got a face where it doesn't participate
 	}
 }
 // ----------------------------------------------------------------------------
@@ -166,14 +130,14 @@ void Vertex::RemoveDegeneratedFaces()
 	for (; curFace != faceEnd; ++curFace)
 		(*curFace)->RemoveOnRelatedVertex();
 
-	// debug only
+#ifdef _DEBUG
 	curFace = incidentFaces_.begin();
 	faceEnd = incidentFaces_.end();
 	for (; curFace != faceEnd; ++curFace)
 		if ((*curFace)->IsDegenerated())
 			break;
 	assert(curFace == faceEnd);
-	// debug only
+#endif
 }
 // ----------------------------------------------------------------------------
 void Vertex::UpdatePairWithThis(const Vertex* parOldVertex)
@@ -193,7 +157,11 @@ void Vertex::UpdatePairWithThis(const Vertex* parOldVertex)
 	}
 }
 // ----------------------------------------------------------------------------
+#ifdef OPTIMIZE
+void Vertex::RemoveInvalidPair(std::vector<VertexPair*>& parDeletePairs)
+#else
 void Vertex::RemoveInvalidPair()
+#endif
 {
 	typedef std::vector<PairListType::iterator> deletePairList;
 	deletePairList deletePairs;
@@ -205,6 +173,9 @@ void Vertex::RemoveInvalidPair()
 		{
 			(*curPair)->SetDeleteMe();
 			deletePairs.push_back(curPair);
+#ifdef OPTIMIZE
+			parDeletePairs.push_back(*curPair);
+#endif
 		}
 
 	// FIXME: Gerer le cas des vertex pair (non edge), ADJACENCE ATTENTION !!!!
@@ -215,7 +186,11 @@ void Vertex::RemoveInvalidPair()
 		pairs_.erase(*curDelPair);
 }
 // ----------------------------------------------------------------------------
+#ifdef OPTIMIZE
+void Vertex::RemoveDuplicatedPair(std::vector<VertexPair*>& parDeletePairs)
+#else
 void Vertex::RemoveDuplicatedPair()
+#endif
 {
 	PairListType deletePairs;
 
@@ -233,6 +208,9 @@ void Vertex::RemoveDuplicatedPair()
 			{
 				pair2->SetDeleteMe();
 				deletePairs.push_back(pair2);
+#ifdef OPTIMIZE
+				parDeletePairs.push_back(pair2);
+#endif
 			}
 		}
 	}
@@ -256,7 +234,11 @@ void Vertex::RemovePair(VertexPair* parPair)
 	pairs_.erase(pairIt);
 }
 // ----------------------------------------------------------------------------
+#ifdef OPTIMIZE
+void Vertex::UpdatePairPosAndQuadric(std::vector<VertexPair*>& parUpdatePairs)
+#else
 void Vertex::UpdatePairPosAndQuadric()
+#endif
 {
 	PairListType::const_iterator curPair = pairs_.begin();
 	PairListType::const_iterator pairEnd = pairs_.end();
@@ -264,61 +246,12 @@ void Vertex::UpdatePairPosAndQuadric()
 	{
 		(*curPair)->ComputePosAndQuadric();
 		(*curPair)->ComputeQuadricError();
+#ifdef OPTIMIZE
+		parUpdatePairs.push_back(*curPair);
+#endif
 	}
 }
-// ----------------------------------------------------------------------------
-#if 0
-/*
-Note: Q is symetric, v is a column vector
-
-error(v) = v' * Q * v
-
-			[q0 q1 q2 q3
-			 q1 q4 q5 q6
-			 q2 q5 q7 q8
-			 q3 q6 q8 q9 ] 
-[x y z w] x					=
-[(x*q0 + y*q1 + z*q2 + w*q3), (x*q1 + y*q4 + z*q5 + w*q6), (x*q2 + y*q5 + z*q7 + w*q8), (x*q3 + y*q6 + z*q8 + w*q9)]
-
-error(v) =	(x*q0 + y*q1 + z*q2 + w*q3)*x + 
-			(x*q1 + y*q4 + z*q5 + w*q6)*y + 
-			(x*q2 + y*q5 + z*q7 + w*q8)*z +
-			(x*q3 + y*q6 + z*q8 + w*q9)*w
-*/
-float Vertex::QuadricError()
-{
-	assert(associatedQuadric_);
-
-	if (quadricErrorComputed_)
-		return quadricError_;
-
-	float x = pos_.x;
-	float y = pos_.y;
-	float z = pos_.z;
-	float w = pos_.w;
-	const float* q = associatedQuadric_->Values();
-
-	quadricError_ = 0.f;
-	quadricError_ += (x*q[0] + y*q[1] + z*q[2] + w*q[3]) * x;
-	quadricError_ += (x*q[1] + y*q[4] + z*q[5] + w*q[6]) * y;
-	quadricError_ += (x*q[2] + y*q[5] + z*q[7] + w*q[8]) * z;
-	quadricError_ += (x*q[3] + y*q[6] + z*q[8] + w*q[9]) * w;
-
-	quadricErrorComputed_ = true;
-
-	return quadricError_;
-}
-// ----------------------------------------------------------------------------
-float Vertex::QuadricError() const
-{
-	assert(associatedQuadric_);
-	assert(quadricErrorComputed_);
-	
-	return quadricError_;
-}
-#endif
-// ----------------------------------------------------------------------------
-}
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
+}
