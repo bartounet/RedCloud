@@ -2,6 +2,8 @@
 #include "vertex_pair.h"
 #include "quadric.h"
 #include <assert.h>
+#include <limits>
+#include <algorithm>
 
 
 // ============================================================================
@@ -16,10 +18,7 @@ VertexPair::VertexPair(Vertex* parV0, Vertex* parV1) :
 	quadricError_(0.0),
 	quadricErrorComputed_(false),
 	deleteMe_(false),
-	quadric_(0)
-#ifdef OPTIMIZE
-	, newQuadricError_(-1.0)
-#endif
+	newQuadricError_(-1.0)
 {
 	assert(v0_);
 	assert(v1_);
@@ -30,32 +29,58 @@ VertexPair::~VertexPair()
 {
 }
 // ----------------------------------------------------------------------------
+void VertexPair::ComputeOptimalPos_()
+{
+	assert(!quadricErrorComputed_);
+
+	// FIXME: Rendre ce code plus classe et gerer le point optimal !
+	const VR::Vec4& pos0 = v0_->Pos();
+	const VR::Vec4& pos1 = v1_->Pos();
+	VR::Vec4 midPos;
+	midPos.x = (pos0.x + pos1.x) / 2;
+	midPos.y = (pos0.y + pos1.y) / 2;
+	midPos.z = (pos0.z + pos1.z) / 2;
+
+	pos_ = pos0;
+	double minError = ComputeQuadricError_(pos0);
+	double error = ComputeQuadricError_(midPos);
+	if (error < minError)
+	{
+		pos_ = midPos;
+		minError = error;
+	}
+
+	error = ComputeQuadricError_(pos1);
+	if (error < minError)
+	{
+		pos_ = pos1;
+		minError = error;
+	}
+
+	newQuadricError_ = minError;
+	quadricErrorComputed_ = true;
+}
+// ----------------------------------------------------------------------------
 void VertexPair::ComputePosAndQuadric()
 {
 	assert(!quadricErrorComputed_);
 
-	// compute the position
-	pos_ = v0_->Pos();  // FIXME: Try a more optimal position...
+	quadric_.Init();
+	quadric_.Add(v0_->AssociatedQuadric());
+	quadric_.Add(v1_->AssociatedQuadric());
 
-	// compute the new quadric
-	if (!quadric_)
-		quadric_ = new Quadric();
-	else
-		quadric_->Init();
-	quadric_->Add(v0_->AssociatedQuadric());
-	quadric_->Add(v1_->AssociatedQuadric());
+	ComputeOptimalPos_();
 }
 // ----------------------------------------------------------------------------
-void VertexPair::ComputeQuadricError()
+double VertexPair::ComputeQuadricError_(const VR::Vec4& parPos) const
 {
 	assert(!quadricErrorComputed_);
-	assert(quadric_);
 
-	double x = pos_.x;
-	double y = pos_.y;
-	double z = pos_.z;
-	double w = pos_.w;
-	const double* q = quadric_->Values();
+	double x = parPos.x;
+	double y = parPos.y;
+	double z = parPos.z;
+	double w = parPos.w;
+	const double* q = quadric_.Values();
 
 	double error = 0.0;
 	error += (x*q[0] + y*q[1] + z*q[2] + w*q[3]) * x;
@@ -65,21 +90,10 @@ void VertexPair::ComputeQuadricError()
 	if (error < 0.0) // floating round error hack
 		error = 0.0;
 
-#ifdef OPTIMIZE
-	newQuadricError_ = error;
-#else
-	quadricError_ = error;
-#endif
-	
-	quadricErrorComputed_ = true;
+	return error;
 }
 // ----------------------------------------------------------------------------
-#ifdef OPTIMIZE
-void VertexPair::Contract(std::vector<VertexPair*>& parDeletePairs,
-						  std::vector<VertexPair*>& parUpdatePairs)
-#else
-void VertexPair::Contract()
-#endif
+void VertexPair::Contract(std::vector<VertexPair*>& parDeletePairs, std::vector<VertexPair*>& parUpdatePairs)
 {
 	assert(!deleteMe_);
 	assert(quadricErrorComputed_);
@@ -94,15 +108,9 @@ void VertexPair::Contract()
 	v0_->AddPairs(v1_->Pairs());
 	v0_->UpdatePairWithThis(v1_);
 
-#ifdef OPTIMIZE
 	v0_->RemoveDuplicatedPair(parDeletePairs);
 	v0_->RemoveInvalidPair(parDeletePairs);
 	v0_->UpdatePairPosAndQuadric(parUpdatePairs);
-#else
-	v0_->RemoveDuplicatedPair();
-	v0_->RemoveInvalidPair();
-	v0_->UpdatePairPosAndQuadric();
-#endif
 
 	v1_->SetDeleteMe();
 	deleteMe_ = true;

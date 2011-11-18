@@ -1,11 +1,5 @@
 #ifndef VERTEX_PAIR_HEAP_H_
 
-#if 0
-#ifndef OPTIMIZE
- #error "Can only be included in optimized version at the moment"
-#endif
-#endif
-
 
 #include <vector>
 

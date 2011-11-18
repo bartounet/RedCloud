@@ -1,8 +1,7 @@
 
 #include "vertex.h"
-#include "../VertexRecolor/types.h"
 #include "vertex_pair.h"
-#include <vector>
+#include "face.h"
 #include <algorithm>
 
 
@@ -13,7 +12,6 @@ namespace QBMS
 // ============================================================================
 Vertex::Vertex(const VR::Vertex& parVertex, size_t parId) :
 	pos_((double)parVertex.x, (double)parVertex.y, (double)parVertex.z, 1.0f),
-	associatedQuadric_(0),
 	id_(parId),
 	deleteMe_(false)
 {
@@ -21,16 +19,10 @@ Vertex::Vertex(const VR::Vertex& parVertex, size_t parId) :
 // ----------------------------------------------------------------------------
 Vertex::~Vertex()
 {
-	if (associatedQuadric_)
-		delete associatedQuadric_;
 }
 // ----------------------------------------------------------------------------
-void Vertex::SetAssociatedQuadric(Quadric* parQuadric)
+void Vertex::SetAssociatedQuadric(const Quadric& parQuadric)
 {
-	assert(parQuadric);
-
-	if (associatedQuadric_)
-		delete associatedQuadric_;
 	associatedQuadric_ = parQuadric;
 
 	PairListType::const_iterator curPair = pairs_.begin();
@@ -50,8 +42,6 @@ void Vertex::SetPos(const VR::Vec4& parPos)
 // The degenerated faces are not added
 void Vertex::AddIncidentFaces(const FaceListType& parFaceList)
 {
-//	assert(parFaceList.size() > 0);
-
 	FaceListType::const_iterator curFace = parFaceList.begin();
 	FaceListType::const_iterator faceEnd = parFaceList.end();
 
@@ -157,11 +147,7 @@ void Vertex::UpdatePairWithThis(const Vertex* parOldVertex)
 	}
 }
 // ----------------------------------------------------------------------------
-#ifdef OPTIMIZE
 void Vertex::RemoveInvalidPair(std::vector<VertexPair*>& parDeletePairs)
-#else
-void Vertex::RemoveInvalidPair()
-#endif
 {
 	typedef std::vector<PairListType::iterator> deletePairList;
 	deletePairList deletePairs;
@@ -173,9 +159,7 @@ void Vertex::RemoveInvalidPair()
 		{
 			(*curPair)->SetDeleteMe();
 			deletePairs.push_back(curPair);
-#ifdef OPTIMIZE
 			parDeletePairs.push_back(*curPair);
-#endif
 		}
 
 	// FIXME: Gerer le cas des vertex pair (non edge), ADJACENCE ATTENTION !!!!
@@ -186,11 +170,7 @@ void Vertex::RemoveInvalidPair()
 		pairs_.erase(*curDelPair);
 }
 // ----------------------------------------------------------------------------
-#ifdef OPTIMIZE
 void Vertex::RemoveDuplicatedPair(std::vector<VertexPair*>& parDeletePairs)
-#else
-void Vertex::RemoveDuplicatedPair()
-#endif
 {
 	PairListType deletePairs;
 
@@ -208,9 +188,7 @@ void Vertex::RemoveDuplicatedPair()
 			{
 				pair2->SetDeleteMe();
 				deletePairs.push_back(pair2);
-#ifdef OPTIMIZE
 				parDeletePairs.push_back(pair2);
-#endif
 			}
 		}
 	}
@@ -234,21 +212,15 @@ void Vertex::RemovePair(VertexPair* parPair)
 	pairs_.erase(pairIt);
 }
 // ----------------------------------------------------------------------------
-#ifdef OPTIMIZE
 void Vertex::UpdatePairPosAndQuadric(std::vector<VertexPair*>& parUpdatePairs)
-#else
-void Vertex::UpdatePairPosAndQuadric()
-#endif
 {
 	PairListType::const_iterator curPair = pairs_.begin();
 	PairListType::const_iterator pairEnd = pairs_.end();
 	for (; curPair != pairEnd; ++curPair)
 	{
 		(*curPair)->ComputePosAndQuadric();
-		(*curPair)->ComputeQuadricError();
-#ifdef OPTIMIZE
+
 		parUpdatePairs.push_back(*curPair);
-#endif
 	}
 }
 // ============================================================================

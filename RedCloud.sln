@@ -8,23 +8,18 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
-		Release (assert off)|Win32 = Release (assert off)|Win32
 		Release OPTIM|Win32 = Release OPTIM|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{4EACBC51-2DD4-4335-B1B3-F5A930B31E3E}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4EACBC51-2DD4-4335-B1B3-F5A930B31E3E}.Debug|Win32.Build.0 = Debug|Win32
-		{4EACBC51-2DD4-4335-B1B3-F5A930B31E3E}.Release (assert off)|Win32.ActiveCfg = Final (assert off)|Win32
-		{4EACBC51-2DD4-4335-B1B3-F5A930B31E3E}.Release (assert off)|Win32.Build.0 = Final (assert off)|Win32
 		{4EACBC51-2DD4-4335-B1B3-F5A930B31E3E}.Release OPTIM|Win32.ActiveCfg = Release OPTIM|Win32
 		{4EACBC51-2DD4-4335-B1B3-F5A930B31E3E}.Release OPTIM|Win32.Build.0 = Release OPTIM|Win32
 		{4EACBC51-2DD4-4335-B1B3-F5A930B31E3E}.Release|Win32.ActiveCfg = Release|Win32
 		{4EACBC51-2DD4-4335-B1B3-F5A930B31E3E}.Release|Win32.Build.0 = Release|Win32
 		{76AB4DE1-0525-4F7A-AC62-423A1E1E0E44}.Debug|Win32.ActiveCfg = Debug|Win32
 		{76AB4DE1-0525-4F7A-AC62-423A1E1E0E44}.Debug|Win32.Build.0 = Debug|Win32
-		{76AB4DE1-0525-4F7A-AC62-423A1E1E0E44}.Release (assert off)|Win32.ActiveCfg = Final (assert off)|Win32
-		{76AB4DE1-0525-4F7A-AC62-423A1E1E0E44}.Release (assert off)|Win32.Build.0 = Final (assert off)|Win32
 		{76AB4DE1-0525-4F7A-AC62-423A1E1E0E44}.Release OPTIM|Win32.ActiveCfg = Release OPTIM|Win32
 		{76AB4DE1-0525-4F7A-AC62-423A1E1E0E44}.Release OPTIM|Win32.Build.0 = Release OPTIM|Win32
 		{76AB4DE1-0525-4F7A-AC62-423A1E1E0E44}.Release|Win32.ActiveCfg = Release|Win32

@@ -28,22 +28,9 @@ int main(int argc, char **argv)
 
 	QBMS::Mesh mesh(srcMesh);
 
-	size_t beforeSimplyTime = GetTickCount();
-
 	mesh.ComputeInitialQuadrics();
 	mesh.SelectAndComputeVertexPairs();
 	mesh.Simplify(20000);
-
-	size_t afterSimplyTime = GetTickCount();
-	size_t elapsedSimplyTime = (afterSimplyTime - beforeSimplyTime) / 1000; // in seconds
-
-	size_t hours = elapsedSimplyTime / 3600;
-	elapsedSimplyTime -= hours * 3600;
-	size_t minutes = elapsedSimplyTime / 60;
-	elapsedSimplyTime -= minutes * 60;
-	size_t seconds = elapsedSimplyTime;
-	
-	printf("[+] Simplification done in %dh %dm %ds\n", hours, minutes, seconds);
 
 	VR::Mesh* dstMesh = mesh.ExportToVRMesh();
 
@@ -58,6 +45,9 @@ int main(int argc, char **argv)
 
 	delete dstMesh;
 
-	system("pause");
+	// FIXME: As long as mesh destructor (and its attribute) is empty,
+	// we avoid a massive call to empty destructor. But we leak...
+	exit(0);
+
 	return 0;
 }

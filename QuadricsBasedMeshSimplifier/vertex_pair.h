@@ -19,15 +19,10 @@ public:
 	~VertexPair();
 
 public:
-#ifdef OPTIMIZE
 	void Contract(std::vector<VertexPair*>& parDeletePairs, std::vector<VertexPair*>& parUpdatePairs);
-#else
-	void Contract();
-#endif
 
 public:
 	void ComputePosAndQuadric();
-	void ComputeQuadricError();
 	bool IsDegenerated() const { return (v0_ == v1_); }
 	void RemoveOnRelatedVertex();
 
@@ -39,25 +34,26 @@ public:
 	void SetVertices(Vertex* parV0, Vertex* parV1);
 	double QuadricError() const { assert(quadricErrorComputed_ || deleteMe_); return quadricError_; }
 	void UnsetQuadricErrorComputed() { assert(quadricErrorComputed_); quadricErrorComputed_ = false; }
-#ifdef OPTIMIZE
 	void AssignQuadricErrorWithNewValue() { assert(quadricErrorComputed_); quadricError_ = newQuadricError_; }
 	size_t HeapInd() const { return heapInd_; }
 	void SetHeapInd(size_t parInd) { heapInd_ = parInd; }
-#endif
+
+private:
+	void ComputeOptimalPos_();
+	double ComputeQuadricError_(const VR::Vec4& parPos) const;
 
 private:
 	Vertex* v0_;
 	Vertex* v1_;
 
 	VR::Vec4 pos_;
-	Quadric* quadric_;
+	Quadric quadric_;
 
 	bool quadricErrorComputed_;
 	double quadricError_;
-#ifdef OPTIMIZE
+
 	double newQuadricError_;
 	size_t heapInd_;
-#endif
 
 	bool deleteMe_;
 };

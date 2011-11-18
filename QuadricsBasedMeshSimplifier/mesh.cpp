@@ -1,10 +1,9 @@
 
 #include "mesh.h"
-#include "vertex.h"
+#include "vertex_pair.h"
 #include <assert.h>
 #include <stdio.h>
 #include <algorithm>
-#include <set>
 #include <limits>
 
 
@@ -20,13 +19,11 @@ Mesh::Mesh(const VR::Mesh& parVRMesh)
 	size_t nbVertices = parVRMesh.vertices.size();
 	assert(nbVertices > 0);
 	printf("\t[ ] Copying %d Vertices\n", nbVertices);
+
+	vertices_.reserve(nbVertices);
 	for (size_t curVertex = 0; curVertex < nbVertices; ++curVertex)
-	{
-#if 0
-		printf("%d\n", curVertex);
-#endif
 		vertices_.push_back(Vertex(parVRMesh.vertices[curVertex], curVertex));
-	}
+	assert(vertices_.size() == nbVertices);
 	printf("\t[+] Vertices copied\n");
 
 	size_t nbFaces = parVRMesh.faces.size();
@@ -147,7 +144,7 @@ void Mesh::ComputeInitialQuadrics()
 		}
 
 		// sum the fundamental error quadric for each plane
-		Quadric* quadric = new Quadric();
+		Quadric quadric;
 		for (size_t curPlane = 0; curPlane < planes.size(); ++curPlane)
 		{
 			const VR::Vec4& p = planes[curPlane];
@@ -155,7 +152,7 @@ void Mesh::ComputeInitialQuadrics()
 							p.y*p.y, p.y*p.z, p.y*p.w, 
 							p.z*p.z, p.z*p.w,
 							p.w*p.w};
-			quadric->Add(vals);
+			quadric.Add(vals);
 		}
 		vertex.SetAssociatedQuadric(quadric);
 	}
@@ -165,11 +162,7 @@ void Mesh::ComputeInitialQuadrics()
 // ----------------------------------------------------------------------------
 void Mesh::SelectAndComputeVertexPairs()
 {
-#ifdef OPTIMIZE
 	assert(pairsHeap_.Size() == 0);
-#else
-	assert(pairs_.size() == 0);
-#endif
 
 	printf("[ ] Selecting and computing valid pairs\n");
 
@@ -179,16 +172,9 @@ void Mesh::SelectAndComputeVertexPairs()
 	{
 		VertexPair* newPair = new VertexPair(it->first, it->second);
 		newPair->ComputePosAndQuadric();
-		newPair->ComputeQuadricError();
-#if 0
-		printf("Pair(%d, %d) -> ERROR = \t\t\t\t%f\n", newPair->V0()->Id(), newPair->V1()->Id(), newPair->QuadricError());
-#endif
 		assert(newPair->QuadricError() >= 0.0);
-#ifdef OPTIMIZE
+
 		pairsHeap_.Insert(newPair);
-#else
-		pairs_.push_back(newPair);
-#endif
 
 		newPair->V0()->AddPair(newPair);
 		newPair->V1()->AddPair(newPair);
@@ -196,11 +182,7 @@ void Mesh::SelectAndComputeVertexPairs()
 
 	printf("[+] Valid pairs selected and computed\n");
 
-#ifdef OPTIMIZE
-	assert(pairsHeap_.Size() >= edges_.size());
-#else
-	assert(pairs_.size() >= edges_.size()); // there is at least all edges
-#endif
+	assert(pairsHeap_.Size() >= edges_.size()); // there is at least all edges
 }
 // ---------------------------------------------------------------------------
 size_t Mesh::NbValidFaces_() const
@@ -222,28 +204,13 @@ void Mesh::Simplify(size_t parMaxFaces)
 	assert(faces_.size() > parMaxFaces);
 
 	printf("[ ] Simplifying mesh...\n");
-
-#ifdef OPTIMIZE
 	printf("\t nbPairs: %d\n", pairsHeap_.Size());
-#else
-	printf("\t nbPairs: %d\n", pairs_.size());
-#endif
 
 	// FIXME: Attention, si on contract un bord, on ne perd qu'une face !!
 	size_t nbContractions = (faces_.size() - parMaxFaces) / 2; // a chaque contraction on supprime 2 faces (OU PLUS !)
-#ifdef OPTIMIZE
 	while (!pairsHeap_.Empty() && (nbContractions > 0))
-#else
-	while (!pairs_.empty() && (nbContractions > 0))
-#endif
 	{
-		VertexPair* pair = 0;
-
-#ifdef OPTIMIZE
-		pair = pairsHeap_.ExtractMin();
-#else
-		pair = ExtractCostlessVertexPair_();
-#endif
+		VertexPair* pair = pairsHeap_.ExtractMin();
 
 		assert(pair);
 		assert(!pair->DeleteMe());
@@ -254,17 +221,14 @@ void Mesh::Simplify(size_t parMaxFaces)
 		//printf("contracting: %d -> %d\n", pair->V0()->Id(), pair->V1()->Id());
 #endif
 
-#ifdef OPTIMIZE
 		std::vector<VertexPair*> deletePairs;
 		std::vector<VertexPair*> updatePairs;
+
 		pair->Contract(deletePairs, updatePairs);
 
 		deletePairs.erase(std::find(deletePairs.begin(), deletePairs.end(), pair)); // ignore the current pair
 		pairsHeap_.Delete(deletePairs);
 		pairsHeap_.Update(updatePairs);
-#else
-		pair->Contract(); // ici, on sait quelles paires vont etre mises a jours et celles qui sont modifs
-#endif
 
 #if 0
 		if ((nbContractions & 127) == 0)
@@ -287,32 +251,6 @@ void Mesh::Simplify(size_t parMaxFaces)
 
 	printf("[+] Mesh Simplified\n");
 }
-// ---------------------------------------------------------------------------
-#ifndef OPTIMIZE
-VertexPair* Mesh::ExtractCostlessVertexPair_()
-{
-	assert(pairs_.size() > 0);
-
-	double minCost = std::numeric_limits<double>::max();
-	VertexPair* minPair = 0;
-
-	for (size_t curPair = 0; curPair < pairs_.size(); ++curPair)
-	{
-		VertexPair* pair = pairs_[curPair];
-
-		if (!pair->DeleteMe() && (pair->QuadricError() < minCost))
-		{
-			minCost = pair->QuadricError();
-			minPair = pair;
-		}
-	}
-
-	assert(minPair);
-	pairs_.erase(std::find(pairs_.begin(), pairs_.end(), minPair));
-	
-	return minPair;
-}
-#endif
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================

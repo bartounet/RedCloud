@@ -24,9 +24,7 @@ void VertexPairHeap::Insert(VertexPair* parVertexPair)
 	assert(parVertexPair);
 
 	tree_.push_back(parVertexPair);
-#ifdef OPTIMIZE
 	parVertexPair->SetHeapInd(tree_.size() - 1);
-#endif
 
 	size_t curInd = tree_.size() - 1;
 	while (curInd > 0)
@@ -62,7 +60,6 @@ void VertexPairHeap::Delete(const std::vector<VertexPair*>& parDeletePairs)
 		VertexPair* pair = parDeletePairs[curPair];
 		assert(pair->DeleteMe());
 
-#ifdef OPTIMIZE
 		size_t pairInd = pair->HeapInd();
 
 		if (pairInd == (tree_.size() - 1)) // deleting the last element
@@ -72,9 +69,8 @@ void VertexPairHeap::Delete(const std::vector<VertexPair*>& parDeletePairs)
 			Swap_(pairInd, tree_.size() - 1);
 			tree_.pop_back();
 			pairInd = DownHeap_(pairInd);
-			(void)UpHeap_(pairInd);
+			UpHeap_(pairInd);
 		}
-#endif
 	}
 
 #ifdef _DEBUG
@@ -88,13 +84,12 @@ void VertexPairHeap::Update(const std::vector<VertexPair*>& parUpdatePairs)
 	{
 		VertexPair* pair = parUpdatePairs[curPair];
 		assert(!pair->DeleteMe());
+
+		pair->AssignQuadricErrorWithNewValue(); // FIXME: Can we avoid this ?
 		
-#ifdef OPTIMIZE
 		size_t pairInd = pair->HeapInd();
-		pair->AssignQuadricErrorWithNewValue();
 		pairInd = DownHeap_(pairInd);
-		(void)UpHeap_(pairInd);
-#endif
+		UpHeap_(pairInd);
 	}
 
 #ifdef _DEBUG
@@ -151,11 +146,9 @@ void VertexPairHeap::Swap_(size_t parIndA, size_t parIndB)
 	tree_[parIndA] = tree_[parIndB];
 	tree_[parIndB] = tmp;
 
-#ifdef OPTIMIZE
 	size_t tmpInd = tree_[parIndA]->HeapInd();
 	tree_[parIndA]->SetHeapInd(tree_[parIndB]->HeapInd());
 	tree_[parIndB]->SetHeapInd(tmpInd);
-#endif
 }
 // ----------------------------------------------------------------------------
 size_t VertexPairHeap::DownHeap_(size_t parInd)
