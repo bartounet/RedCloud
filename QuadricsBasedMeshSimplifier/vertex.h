@@ -32,35 +32,41 @@ public:
 	void AddIncidentFaces(const FaceListType& parFaceList);
 	void AddPair(VertexPair* parPair);
 	void AddPairs(const PairListType& parPairList);
+
 	void UpdateIncidentFaces(Vertex* parNewVertex);
+	void UpdatePairWithThis(const Vertex* parOldVertex);
+	void UpdatePairPosAndQuadric(std::vector<VertexPair*>& parUpdatePairs);
+
 	void RemoveIncidentFace(Face* parFace);
 	void RemoveDegeneratedFaces();
-	void UpdatePairWithThis(const Vertex* parOldVertex);
 	void RemovePair(VertexPair* parPair);
 	void RemoveInvalidPair(std::vector<VertexPair*>& parDeletePairs);
 	void RemoveDuplicatedPair(std::vector<VertexPair*>& parDeletePairs);
-	void UpdatePairPosAndQuadric(std::vector<VertexPair*>& parUpdatePairs);
 
 public:
-	const VR::Vec4& Pos() const { return pos_; }
-	const FaceListType& IncidentFaces() const { return incidentFaces_; }
-	const Quadric& AssociatedQuadric() const { return associatedQuadric_; }
-	size_t Id() const { return id_; }
-	const PairListType& Pairs() const { return pairs_; }
-	bool DeleteMe() const { return deleteMe_; }
+	inline const VR::Vec4& Pos() const { return pos_; }
+	inline const FaceListType& IncidentFaces() const { return incidentFaces_; }
+	inline const Quadric& GetQuadric() const { return quadric_; }
+	inline size_t Id() const { return id_; }
+	inline const PairListType& Pairs() const { return pairs_; }
+	inline bool DeleteMe() const { return deleteMe_; }
 
 public:
-	void SetAssociatedQuadric(const Quadric& parQuadric);
-	void SetPos(const VR::Vec4& parPos);
-	void SetId(size_t parId) { id_ = parId; }
-	void SetDeleteMe() { deleteMe_ = true; }
+	inline void SetId(size_t parId) { id_ = parId; }
+	inline void SetDeleteMe() { deleteMe_ = true; }
+	inline void SetPos(const VR::Vec4& parPos) { pos_ = parPos; }
+#ifdef _DEBUG
+	void SetQuadric(const Quadric& parQuadric);
+#else
+	inline void SetQuadric(const Quadric& parQuadric) { quadric_ = parQuadric; }
+#endif
 
 private:
 	FaceListType incidentFaces_;
 	PairListType pairs_;
 
 	VR::Vec4 pos_;
-	Quadric associatedQuadric_;
+	Quadric quadric_;
 	
 	size_t id_;
 	bool deleteMe_;

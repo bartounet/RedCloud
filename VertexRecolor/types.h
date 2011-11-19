@@ -40,6 +40,16 @@ struct Vec4
 	{
 	}
 
+	Vec4& operator=(const Vec4& parRhs)
+	{
+		x = parRhs.x;
+		y = parRhs.y;
+		z = parRhs.z;
+		w = parRhs.w;
+
+		return *this;
+	}
+
 	double Length() const
 	{
 		return sqrt((x * x) + (y * y) + (z * z));

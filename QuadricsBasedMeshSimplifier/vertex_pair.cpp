@@ -16,9 +16,11 @@ VertexPair::VertexPair(Vertex* parV0, Vertex* parV1) :
 	v0_(parV0),
 	v1_(parV1),
 	quadricError_(0.0),
-	quadricErrorComputed_(false),
 	deleteMe_(false),
 	newQuadricError_(-1.0)
+#ifdef _DEBUG
+	, quadricErrorComputed_(false)
+#endif
 {
 	assert(v0_);
 	assert(v1_);
@@ -31,7 +33,9 @@ VertexPair::~VertexPair()
 // ----------------------------------------------------------------------------
 void VertexPair::ComputeOptimalPos_()
 {
+#ifdef _DEBUG
 	assert(!quadricErrorComputed_);
+#endif
 
 	// FIXME: Rendre ce code plus classe et gerer le point optimal !
 	const VR::Vec4& pos0 = v0_->Pos();
@@ -58,23 +62,53 @@ void VertexPair::ComputeOptimalPos_()
 	}
 
 	newQuadricError_ = minError;
+#ifdef _DEBUG
 	quadricErrorComputed_ = true;
+#endif
 }
+// ----------------------------------------------------------------------------
+#ifdef _DEBUG
+double VertexPair::QuadricError() const
+{
+	assert(quadricErrorComputed_ || deleteMe_);
+	return quadricError_;
+}
+#endif
+// ----------------------------------------------------------------------------
+#ifdef _DEBUG
+void VertexPair::UnsetQuadricErrorComputed()
+{
+	assert(quadricErrorComputed_);
+	quadricErrorComputed_ = false;
+}
+#endif
+// ----------------------------------------------------------------------------
+#ifdef _DEBUG
+void VertexPair::AssignQuadricErrorWithNewValue()
+{
+	assert(quadricErrorComputed_);
+	quadricError_ = newQuadricError_;
+}
+#endif
 // ----------------------------------------------------------------------------
 void VertexPair::ComputePosAndQuadric()
 {
+#ifdef _DEBUG
 	assert(!quadricErrorComputed_);
+#endif
 
 	quadric_.Init();
-	quadric_.Add(v0_->AssociatedQuadric());
-	quadric_.Add(v1_->AssociatedQuadric());
+	quadric_.Add(v0_->GetQuadric());
+	quadric_.Add(v1_->GetQuadric());
 
 	ComputeOptimalPos_();
 }
 // ----------------------------------------------------------------------------
 double VertexPair::ComputeQuadricError_(const VR::Vec4& parPos) const
 {
+#ifdef _DEBUG
 	assert(!quadricErrorComputed_);
+#endif
 
 	double x = parPos.x;
 	double y = parPos.y;
@@ -96,10 +130,12 @@ double VertexPair::ComputeQuadricError_(const VR::Vec4& parPos) const
 void VertexPair::Contract(std::vector<VertexPair*>& parDeletePairs, std::vector<VertexPair*>& parUpdatePairs)
 {
 	assert(!deleteMe_);
+#ifdef _DEBUG
 	assert(quadricErrorComputed_);
+#endif
 
 	v0_->SetPos(pos_);
-	v0_->SetAssociatedQuadric(quadric_);
+	v0_->SetQuadric(quadric_);
 
 	v1_->UpdateIncidentFaces(v0_);
 	v0_->AddIncidentFaces(v1_->IncidentFaces());
@@ -132,7 +168,9 @@ void VertexPair::SetVertices(Vertex* parV0, Vertex* parV1)
 		v1_ = parV0;
 	}
 
+#ifdef _DEBUG
 	quadricErrorComputed_ = false;
+#endif
 }
 // ----------------------------------------------------------------------------
 void VertexPair::RemoveOnRelatedVertex()

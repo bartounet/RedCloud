@@ -154,7 +154,7 @@ void Mesh::ComputeInitialQuadrics()
 							p.w*p.w};
 			quadric.Add(vals);
 		}
-		vertex.SetAssociatedQuadric(quadric);
+		vertex.SetQuadric(quadric);
 	}
 
 	printf("[+] Initial quadrics computed\n");

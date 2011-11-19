@@ -21,23 +21,17 @@ Vertex::~Vertex()
 {
 }
 // ----------------------------------------------------------------------------
-void Vertex::SetAssociatedQuadric(const Quadric& parQuadric)
+#ifdef _DEBUG
+void Vertex::SetQuadric(const Quadric& parQuadric)
 {
-	associatedQuadric_ = parQuadric;
+	quadric_ = parQuadric;
 
 	PairListType::const_iterator curPair = pairs_.begin();
 	PairListType::const_iterator pairEnd = pairs_.end();
 	for (; curPair != pairEnd; ++curPair)
 		(*curPair)->UnsetQuadricErrorComputed();
 }
-// ----------------------------------------------------------------------------
-void Vertex::SetPos(const VR::Vec4& parPos)
-{
-	pos_.x = parPos.x;
-	pos_.y = parPos.y;
-	pos_.z = parPos.z;
-	pos_.w = parPos.w;
-}
+#endif
 // ----------------------------------------------------------------------------
 // The degenerated faces are not added
 void Vertex::AddIncidentFaces(const FaceListType& parFaceList)

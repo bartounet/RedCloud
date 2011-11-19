@@ -23,20 +23,26 @@ public:
 
 public:
 	void ComputePosAndQuadric();
-	bool IsDegenerated() const { return (v0_ == v1_); }
 	void RemoveOnRelatedVertex();
 
 public:
+	inline bool IsDegenerated() const { return (v0_ == v1_); }
 	inline bool DeleteMe() const { return deleteMe_; }
-	void SetDeleteMe() { assert(!deleteMe_); deleteMe_ = true; }
-	Vertex* V0() { return v0_; }
-	Vertex* V1() { return v1_; }
+	inline void SetDeleteMe() { assert(!deleteMe_); deleteMe_ = true; }
+	inline Vertex* V0() { return v0_; }
+	inline Vertex* V1() { return v1_; }
+	inline size_t HeapInd() const { return heapInd_; }
+	inline void SetHeapInd(size_t parInd) { heapInd_ = parInd; }
 	void SetVertices(Vertex* parV0, Vertex* parV1);
-	double QuadricError() const { assert(quadricErrorComputed_ || deleteMe_); return quadricError_; }
-	void UnsetQuadricErrorComputed() { assert(quadricErrorComputed_); quadricErrorComputed_ = false; }
-	void AssignQuadricErrorWithNewValue() { assert(quadricErrorComputed_); quadricError_ = newQuadricError_; }
-	size_t HeapInd() const { return heapInd_; }
-	void SetHeapInd(size_t parInd) { heapInd_ = parInd; }
+
+#ifdef _DEBUG
+	double QuadricError() const;
+	void AssignQuadricErrorWithNewValue();
+	void UnsetQuadricErrorComputed();
+#else
+	inline double QuadricError() const { return quadricError_; }
+	inline void AssignQuadricErrorWithNewValue() { quadricError_ = newQuadricError_; }
+#endif
 
 private:
 	void ComputeOptimalPos_();
@@ -45,17 +51,18 @@ private:
 private:
 	Vertex* v0_;
 	Vertex* v1_;
-
 	VR::Vec4 pos_;
 	Quadric quadric_;
 
-	bool quadricErrorComputed_;
 	double quadricError_;
-
 	double newQuadricError_;
 	size_t heapInd_;
 
 	bool deleteMe_;
+
+#ifdef _DEBUG
+	bool quadricErrorComputed_;
+#endif
 };
 // ----------------------------------------------------------------------------
 }
