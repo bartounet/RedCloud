@@ -155,7 +155,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release OPTIM|Win32"
+			Name="Final|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
@@ -181,7 +181,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;USE_VS_2008"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;USE_VS_2008;NDEBUG"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"

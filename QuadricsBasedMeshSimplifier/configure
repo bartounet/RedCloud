@@ -1,0 +1,23 @@
+#! /bin/sh
+#
+
+if [ -z $1 ] || ([ "$1" != "DEBUG" ] && [ "$1" != "RELEASE" ] && [ "$1" != "FINAL" ]); then
+	echo "Usage:"$0" DEBUG|RELEASE|FINAL"
+	exit 1
+else
+	MODE=$1
+fi
+
+echo "CC=g++" > Makefile.rules
+if [ $MODE = "DEBUG" ]; then
+	echo "PREPROCS=-D_DEBUG" >> Makefile.rules
+	echo "PROG=qbms_debug" >> Makefile.rules
+elif [ $MODE = "RELEASE" ]; then
+	echo "PREPROCS=" >> Makefile.rules
+	echo "PROG=qbms_release" >> Makefile.rules
+elif [ $MODE = "FINAL" ]; then
+	echo "PREPROCS=-DNDEBUG" >> Makefile.rules
+	echo "PROG=qbms_final" >> Makefile.rules
+fi
+echo "CFLAGS=-Wall -Wextra -std=c++98 -pedantic" >> Makefile.rules
+echo "MAKE=gmake" >> Makefile.rules

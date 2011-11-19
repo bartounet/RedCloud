@@ -4,6 +4,8 @@
 #include "easy_cleaner.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
+#include <string.h>
 	
 
 // ============================================================================

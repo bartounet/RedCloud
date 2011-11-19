@@ -11,6 +11,7 @@ namespace VR
 void EasyClean(Mesh& parMesh)
 {
 	// FIXME
+	parMesh = parMesh; // delete me
 }
 // ----------------------------------------------------------------------------
 }

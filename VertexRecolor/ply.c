@@ -106,7 +106,7 @@ void ascii_get_element(PlyFile *, char *);
 void binary_get_element(PlyFile *, char *);
 
 /* memory allocation */
-char *my_alloc(int, int, char *);
+static char *my_alloc(int, int, char *);
 
 
 /*************/
@@ -531,7 +531,7 @@ void ply_put_element(PlyFile *plyfile, void *elem_ptr)
   char **other_ptr;
 
   elem = plyfile->which_elem;
-  elem_data = elem_ptr;
+  elem_data = (char*)elem_ptr;
   other_ptr = (char **) (((char *) elem_ptr) + elem->other_offset);
 
   /* write out either to an ascii or binary file */
@@ -546,7 +546,7 @@ void ply_put_element(PlyFile *plyfile, void *elem_ptr)
       if (elem->store_prop[j] == OTHER_PROP)
         elem_data = *other_ptr;
       else
-        elem_data = elem_ptr;
+        elem_data = (char*)elem_ptr;
       if (prop->is_list) {
         item = elem_data + prop->count_offset;
         get_stored_item ((void *) item, prop->count_internal,
@@ -586,7 +586,7 @@ void ply_put_element(PlyFile *plyfile, void *elem_ptr)
       if (elem->store_prop[j] == OTHER_PROP)
         elem_data = *other_ptr;
       else
-        elem_data = elem_ptr;
+        elem_data = (char*)elem_ptr;
       if (prop->is_list) {
         item = elem_data + prop->count_offset;
         item_size = ply_type_size[prop->count_internal];

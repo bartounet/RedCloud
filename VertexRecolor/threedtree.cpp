@@ -13,9 +13,9 @@ namespace VR
 ThreeDNode::ThreeDNode(const Vertex* parVertex, AlignedAxisDir parDir) :
 	Node(),
 	dir_(parDir),
+	vertex_(parVertex),
 	left_(0),
-	right_(0),
-	vertex_(parVertex)
+	right_(0)
 {
 }
 // ----------------------------------------------------------------------------
@@ -90,7 +90,6 @@ void ThreeDNode::NearestNeighbor(	const Node* parNode,
 		const std::vector<const Vertex*>& vertices = leafNode->Vertices();
 		if (vertices.size() <= 0)
 			return;
-		const Vertex* nearestVertex = vertices[0];
 		for (size_t curVertex = 0; curVertex < vertices.size(); ++curVertex)
 		{
 			const Vertex* v = vertices[curVertex];
@@ -115,7 +114,6 @@ void ThreeDNode::NearestNeighbor(	const Node* parNode,
 		}
 
 		AlignedAxisDir dir = planeDir[parDepth % MAX_PLANE_DIR];
-		bool goToLeftNode = false;
 		switch (dir)
 		{
 		case AADIR_X:

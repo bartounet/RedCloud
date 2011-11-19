@@ -5,7 +5,6 @@
 #include "mesh.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h> // GetTickCount()
 
 
 void Usage(const char* parProgName)
@@ -16,7 +15,11 @@ void Usage(const char* parProgName)
 
 int main(int argc, char **argv)
 {
+#ifdef _DEBUG
+	printf("=== Quadrics based mesh simplifier (DEBUG MODE)===\n");
+#else
 	printf("=== Quadrics based mesh simplifier ===\n");
+#endif
 
 	if (argc != 3)
 		Usage(argv[0]);
