@@ -10,7 +10,7 @@ namespace QBMS
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
-Vertex::Vertex(const VR::Vertex& parVertex, size_t parId) :
+Vertex::Vertex(const VR::Vertex& parVertex, uint parId) :
 	pos_((double)parVertex.x, (double)parVertex.y, (double)parVertex.z, 1.0f),
 	id_(parId),
 	deleteMe_(false)
@@ -93,7 +93,7 @@ void Vertex::RemoveIncidentFace(Face* parFace)
 	assert(parFace);
 	assert(parFace->IsDegenerated());
 
-	FaceListType::const_iterator faceIt = std::find(incidentFaces_.begin(), incidentFaces_.end(), parFace);
+	FaceListType::iterator faceIt = std::find(incidentFaces_.begin(), incidentFaces_.end(), parFace);
 	assert(faceIt != incidentFaces_.end()); // we are deleting a non existing face
 
 	incidentFaces_.erase(faceIt);
@@ -200,7 +200,7 @@ void Vertex::RemovePair(VertexPair* parPair)
 	assert(parPair);
 	assert(parPair->DeleteMe());
 
-	PairListType::const_iterator pairIt = std::find(pairs_.begin(), pairs_.end(), parPair);
+	PairListType::iterator pairIt = std::find(pairs_.begin(), pairs_.end(), parPair);
 	assert(pairIt != pairs_.end());
 
 	pairs_.erase(pairIt);

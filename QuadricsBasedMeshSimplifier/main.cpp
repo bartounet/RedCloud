@@ -10,7 +10,7 @@
 
 void Usage(const char* parProgName)
 {
-	printf("Usage: ./%s <MESH_IN.ply> <MESH_OUT.ply>\n");
+	printf("Usage: ./%s <MESH_IN.ply> <MESH_OUT.ply>\n", parProgName);
 	exit(1);
 }
 

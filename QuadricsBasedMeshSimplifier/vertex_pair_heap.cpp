@@ -15,7 +15,7 @@ VertexPairHeap::VertexPairHeap()
 // ----------------------------------------------------------------------------
 VertexPairHeap::~VertexPairHeap()
 {
-	for (size_t ind = 0; ind < tree_.size(); ++ind)
+	for (uint ind = 0; ind < tree_.size(); ++ind)
 		delete tree_[ind];
 }
 // ----------------------------------------------------------------------------
@@ -26,10 +26,10 @@ void VertexPairHeap::Insert(VertexPair* parVertexPair)
 	tree_.push_back(parVertexPair);
 	parVertexPair->SetHeapInd(tree_.size() - 1);
 
-	size_t curInd = tree_.size() - 1;
+	uint curInd = tree_.size() - 1;
 	while (curInd > 0)
 	{
-		size_t parent = (curInd - 1) / 2;
+		uint parent = (curInd - 1) / 2;
 
 		if (tree_[parent]->QuadricError() > parVertexPair->QuadricError())
 			Swap_(parent, curInd);
@@ -55,12 +55,12 @@ VertexPair* VertexPairHeap::ExtractMin()
 // ----------------------------------------------------------------------------
 void VertexPairHeap::Delete(const std::vector<VertexPair*>& parDeletePairs)
 {
-	for (size_t curPair = 0; curPair < parDeletePairs.size(); ++curPair)
+	for (uint curPair = 0; curPair < parDeletePairs.size(); ++curPair)
 	{
 		VertexPair* pair = parDeletePairs[curPair];
 		assert(pair->DeleteMe());
 
-		size_t pairInd = pair->HeapInd();
+		uint pairInd = pair->HeapInd();
 
 		if (pairInd == (tree_.size() - 1)) // deleting the last element
 			tree_.pop_back();
@@ -80,14 +80,14 @@ void VertexPairHeap::Delete(const std::vector<VertexPair*>& parDeletePairs)
 // ----------------------------------------------------------------------------
 void VertexPairHeap::Update(const std::vector<VertexPair*>& parUpdatePairs)
 {
-	for (size_t curPair = 0; curPair < parUpdatePairs.size(); ++curPair)
+	for (uint curPair = 0; curPair < parUpdatePairs.size(); ++curPair)
 	{
 		VertexPair* pair = parUpdatePairs[curPair];
 		assert(!pair->DeleteMe());
 
 		pair->AssignQuadricErrorWithNewValue(); // FIXME: Can we avoid this ?
 		
-		size_t pairInd = pair->HeapInd();
+		uint pairInd = pair->HeapInd();
 		pairInd = DownHeap_(pairInd);
 		UpHeap_(pairInd);
 	}
@@ -98,13 +98,13 @@ void VertexPairHeap::Update(const std::vector<VertexPair*>& parUpdatePairs)
 }
 // ----------------------------------------------------------------------------
 #ifdef _DEBUG
-bool VertexPairHeap::IsValid(size_t parInd) const
+bool VertexPairHeap::IsValid(uint parInd) const
 {
-	size_t size = tree_.size();
+	uint size = tree_.size();
 	assert(parInd < size);
 
-	size_t left = 2 * parInd + 1;
-	size_t right = 2 * parInd + 2;
+	uint left = 2 * parInd + 1;
+	uint right = 2 * parInd + 2;
 
 	if ((left < size) &&
 		((tree_[left]->QuadricError() < tree_[parInd]->QuadricError()) || 
@@ -124,11 +124,11 @@ bool VertexPairHeap::IsValid(size_t parInd) const
 #endif
 // ----------------------------------------------------------------------------
 #ifdef _DEBUG
-size_t VertexPairHeap::LinearFindInTree(const VertexPair* parPair) const
+uint VertexPairHeap::LinearFindInTree(const VertexPair* parPair) const
 {
 	assert(parPair);
 
-	for (size_t curPair = 0; curPair < tree_.size(); ++curPair)
+	for (uint curPair = 0; curPair < tree_.size(); ++curPair)
 		if (tree_[curPair] == parPair)
 			return curPair;
 
@@ -137,7 +137,7 @@ size_t VertexPairHeap::LinearFindInTree(const VertexPair* parPair) const
 }
 #endif
 // ----------------------------------------------------------------------------
-void VertexPairHeap::Swap_(size_t parIndA, size_t parIndB)
+void VertexPairHeap::Swap_(uint parIndA, uint parIndB)
 {
 	assert(parIndA < tree_.size());
 	assert(parIndB < tree_.size());
@@ -146,23 +146,23 @@ void VertexPairHeap::Swap_(size_t parIndA, size_t parIndB)
 	tree_[parIndA] = tree_[parIndB];
 	tree_[parIndB] = tmp;
 
-	size_t tmpInd = tree_[parIndA]->HeapInd();
+	uint tmpInd = tree_[parIndA]->HeapInd();
 	tree_[parIndA]->SetHeapInd(tree_[parIndB]->HeapInd());
 	tree_[parIndB]->SetHeapInd(tmpInd);
 }
 // ----------------------------------------------------------------------------
-size_t VertexPairHeap::DownHeap_(size_t parInd)
+uint VertexPairHeap::DownHeap_(uint parInd)
 {
-	size_t size = tree_.size();
+	uint size = tree_.size();
 	assert(parInd < size);
 
-	size_t curInd = parInd;
+	uint curInd = parInd;
 	while (1)
 	{
-		size_t left = 2 * curInd + 1;
-		size_t right = 2 * curInd + 2;
+		uint left = 2 * curInd + 1;
+		uint right = 2 * curInd + 2;
 
-		size_t min = curInd;
+		uint min = curInd;
 		if ((left < size) && (tree_[left]->QuadricError() < tree_[min]->QuadricError()))
 			min = left;
 		if ((right < size) && (tree_[right]->QuadricError() < tree_[min]->QuadricError()))
@@ -180,15 +180,15 @@ size_t VertexPairHeap::DownHeap_(size_t parInd)
 	return curInd;
 }
 // ----------------------------------------------------------------------------
-size_t VertexPairHeap::UpHeap_(size_t parInd)
+uint VertexPairHeap::UpHeap_(uint parInd)
 {
-	size_t size = tree_.size();
+	uint size = tree_.size();
 	assert(parInd < size);
 
-	size_t curInd = parInd;
+	uint curInd = parInd;
 	while (curInd > 0)
 	{
-		size_t parent = (curInd - 1) / 2;
+		uint parent = (curInd - 1) / 2;
 
 		if (tree_[curInd]->QuadricError() < tree_[parent]->QuadricError())
 		{

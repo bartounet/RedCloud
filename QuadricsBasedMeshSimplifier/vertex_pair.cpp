@@ -16,8 +16,8 @@ VertexPair::VertexPair(Vertex* parV0, Vertex* parV1) :
 	v0_(parV0),
 	v1_(parV1),
 	quadricError_(0.0),
-	deleteMe_(false),
-	newQuadricError_(-1.0)
+	newQuadricError_(-1.0),
+	deleteMe_(false)
 #ifdef _DEBUG
 	, quadricErrorComputed_(false)
 #endif

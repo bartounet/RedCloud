@@ -28,11 +28,11 @@ public:
 	VR::Mesh* ExportToVRMesh();
 	void ComputeInitialQuadrics();
 	void SelectAndComputeVertexPairs();
-	void Simplify(size_t parMaxFaces);
+	void Simplify(uint parMaxFaces);
 
 private:
 	void GenerateAdjacency_();
-	size_t NbValidFaces_() const;
+	uint NbValidFaces_() const;
 
 private:
 	std::vector<Vertex> vertices_;

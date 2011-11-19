@@ -1,5 +1,6 @@
 
 #include "quadric.h"
+#include "../VertexRecolor/types.h"
 
 
 // ============================================================================
@@ -10,13 +11,13 @@ namespace QBMS
 // ----------------------------------------------------------------------------
 Quadric::Quadric()
 {
-	for (size_t val = 0; val < MAX_VALUES; ++val)
+	for (uint val = 0; val < MAX_VALUES; ++val)
 		values_[val] = 0.f;
 }
 // ----------------------------------------------------------------------------
 Quadric::Quadric(double parValues[])
 {
-	for (size_t val = 0; val < MAX_VALUES; ++val)
+	for (uint val = 0; val < MAX_VALUES; ++val)
 		values_[val] = parValues[val];
 }
 // ----------------------------------------------------------------------------
@@ -31,13 +32,13 @@ void Quadric::Add(const Quadric& parQuadric)
 // ----------------------------------------------------------------------------
 void Quadric::Add(const double parValues[])
 {
-	for (size_t val = 0; val < MAX_VALUES; ++val)
+	for (uint val = 0; val < MAX_VALUES; ++val)
 		values_[val] += parValues[val];
 }
 // ----------------------------------------------------------------------------
 void Quadric::Init()
 {
-	for (size_t val = 0; val < MAX_VALUES; ++val)
+	for (uint val = 0; val < MAX_VALUES; ++val)
 		values_[val] = 0.0;
 }
 // ----------------------------------------------------------------------------

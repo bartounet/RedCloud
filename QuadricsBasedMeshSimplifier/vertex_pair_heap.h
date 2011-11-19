@@ -1,6 +1,7 @@
 #ifndef VERTEX_PAIR_HEAP_H_
 
 
+#include "../VertexRecolor/types.h"
 #include <vector>
 
 
@@ -24,19 +25,19 @@ public:
 	void Update(const std::vector<VertexPair*>& parUpdatePairs);
 
 public:
-	size_t Size() const { return tree_.size(); }
+	uint Size() const { return tree_.size(); }
 	bool Empty() const { return tree_.empty(); }
 
 #ifdef _DEBUG
 public:
-	bool IsValid(size_t parInd = 0) const;
-	size_t LinearFindInTree(const VertexPair* parPair) const;
+	bool IsValid(uint parInd = 0) const;
+	uint LinearFindInTree(const VertexPair* parPair) const;
 #endif
 
 private:
-	void Swap_(size_t parIndA, size_t parIndB);
-	size_t DownHeap_(size_t parInd);
-	size_t UpHeap_(size_t parInd);
+	void Swap_(uint parIndA, uint parIndB);
+	uint DownHeap_(uint parInd);
+	uint UpHeap_(uint parInd);
 
 private:
 	std::vector<VertexPair*> tree_;

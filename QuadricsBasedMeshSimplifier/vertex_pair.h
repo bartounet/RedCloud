@@ -31,8 +31,8 @@ public:
 	inline void SetDeleteMe() { assert(!deleteMe_); deleteMe_ = true; }
 	inline Vertex* V0() { return v0_; }
 	inline Vertex* V1() { return v1_; }
-	inline size_t HeapInd() const { return heapInd_; }
-	inline void SetHeapInd(size_t parInd) { heapInd_ = parInd; }
+	inline uint HeapInd() const { return heapInd_; }
+	inline void SetHeapInd(uint parInd) { heapInd_ = parInd; }
 	void SetVertices(Vertex* parV0, Vertex* parV1);
 
 #ifdef _DEBUG
@@ -56,7 +56,7 @@ private:
 
 	double quadricError_;
 	double newQuadricError_;
-	size_t heapInd_;
+	uint heapInd_;
 
 	bool deleteMe_;
 

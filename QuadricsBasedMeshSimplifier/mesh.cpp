@@ -16,20 +16,20 @@ Mesh::Mesh(const VR::Mesh& parVRMesh)
 {
 	printf("[ ] Constructing Mesh from VRMesh\n");
 
-	size_t nbVertices = parVRMesh.vertices.size();
+	uint nbVertices = parVRMesh.vertices.size();
 	assert(nbVertices > 0);
 	printf("\t[ ] Copying %d Vertices\n", nbVertices);
 
 	vertices_.reserve(nbVertices);
-	for (size_t curVertex = 0; curVertex < nbVertices; ++curVertex)
+	for (uint curVertex = 0; curVertex < nbVertices; ++curVertex)
 		vertices_.push_back(Vertex(parVRMesh.vertices[curVertex], curVertex));
 	assert(vertices_.size() == nbVertices);
 	printf("\t[+] Vertices copied\n");
 
-	size_t nbFaces = parVRMesh.faces.size();
+	uint nbFaces = parVRMesh.faces.size();
 	assert(nbFaces > 0);
 	printf("\t[ ] Copying %d Faces\n", nbFaces);
-	for (size_t curFace = 0; curFace < nbFaces; ++curFace)
+	for (uint curFace = 0; curFace < nbFaces; ++curFace)
 	{
 		Vertex* v0 = &vertices_[parVRMesh.faces[curFace].vertices[0]];
 		Vertex* v1 = &vertices_[parVRMesh.faces[curFace].vertices[1]];
@@ -56,7 +56,7 @@ void Mesh::GenerateAdjacency_()
 	printf("\t[ ] Generating adjacency\n");
 
 	// incident face + edges
-	for (size_t curFace = 0; curFace < faces_.size(); ++curFace)
+	for (uint curFace = 0; curFace < faces_.size(); ++curFace)
 	{
 		Face* face = &faces_[curFace];
 
@@ -76,9 +76,9 @@ VR::Mesh* Mesh::ExportToVRMesh()
 {
 	VR::Mesh* newMesh = new VR::Mesh();
 
-	size_t deleteOffset = 0;
-	size_t nbVertices = vertices_.size();
-	for (size_t curVertex = 0; curVertex < nbVertices; ++curVertex)
+	uint deleteOffset = 0;
+	uint nbVertices = vertices_.size();
+	for (uint curVertex = 0; curVertex < nbVertices; ++curVertex)
 	{
 		Vertex* vertex = &vertices_[curVertex];
 
@@ -94,8 +94,8 @@ VR::Mesh* Mesh::ExportToVRMesh()
 		}
 	}
 
-	size_t nbFaces = faces_.size();
-	for (size_t curFace = 0; curFace < nbFaces; ++curFace)
+	uint nbFaces = faces_.size();
+	for (uint curFace = 0; curFace < nbFaces; ++curFace)
 	{
 		Face* face = &faces_[curFace];
 
@@ -113,13 +113,13 @@ void Mesh::ComputeInitialQuadrics()
 {
 	printf("[ ] Computing initial quadrics\n");
 
-	for (size_t curVertex = 0; curVertex < vertices_.size(); ++curVertex)
+	for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
 	{
 		Vertex& vertex = vertices_[curVertex];
 		std::vector<VR::Vec4> planes;
 
 		// for each incident faces, compute the plane
-		for (size_t curFace = 0; curFace < vertex.IncidentFaces().size(); ++curFace)
+		for (uint curFace = 0; curFace < vertex.IncidentFaces().size(); ++curFace)
 		{
 			const Face* face = vertex.IncidentFaces()[curFace];
 
@@ -145,7 +145,7 @@ void Mesh::ComputeInitialQuadrics()
 
 		// sum the fundamental error quadric for each plane
 		Quadric quadric;
-		for (size_t curPlane = 0; curPlane < planes.size(); ++curPlane)
+		for (uint curPlane = 0; curPlane < planes.size(); ++curPlane)
 		{
 			const VR::Vec4& p = planes[curPlane];
 			double vals[] = {p.x*p.x, p.x*p.y, p.x*p.z, p.x*p.w,
@@ -185,9 +185,9 @@ void Mesh::SelectAndComputeVertexPairs()
 	assert(pairsHeap_.Size() >= edges_.size()); // there is at least all edges
 }
 // ---------------------------------------------------------------------------
-size_t Mesh::NbValidFaces_() const
+uint Mesh::NbValidFaces_() const
 {
-	size_t nbValidFaces = 0;
+	uint nbValidFaces = 0;
 
 	std::vector<Face>::const_iterator it = faces_.begin();
 	std::vector<Face>::const_iterator end = faces_.end();
@@ -198,7 +198,7 @@ size_t Mesh::NbValidFaces_() const
 	return nbValidFaces;
 }
 // ---------------------------------------------------------------------------
-void Mesh::Simplify(size_t parMaxFaces)
+void Mesh::Simplify(uint parMaxFaces)
 {
 	assert(parMaxFaces > 0); // the simpliest mesh will be a triangle
 	assert(faces_.size() > parMaxFaces);
@@ -207,7 +207,7 @@ void Mesh::Simplify(size_t parMaxFaces)
 	printf("\t nbPairs: %d\n", pairsHeap_.Size());
 
 	// FIXME: Attention, si on contract un bord, on ne perd qu'une face !!
-	size_t nbContractions = (faces_.size() - parMaxFaces) / 2; // a chaque contraction on supprime 2 faces (OU PLUS !)
+	uint nbContractions = (faces_.size() - parMaxFaces) / 2; // a chaque contraction on supprime 2 faces (OU PLUS !)
 	while (!pairsHeap_.Empty() && (nbContractions > 0))
 	{
 		VertexPair* pair = pairsHeap_.ExtractMin();

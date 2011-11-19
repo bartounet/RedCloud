@@ -41,7 +41,7 @@ struct Face
 	int *vertices;
 	uchar nbVertices;
 
-	Face(size_t parV0, size_t parV1, size_t parV2)
+	Face(uint parV0, uint parV1, uint parV2)
 	{
 		nbVertices = (uchar) 3;
 
@@ -66,7 +66,7 @@ struct Mesh
 	~Mesh() // because the ply loader allocate
 	{
 		printf("[ ] Freeing mesh memory\n");
-		for (size_t face = 0; face < faces.size(); ++face)
+		for (uint face = 0; face < faces.size(); ++face)
 			delete faces[face].vertices;
 		printf("[+] Mesh freed\n");
 	}
