@@ -72,38 +72,50 @@ void Mesh::GenerateAdjacency_()
 	printf("\t[+] Adjacency generated\n");
 }
 // ----------------------------------------------------------------------------
+// FIXME: Bad side effect on Vertex (about ID)
 VR::Mesh* Mesh::ExportToVRMesh()
 {
 	VR::Mesh* newMesh = new VR::Mesh();
 
-	uint deleteOffset = 0;
-	uint nbVertices = vertices_.size();
-	for (uint curVertex = 0; curVertex < nbVertices; ++curVertex)
+	// get the referenced vertices
+	std::set<const Vertex*> usedVertices;
+	for (uint curFace = 0; curFace <  faces_.size(); ++curFace)
 	{
-		Vertex* vertex = &vertices_[curVertex];
-
-		// FIXME !!!!
-#if 0
-		if (vertex->DeleteMe()) 
-			deleteOffset++;
-		else
-#endif
+		const Face& face = faces_[curFace];
+		if (!face.IsDegenerated())
 		{
-			newMesh->vertices.push_back(VR::Vertex(vertices_[curVertex].Pos()));
-			vertex->SetId(vertex->Id() - deleteOffset);
+			usedVertices.insert(face.V0());
+			usedVertices.insert(face.V1());
+			usedVertices.insert(face.V2());
 		}
 	}
 
-	uint nbFaces = faces_.size();
-	for (uint curFace = 0; curFace < nbFaces; ++curFace)
+	// update vertex indices and export vertices
+	uint index = 0;
+	for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
 	{
-		Face* face = &faces_[curFace];
+		Vertex* vertex = &vertices_[curVertex];
 
-		if (!face->IsDegenerated())
+		if (usedVertices.find(vertex) != usedVertices.end())
 		{
-			newMesh->faces.push_back(VR::Face(faces_[curFace].V0()->Id(), 
-				faces_[curFace].V1()->Id(), faces_[curFace].V2()->Id()));
+			//assert(!vertex->DeleteMe()); // FIXME: Bug de mise a jour ?
+			vertex->SetId(index);
+			index++;
+			newMesh->vertices.push_back(VR::Vertex(vertex->Pos()));
 		}
+		else
+		{
+			vertex->SetId(vertices_.size()); // set invalid id
+			//assert(vertex->DeleteMe());  // FIXME: Bug de mise a jour ?
+		}
+	}
+
+	// export non degenerated faces
+	for (uint curFace = 0; curFace < faces_.size(); ++curFace)
+	{
+		const Face& face = faces_[curFace];
+		if (!face.IsDegenerated())
+			newMesh->faces.push_back(VR::Face(face.V0()->Id(), face.V1()->Id(), face.V2()->Id()));
 	}
 
 	return newMesh;
