@@ -48,7 +48,8 @@ VertexPair* VertexPairHeap::ExtractMin()
 
 	Swap_(0, tree_.size() - 1);
 	tree_.pop_back();
-	DownHeap_(0);
+	if (tree_.size() > 0)
+		DownHeap_(0);
 
 	return result;
 }

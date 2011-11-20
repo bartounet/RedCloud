@@ -215,9 +215,13 @@ void Mesh::Simplify(uint parMaxFaces)
 		assert(pair);
 		assert(!pair->DeleteMe());
 		assert(pair->QuadricError() >= 0.0);
+#if 0 // FIXME: Bug dans la contraction ?
+		assert(!pair->V0()->DeleteMe() && !pair->V1()->DeleteMe());
+#endif
 
 #if 0
-		printf("nbContractLeft: %d\n", nbContractions);
+		if ((nbContractions & 127) == 0)
+			printf("nbContractLeft: %d\n", nbContractions);
 		//printf("contracting: %d -> %d\n", pair->V0()->Id(), pair->V1()->Id());
 #endif
 
