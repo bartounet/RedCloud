@@ -19,7 +19,7 @@ public:
 	~VertexPair();
 
 public:
-	void Contract(std::vector<VertexPair*>& parDeletePairs, std::vector<VertexPair*>& parUpdatePairs);
+	uint Contract(std::vector<VertexPair*>& parDeletePairs, std::vector<VertexPair*>& parUpdatePairs);
 
 public:
 	void ComputePosAndQuadric();

@@ -86,7 +86,7 @@ void VertexPairHeap::Update(const std::vector<VertexPair*>& parUpdatePairs)
 		VertexPair* pair = parUpdatePairs[curPair];
 		assert(!pair->DeleteMe());
 
-		pair->AssignQuadricErrorWithNewValue(); // FIXME: Can we avoid this ?
+		pair->AssignQuadricErrorWithNewValue();
 		
 		uint pairInd = pair->HeapInd();
 		pairInd = DownHeap_(pairInd);

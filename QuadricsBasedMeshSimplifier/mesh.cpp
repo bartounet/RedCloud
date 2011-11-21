@@ -235,9 +235,8 @@ void Mesh::Simplify(uint parMaxFaces)
 	printf("[ ] Simplifying mesh...\n");
 	printf("\t nbPairs: %d\n", pairsHeap_.Size());
 
-	// FIXME: Attention, si on contract un bord, on ne perd qu'une face (ou pas, dans un non-manifold) !!
-	uint nbContractions = (faces_.size() - parMaxFaces) / 2; // a chaque contraction on supprime 2 faces (OU PLUS !)
-	while (!pairsHeap_.Empty() && (nbContractions > 0))
+	uint curNbFaces = faces_.size();
+	while (!pairsHeap_.Empty() && (curNbFaces > parMaxFaces))
 	{
 		VertexPair* pair = pairsHeap_.ExtractMin();
 		assert(pair);
@@ -248,34 +247,23 @@ void Mesh::Simplify(uint parMaxFaces)
 		assert(!pair->V1()->DeleteMe());
 
 #if 0
-		//if ((nbContractions & 127) == 0)
-			printf("nbContractLeft: %d\n", nbContractions);
+		//if ((curNbFaces & 127) == 0)
+			printf("curNbFaces: %d\n", curNbFaces);
 		//printf("contracting: %d -> %d\n", pair->V0()->Id(), pair->V1()->Id());
+		if ((nbContractions & 127) == 0)
+			printf("\tfaces: %d\n", NbValidFaces_());
 #endif
 
 		std::vector<VertexPair*> deletePairs;
 		std::vector<VertexPair*> updatePairs;
 
-		pair->Contract(deletePairs, updatePairs);
+		curNbFaces -= pair->Contract(deletePairs, updatePairs);
 
 		pairsHeap_.Delete(deletePairs);
 		pairsHeap_.Update(updatePairs);
 
-#if 0
-		if ((nbContractions & 127) == 0)
-			printf("\tfaces: %d\n", NbValidFaces_());
-#endif
-
-		nbContractions--;
 		assert(pair);
 		delete pair;
-
-		// === DELETE ME ===
-		// FIXME: Hack pour tomber en dessous du nombre de face necessaire. On 
-		// devrait calculer le nombre de contraction necessaire en amont !!
-		if ((nbContractions <= 0) && (NbValidFaces_() > parMaxFaces))
-			nbContractions = 1;
-		// === DELETE ME ===
 	}
 
 	assert(NbValidFaces_() <= parMaxFaces);

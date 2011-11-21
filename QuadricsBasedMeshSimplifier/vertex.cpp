@@ -106,7 +106,7 @@ void Vertex::RemoveIncidentFace(Face* parFace)
 	incidentFaces_.erase(faceIt);
 }
 // ----------------------------------------------------------------------------
-void Vertex::RemoveDegeneratedFaces()
+uint Vertex::RemoveDegeneratedFaces()
 {
 	FaceListType facesToDelete;
 
@@ -132,6 +132,8 @@ void Vertex::RemoveDegeneratedFaces()
 			break;
 	assert(curFace == faceEnd);
 #endif
+
+	return facesToDelete.size();
 }
 // ----------------------------------------------------------------------------
 void Vertex::ReplaceThisInPairsWith(Vertex* parNewVertex)

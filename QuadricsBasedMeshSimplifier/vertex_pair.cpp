@@ -128,7 +128,7 @@ double VertexPair::ComputeQuadricError_(const VR::Vec4& parPos) const
 	return error;
 }
 // ----------------------------------------------------------------------------
-void VertexPair::Contract(std::vector<VertexPair*>& parDeletePairs, std::vector<VertexPair*>& parUpdatePairs)
+uint VertexPair::Contract(std::vector<VertexPair*>& parDeletePairs, std::vector<VertexPair*>& parUpdatePairs)
 {
 	assert(!deleteMe_);
 	assert(!IsDegenerated());
@@ -138,13 +138,15 @@ void VertexPair::Contract(std::vector<VertexPair*>& parDeletePairs, std::vector<
 	assert(quadricErrorComputed_);
 #endif
 
+	uint nbFacesDeleted = 0;
+
 	v0_->SetPos(pos_);
 	v0_->SetQuadric(quadric_);
 
 	v1_->ReplaceThisInIncidentFacesWith(v0_);
-	v1_->RemoveDegeneratedFaces();
+	nbFacesDeleted += v1_->RemoveDegeneratedFaces();
 	v0_->AddIncidentFaces(v1_->IncidentFaces());
-	v0_->RemoveDegeneratedFaces();
+	nbFacesDeleted += v0_->RemoveDegeneratedFaces();
 
 	deleteMe_ = true;
 	v1_->RemovePair(this);
@@ -160,6 +162,8 @@ void VertexPair::Contract(std::vector<VertexPair*>& parDeletePairs, std::vector<
 	v1_->SetDeleteMe();
 
 	v0_->UpdatePairPosAndQuadric(parUpdatePairs);
+
+	return nbFacesDeleted;
 }
 // ----------------------------------------------------------------------------
 void VertexPair::SetVertices(Vertex* parV0, Vertex* parV1)

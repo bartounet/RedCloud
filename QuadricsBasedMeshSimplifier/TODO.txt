@@ -1,4 +1,3 @@
-- Critere d'arret de la simplification (version exacte)
 - Ameliorer la position lors d'une contraction (en mode optimal)
 
 - Prevenir le face flip
