@@ -47,9 +47,8 @@ int main(int argc, char **argv)
 	VR::MeshFileHelper::SaveMeshToPlyFile(dstMesh, argv[2], true);
 	printf("[+] Mesh saved\n");
 
-	// FIXME: As long as mesh destructor (and its attribute) is empty,
-	// we avoid a massive call to empty destructor. But we leak...
-	exit(0);
+	exit(0);	// FIXME: As long as mesh destructor (and its attribute) is empty,
+				// we avoid a massive call to empty destructor. But it leak...
 
 	return 0;
 }

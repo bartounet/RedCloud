@@ -1,8 +1,10 @@
-- BIG BUG : Eliminer les edges/faces degeneré avant la simplification + Faire un check
+- Critere d'arret de la simplification (version exacte)
 - Ameliorer la position lors d'une contraction (en mode optimal)
+
 - Prevenir le face flip
 - Gerer les vertex pairs qui ne sont pas des edges
-- Critere d'arret de la simplification (version exacte)
-- Clean du code
+
+- Clean/Factorisation du code
 - Gerer la question du clean du mesh qui est trop long (appel massif a des destructeurs vides)
-- Remove duplicated faces
+
+- Remove duplicated faces ( A faire a posteriori )

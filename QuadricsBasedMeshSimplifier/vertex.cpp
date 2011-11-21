@@ -72,6 +72,7 @@ void Vertex::AddIncidentFace(Face* parFace)
 {
 	assert(parFace);
 	assert(!parFace->IsDegenerated());
+
 	incidentFaces_.push_back(parFace);
 }
 // ----------------------------------------------------------------------------
@@ -93,7 +94,7 @@ void Vertex::AddPairs(const PairListType& parPairList)
 	}
 }
 // ----------------------------------------------------------------------------
-// We only remove degenerated face
+// Only degenerated face can be removed
 void Vertex::RemoveIncidentFace(Face* parFace)
 {
 	assert(parFace);

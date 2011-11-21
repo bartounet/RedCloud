@@ -99,7 +99,10 @@ void Mesh::ReassignVerticesIdAndSetDeleteUnusedVertices_()
 		else
 		{
 			if (usedVertices.find(&vertex) == usedVertices.end())
+			{
 				vertex.SetDeleteMe();
+				vertex.SetId(BAD_VERTEX_ID);
+			}
 			else
 			{
 				vertex.SetId(index);
@@ -232,7 +235,7 @@ void Mesh::Simplify(uint parMaxFaces)
 	printf("[ ] Simplifying mesh...\n");
 	printf("\t nbPairs: %d\n", pairsHeap_.Size());
 
-	// FIXME: Attention, si on contract un bord, on ne perd qu'une face !!
+	// FIXME: Attention, si on contract un bord, on ne perd qu'une face (ou pas, dans un non-manifold) !!
 	uint nbContractions = (faces_.size() - parMaxFaces) / 2; // a chaque contraction on supprime 2 faces (OU PLUS !)
 	while (!pairsHeap_.Empty() && (nbContractions > 0))
 	{

@@ -71,8 +71,6 @@ struct Vec4
 		assert(length > 0.0f);
 		return Vec4(parVec4.x / length, parVec4.y / length, parVec4.z / length, 1.0);
 	}
-
-	// FIXME: Dot product
 };
 // ----------------------------------------------------------------------------
 }
