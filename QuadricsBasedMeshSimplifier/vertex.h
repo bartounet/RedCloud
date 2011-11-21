@@ -9,6 +9,9 @@
 #include <assert.h>
 
 
+#define BAD_VERTEX_ID 999999999
+
+
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
@@ -33,8 +36,9 @@ public:
 	void AddPair(VertexPair* parPair);
 	void AddPairs(const PairListType& parPairList);
 
-	void UpdateIncidentFaces(Vertex* parNewVertex);
-	void UpdatePairWithThis(const Vertex* parOldVertex);
+	void ReplaceThisInIncidentFacesWith(Vertex* parNewVertex);
+	void ReplaceThisInPairsWith(Vertex* parNewVertex);
+
 	void UpdatePairPosAndQuadric(std::vector<VertexPair*>& parUpdatePairs);
 
 	void RemoveIncidentFace(Face* parFace);
@@ -42,13 +46,14 @@ public:
 	void RemovePair(VertexPair* parPair);
 	void RemoveInvalidPair(std::vector<VertexPair*>& parDeletePairs);
 	void RemoveDuplicatedPair(std::vector<VertexPair*>& parDeletePairs);
+	void RemoveDegeneratedPairs(std::vector<VertexPair*>& parDeletePairs);
 
 public:
 	inline const VR::Vec4& Pos() const { return pos_; }
 	inline const FaceListType& IncidentFaces() const { return incidentFaces_; }
 	inline const Quadric& GetQuadric() const { return quadric_; }
 	inline uint Id() const { return id_; }
-	inline const PairListType& Pairs() const { return pairs_; }
+	const PairListType& Pairs() const { return pairs_; }
 	inline bool DeleteMe() const { return deleteMe_; }
 
 public:

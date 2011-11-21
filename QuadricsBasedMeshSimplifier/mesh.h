@@ -25,7 +25,7 @@ public:
 	~Mesh();
 
 public:
-	VR::Mesh* ExportToVRMesh();
+	void ExportToVRMesh(VR::Mesh& parDstMesh) const;
 	void ComputeInitialQuadrics();
 	void SelectAndComputeVertexPairs();
 	void Simplify(uint parMaxFaces);
@@ -33,6 +33,7 @@ public:
 private:
 	void GenerateAdjacency_();
 	uint NbValidFaces_() const;
+	void ReassignVerticesIdAndSetDeleteUnusedVertices_();
 
 private:
 	std::vector<Vertex> vertices_;

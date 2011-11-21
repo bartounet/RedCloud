@@ -37,16 +37,18 @@ void VertexPair::ComputeOptimalPos_()
 	assert(!quadricErrorComputed_);
 #endif
 
-	// FIXME: Rendre ce code plus classe et gerer le point optimal !
+// FIXME: Rendre ce code plus classe et gerer le point optimal !
+
 	const VR::Vec4& pos0 = v0_->Pos();
 	const VR::Vec4& pos1 = v1_->Pos();
+
+	pos_ = pos0;
+	double minError = ComputeQuadricError_(pos0);
+
 	VR::Vec4 midPos;
 	midPos.x = (pos0.x + pos1.x) / 2;
 	midPos.y = (pos0.y + pos1.y) / 2;
 	midPos.z = (pos0.z + pos1.z) / 2;
-
-	pos_ = pos0;
-	double minError = ComputeQuadricError_(pos0);
 	double error = ComputeQuadricError_(midPos);
 	if (error < minError)
 	{
@@ -67,7 +69,7 @@ void VertexPair::ComputeOptimalPos_()
 #endif
 }
 // ----------------------------------------------------------------------------
-#ifdef _DEBUG
+#ifdef _DEBUG // Non-debug version is inlined
 double VertexPair::QuadricError() const
 {
 	assert(quadricErrorComputed_ || deleteMe_);
@@ -75,7 +77,7 @@ double VertexPair::QuadricError() const
 }
 #endif
 // ----------------------------------------------------------------------------
-#ifdef _DEBUG
+#ifdef _DEBUG // Non-debug version is inlined
 void VertexPair::UnsetQuadricErrorComputed()
 {
 	assert(quadricErrorComputed_);
@@ -83,7 +85,7 @@ void VertexPair::UnsetQuadricErrorComputed()
 }
 #endif
 // ----------------------------------------------------------------------------
-#ifdef _DEBUG
+#ifdef _DEBUG // Non-debug version is inlined
 void VertexPair::AssignQuadricErrorWithNewValue()
 {
 	assert(quadricErrorComputed_);
@@ -130,6 +132,9 @@ double VertexPair::ComputeQuadricError_(const VR::Vec4& parPos) const
 void VertexPair::Contract(std::vector<VertexPair*>& parDeletePairs, std::vector<VertexPair*>& parUpdatePairs)
 {
 	assert(!deleteMe_);
+	assert(!IsDegenerated());
+	assert(parDeletePairs.size() == 0);
+	assert(parUpdatePairs.size() == 0);
 #ifdef _DEBUG
 	assert(quadricErrorComputed_);
 #endif
@@ -137,19 +142,25 @@ void VertexPair::Contract(std::vector<VertexPair*>& parDeletePairs, std::vector<
 	v0_->SetPos(pos_);
 	v0_->SetQuadric(quadric_);
 
-	v1_->UpdateIncidentFaces(v0_);
+	v1_->ReplaceThisInIncidentFacesWith(v0_);
+	v1_->RemoveDegeneratedFaces();
 	v0_->AddIncidentFaces(v1_->IncidentFaces());
 	v0_->RemoveDegeneratedFaces();
 
-	v0_->AddPairs(v1_->Pairs());
-	v0_->UpdatePairWithThis(v1_);
+	deleteMe_ = true;
+	v1_->RemovePair(this);
+	v0_->RemovePair(this);
 
+	v1_->ReplaceThisInPairsWith(v0_); // warning: call after remove THIS pair
+	assert(v0_ != v1_);
+	v1_->RemoveDegeneratedPairs(parDeletePairs);
+	v0_->AddPairs(v1_->Pairs());
+	v0_->RemoveDegeneratedPairs(parDeletePairs); // des pairs en doublon du coup ?
 	v0_->RemoveDuplicatedPair(parDeletePairs);
-	v0_->RemoveInvalidPair(parDeletePairs);
-	v0_->UpdatePairPosAndQuadric(parUpdatePairs);
 
 	v1_->SetDeleteMe();
-	deleteMe_ = true;
+
+	v0_->UpdatePairPosAndQuadric(parUpdatePairs);
 }
 // ----------------------------------------------------------------------------
 void VertexPair::SetVertices(Vertex* parV0, Vertex* parV1)
@@ -176,6 +187,7 @@ void VertexPair::SetVertices(Vertex* parV0, Vertex* parV1)
 void VertexPair::RemoveOnRelatedVertex()
 {
 	assert(deleteMe_);
+	assert(!IsDegenerated());
 
 	v0_->RemovePair(this);
 	v1_->RemovePair(this);

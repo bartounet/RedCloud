@@ -3,9 +3,6 @@
 - Prevenir le face flip
 - Gerer les vertex pairs qui ne sont pas des edges
 - Critere d'arret de la simplification (version exacte)
-- Gerer un export propre (au niveau des vertices)
 - Clean du code
 - Gerer la question du clean du mesh qui est trop long (appel massif a des destructeurs vides)
-- BUG: Est-ce normal qu'une pair (dite valide) contiennent des vertex qui vont etre supprimé ?
-	+ C'est peut etre un probleme de manifold et non-manifold ???
-	+ Des vertex non reference ne sont pas marque comme DeleteMe
+- Remove duplicated faces

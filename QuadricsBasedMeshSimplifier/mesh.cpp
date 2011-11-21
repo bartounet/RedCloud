@@ -18,6 +18,7 @@ Mesh::Mesh(const VR::Mesh& parVRMesh)
 
 	uint nbVertices = parVRMesh.vertices.size();
 	assert(nbVertices > 0);
+	assert(nbVertices < BAD_VERTEX_ID); // if it fails, grow up the BAD_VERTEX_ID value
 	printf("\t[ ] Copying %d Vertices\n", nbVertices);
 
 	vertices_.reserve(nbVertices);
@@ -72,14 +73,12 @@ void Mesh::GenerateAdjacency_()
 	printf("\t[+] Adjacency generated\n");
 }
 // ----------------------------------------------------------------------------
-// FIXME: Bad side effect on Vertex (about ID)
-VR::Mesh* Mesh::ExportToVRMesh()
+void Mesh::ReassignVerticesIdAndSetDeleteUnusedVertices_()
 {
-	VR::Mesh* newMesh = new VR::Mesh();
+	printf("[ ] Reassigning Vertex Id...\n");
 
-	// get the referenced vertices
-	std::set<const Vertex*> usedVertices;
-	for (uint curFace = 0; curFace <  faces_.size(); ++curFace)
+	std::set<Vertex*> usedVertices;
+	for (uint curFace = 0; curFace < faces_.size(); ++curFace)
 	{
 		const Face& face = faces_[curFace];
 		if (!face.IsDegenerated())
@@ -90,35 +89,50 @@ VR::Mesh* Mesh::ExportToVRMesh()
 		}
 	}
 
-	// update vertex indices and export vertices
 	uint index = 0;
 	for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
 	{
-		Vertex* vertex = &vertices_[curVertex];
+		Vertex& vertex = vertices_[curVertex];
 
-		if (usedVertices.find(vertex) != usedVertices.end())
-		{
-			//assert(!vertex->DeleteMe()); // FIXME: Bug de mise a jour ?
-			vertex->SetId(index);
-			index++;
-			newMesh->vertices.push_back(VR::Vertex(vertex->Pos()));
-		}
+		if (vertex.DeleteMe())
+			vertex.SetId(BAD_VERTEX_ID);
 		else
 		{
-			vertex->SetId(vertices_.size()); // set invalid id
-			//assert(vertex->DeleteMe());  // FIXME: Bug de mise a jour ?
+			if (usedVertices.find(&vertex) == usedVertices.end())
+				vertex.SetDeleteMe();
+			else
+			{
+				vertex.SetId(index);
+				index++;
+			}
 		}
 	}
 
-	// export non degenerated faces
+	printf("[+] Vertex Id reassigned...\n");
+}
+// ----------------------------------------------------------------------------
+void Mesh::ExportToVRMesh(VR::Mesh& parDstMesh) const
+{
+	assert(parDstMesh.faces.size() == 0);
+	assert(parDstMesh.vertices.size() == 0);
+
 	for (uint curFace = 0; curFace < faces_.size(); ++curFace)
 	{
 		const Face& face = faces_[curFace];
 		if (!face.IsDegenerated())
-			newMesh->faces.push_back(VR::Face(face.V0()->Id(), face.V1()->Id(), face.V2()->Id()));
+		{
+			parDstMesh.faces.push_back(VR::Face(face.V0()->Id(), 
+												face.V1()->Id(),
+												face.V2()->Id()));
+		}
 	}
 
-	return newMesh;
+	for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
+	{
+		const Vertex& vertex = vertices_[curVertex];
+		if (!vertex.DeleteMe())
+			parDstMesh.vertices.push_back(VR::Vertex(vertex.Pos()));
+	}
 }
 // ----------------------------------------------------------------------------
 void Mesh::ComputeInitialQuadrics()
@@ -223,16 +237,15 @@ void Mesh::Simplify(uint parMaxFaces)
 	while (!pairsHeap_.Empty() && (nbContractions > 0))
 	{
 		VertexPair* pair = pairsHeap_.ExtractMin();
-
 		assert(pair);
 		assert(!pair->DeleteMe());
+		assert(!pair->IsDegenerated());
 		assert(pair->QuadricError() >= 0.0);
-#if 0 // FIXME: Bug dans la contraction ?
-		assert(!pair->V0()->DeleteMe() && !pair->V1()->DeleteMe());
-#endif
+		assert(!pair->V0()->DeleteMe());
+		assert(!pair->V1()->DeleteMe());
 
 #if 0
-		if ((nbContractions & 127) == 0)
+		//if ((nbContractions & 127) == 0)
 			printf("nbContractLeft: %d\n", nbContractions);
 		//printf("contracting: %d -> %d\n", pair->V0()->Id(), pair->V1()->Id());
 #endif
@@ -242,7 +255,6 @@ void Mesh::Simplify(uint parMaxFaces)
 
 		pair->Contract(deletePairs, updatePairs);
 
-		deletePairs.erase(std::find(deletePairs.begin(), deletePairs.end(), pair)); // ignore the current pair
 		pairsHeap_.Delete(deletePairs);
 		pairsHeap_.Update(updatePairs);
 
@@ -264,6 +276,8 @@ void Mesh::Simplify(uint parMaxFaces)
 	}
 
 	assert(NbValidFaces_() <= parMaxFaces);
+
+	ReassignVerticesIdAndSetDeleteUnusedVertices_();
 
 	printf("[+] Mesh Simplified\n");
 }

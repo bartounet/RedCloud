@@ -35,18 +35,17 @@ int main(int argc, char **argv)
 	mesh.SelectAndComputeVertexPairs();
 	mesh.Simplify(20000);
 
-	VR::Mesh* dstMesh = mesh.ExportToVRMesh();
+	VR::Mesh dstMesh;
+	mesh.ExportToVRMesh(dstMesh);
 
 	printf("\t[.] Vertices reduction: %.2f percent\n",
-		100.f * (1.f - (float)dstMesh->vertices.size() / (float)srcMesh.vertices.size()));
+		100.f * (1.f - (float)dstMesh.vertices.size() / (float)srcMesh.vertices.size()));
 	printf("\t[.] Faces reduction: %.2f percent\n",
-		100.f * (1.f - (float)dstMesh->faces.size() / (float)srcMesh.faces.size()));
+		100.f * (1.f - (float)dstMesh.faces.size() / (float)srcMesh.faces.size()));
 
-	printf("[ ] Saving '%s' mesh file (vertices: %d, faces: %d)\n", argv[2], dstMesh->vertices.size(), dstMesh->faces.size());
-	VR::MeshFileHelper::SaveMeshToPlyFile(*dstMesh, argv[2], true);
+	printf("[ ] Saving '%s' mesh file (vertices: %d, faces: %d)\n", argv[2], dstMesh.vertices.size(), dstMesh.faces.size());
+	VR::MeshFileHelper::SaveMeshToPlyFile(dstMesh, argv[2], true);
 	printf("[+] Mesh saved\n");
-
-	delete dstMesh;
 
 	// FIXME: As long as mesh destructor (and its attribute) is empty,
 	// we avoid a massive call to empty destructor. But we leak...
