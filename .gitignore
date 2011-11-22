@@ -1,0 +1,15 @@
+*.o
+*~
+*.ply
+*.obj
+*.dae
+*.png
+*.ppm
+*.jpg
+*.pyc
+Res/*
+Bin/*
+Dataset/*
+*.ncb
+*.suo
+Makefile.rules
