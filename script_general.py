@@ -88,6 +88,8 @@ manager.doBundle2PMVS()
 manager.doCMVS()
 print "--> Done in: ", time.time() - start, "secs" 
 
+print "LOL"
+
 print "## CMVS Fusion:"
 start = time.time()
 redCouldDir = os.path.join(resultDir, "RedClouds") 
