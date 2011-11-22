@@ -13,3 +13,5 @@ Dataset/*
 *.ncb
 *.suo
 Makefile.rules
+*.user
+
