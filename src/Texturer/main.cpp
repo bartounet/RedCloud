@@ -13,7 +13,7 @@
 #include "World.h"
 #include "Texture.h"
 
-#include "tools/mesh_file_helper.h"
+#include "mesh_file_helper.h"
 
 bool load_point_cloud (std::string filename, std::vector<Point3dColor* >& points, Point3d& min, Point3d& max)
 {
