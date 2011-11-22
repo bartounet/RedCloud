@@ -2,6 +2,7 @@
 #include "mesh_file_helper.h"
 #include "ply.h"
 #include <assert.h>
+#include <stdlib.h>
 
 
 // ----------------------------------------------------------------------------

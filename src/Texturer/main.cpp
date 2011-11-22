@@ -25,7 +25,7 @@ bool load_point_cloud (std::string filename, std::vector<Point3dColor* >& points
 	bool result = VR::MeshFileHelper::LoadMeshFromPlyFile(mesh, cfilename);
 	if (!result)
 	{
-		printf("[-] Failed to load triangularized mesh '%s'\n", filename);
+		printf("[-] Failed to load triangularized mesh '%s'\n", filename.c_str());
 		exit(1);
 	}
 	std::cout << mesh.vertices.size () << std::endl;
@@ -56,7 +56,7 @@ bool load_faces (std::string filename, std::vector<Face* >& faces, std::vector<P
 	bool result = VR::MeshFileHelper::LoadMeshFromPlyFile(mesh, cfilename);
 	if (!result)
 	{
-		printf("[-] Failed to load triangularized mesh '%s'\n", filename);
+		printf("[-] Failed to load triangularized mesh '%s'\n", filename.c_str());
 		exit(1);
 	}
 	std::cout << mesh.vertices.size () << std::endl;

@@ -3,6 +3,7 @@
 #include "ply.h"
 #include <assert.h>
 #include <stdlib.h>
+#include <cstring>
 
 // ----------------------------------------------------------------------------
 namespace VR
