@@ -78,7 +78,7 @@ Node* ThreeDNode::BuildTree(const std::vector<const Vertex*>& parVertices, int p
 }
 // ----------------------------------------------------------------------------
 #define SQ(x) ((x) * (x))
-void ThreeDNode::NearestNeighbor(	const Node* parNode,
+void ThreeDNode::NearestPoint(		const Node* parNode,
 									const Vertex& parTarget,
 									int parDepth,
 									float& minDist,
@@ -118,21 +118,21 @@ void ThreeDNode::NearestNeighbor(	const Node* parNode,
 		{
 		case AADIR_X:
 			if (parTarget.x <= threeDNode->vertex_->x)
-				NearestNeighbor(threeDNode->left_, parTarget, parDepth + 1, minDist, minVertex);
+				NearestPoint(threeDNode->left_, parTarget, parDepth + 1, minDist, minVertex);
 			else
-				NearestNeighbor(threeDNode->right_, parTarget, parDepth + 1, minDist, minVertex);
+				NearestPoint(threeDNode->right_, parTarget, parDepth + 1, minDist, minVertex);
 			break;
 		case AADIR_Y:
 			if (parTarget.y <= threeDNode->vertex_->y)
-				NearestNeighbor(threeDNode->left_, parTarget, parDepth + 1, minDist, minVertex);
+				NearestPoint(threeDNode->left_, parTarget, parDepth + 1, minDist, minVertex);
 			else
-				NearestNeighbor(threeDNode->right_, parTarget, parDepth + 1, minDist, minVertex);
+				NearestPoint(threeDNode->right_, parTarget, parDepth + 1, minDist, minVertex);
 			break;
 		case AADIR_Z:
 			if (parTarget.z <= threeDNode->vertex_->z)
-				NearestNeighbor(threeDNode->left_, parTarget, parDepth + 1, minDist, minVertex);
+				NearestPoint(threeDNode->left_, parTarget, parDepth + 1, minDist, minVertex);
 			else
-				NearestNeighbor(threeDNode->right_, parTarget, parDepth + 1, minDist, minVertex);
+				NearestPoint(threeDNode->right_, parTarget, parDepth + 1, minDist, minVertex);
 			break;
 		default:
 			assert(false); // it should never happen

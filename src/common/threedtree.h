@@ -41,11 +41,11 @@ public:
 
 public:
 	static Node* BuildTree(const std::vector<const Vertex*>& parVertices, int parDepth);
-	static void NearestNeighbor(const Node* parNode,
-								const Vertex& parTarget,
-								int parDepth,
-								float& minDist,
-								const Vertex** minVertex);
+	static void NearestPoint(const Node* parNode,
+							 const Vertex& parTarget,
+							 int parDepth,
+							 float& minDist,
+							 const Vertex** minVertex);
 
 private:
 	AlignedAxisDir dir_;
