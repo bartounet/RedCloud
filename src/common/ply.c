@@ -202,14 +202,27 @@ PlyFile *ply_open_for_writing(
   /* tack on the extension .ply, if necessary */
 
   name = (char *) myalloc (sizeof (char) * (strlen (filename) + 5));
+#ifdef USE_VS_2008
+  strcpy_s (name, strlen(name), filename);
+#else
   strcpy (name, filename);
-  if (strlen (name) < 4 ||
-      strcmp (name + strlen (name) - 4, ".ply") != 0)
+#endif
+  if (strlen (name) < 4 || strcmp (name + strlen (name) - 4, ".ply") != 0)
+  {
+#ifdef USE_VS_2008
+	  strcat_s (name, strlen(name), ".ply");
+#else
       strcat (name, ".ply");
+#endif
+  }
 
   /* open the file for writing */
 
+#ifdef USE_VS_2008
+  fopen_s (&fp, name, "w");
+#else
   fp = fopen (name, "w");
+#endif
   if (fp == NULL) {
     return (NULL);
   }
@@ -825,14 +838,27 @@ PlyFile *ply_open_for_reading(
   /* tack on the extension .ply, if necessary */
 
   name = (char *) myalloc (sizeof (char) * (strlen (filename) + 5));
+#ifdef USE_VS_2008
+  strcpy_s (name, strlen(name), filename);
+#else
   strcpy (name, filename);
-  if (strlen (name) < 4 ||
-      strcmp (name + strlen (name) - 4, ".ply") != 0)
+#endif
+  if (strlen (name) < 4 || strcmp (name + strlen (name) - 4, ".ply") != 0)
+  {
+#ifdef USE_VS_2008
+	  strcat_s (name, strlen(name), ".ply");
+#else
       strcat (name, ".ply");
+#endif
+  }
 
   /* open the file for reading */
 
+#ifdef USE_VS_2008
+  fopen_s(&fp, name, "r");
+#else
   fp = fopen (name, "r");
+#endif
   if (fp == NULL)
     return (NULL);
 

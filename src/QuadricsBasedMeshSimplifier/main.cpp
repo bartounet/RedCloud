@@ -16,9 +16,13 @@ void Usage(const char* parProgName)
 int main(int argc, char **argv)
 {
 #ifdef _DEBUG
-	printf("=== Quadrics based mesh simplifier (DEBUG MODE)===\n");
+	printf("=== Quadrics based mesh simplifier (DEBUG MODE) ===\n");
 #else
-	printf("=== Quadrics based mesh simplifier ===\n");
+ #ifndef NDEBUG
+	printf("=== Quadrics based mesh simplifier (RELEASE MODE) ===\n");
+ #else
+	printf("=== Quadrics based mesh simplifier (FINAL MODE) ===\n");
+ #endif
 #endif
 
 	if (argc != 3)
