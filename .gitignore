@@ -8,8 +8,9 @@
 *.jpg
 *.pyc
 Res/*
-Bin/*
-Dataset/*
+bin/*
+dataset/*
+output/*
 *.ncb
 *.suo
 Makefile.rules
