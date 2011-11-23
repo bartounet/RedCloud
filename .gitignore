@@ -14,4 +14,10 @@ Dataset/*
 *.suo
 Makefile.rules
 *.user
-
+*.exe
+*.ilk
+*.pdb
+*BuildLog.htm
+*.idb
+*.dep
+*.manifest
