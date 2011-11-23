@@ -8,8 +8,8 @@ quadric.o\
 vertex.o\
 vertex_pair.o\
 vertex_pair_heap.o\
-../VertexRecolor/mesh_file_helper.o\
-../VertexRecolor/ply.o\
+../common/mesh_file_helper.o\
+../common/ply.o\
 
 
 all: $(PROG)
@@ -34,4 +34,4 @@ cleanVCPP:
 distclean: cleanVCPP clean
 	rm -rf Makefile.rules
 	rm -rf $(PROG)
-
+	rm -rf $(PROG).exe

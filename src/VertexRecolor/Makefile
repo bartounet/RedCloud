@@ -2,10 +2,9 @@ include Makefile.rules
 
 
 OBJS=main.o\
-easy_cleaner.o\
-mesh_file_helper.o\
-ply.o\
-threedtree.o\
+../common/mesh_file_helper.o\
+../common/ply.o\
+../common/threedtree.o\
 vertex_recolor.o\
 
 
@@ -31,3 +30,4 @@ cleanVCPP:
 distclean: cleanVCPP clean
 	rm -rf Makefile.rules
 	rm -rf $(PROG)
+	rm -rf $(PROG).exe
