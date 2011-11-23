@@ -1,18 +1,27 @@
 #ifndef COLOR_H_INCLUDED
 #define COLOR_H_INCLUDED
 
+
+#include "../VertexRecolor/types.h"
 #include <iostream>
 
+
+// ============================================================================
+// ----------------------------------------------------------------------------
+// ============================================================================
 struct Color
 {
-    unsigned char r_;
-    unsigned char g_;
-    unsigned char b_;
-    Color (unsigned char r, unsigned char g, unsigned char b);
+    uchar r_;
+    uchar g_;
+    uchar b_;
 
+    Color (uchar parR, uchar parG, uchar parB);
 };
-
-std::ostream& operator<<(std::ostream &flux, Color* const& c);
+// ----------------------------------------------------------------------------
+std::ostream& operator<<(std::ostream &flux, const Color& c);
+// ============================================================================
+// ----------------------------------------------------------------------------
+// ============================================================================
 
 
 #endif // COLOR_H_INCLUDED

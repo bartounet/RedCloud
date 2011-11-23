@@ -1,16 +1,25 @@
 #ifndef POINT2DCOLOR_H_INCLUDED
 #define POINT2DCOLOR_H_INCLUDED
+
+
 #include "Color.h"
 #include "Point2d.h"
 
+
+// ============================================================================
+// ----------------------------------------------------------------------------
+// ============================================================================
 struct Point2dColor : public Point2d
 {
   Color color_;
 
-  Point2dColor (float x, float y, Color c);
+  Point2dColor (float parX, float parY, Color parColor);
 };
-
-std::ostream& operator<<( std::ostream &flux, Point2dColor* const& p);
+// ----------------------------------------------------------------------------
+std::ostream& operator<<( std::ostream &parOutStream, Point2dColor* const& parPoint2dColor);
+// ============================================================================
+// ----------------------------------------------------------------------------
+// ============================================================================
 
 
 #endif // POINT2DCOLOR_H_INCLUDED

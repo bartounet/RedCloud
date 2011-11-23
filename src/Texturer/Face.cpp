@@ -1,3 +1,4 @@
+
 #include "Face.h"
 #include <assert.h>
 #include <iostream>
@@ -6,6 +7,10 @@
 #include <list>
 #include <utility>
 
+
+// ============================================================================
+// ----------------------------------------------------------------------------
+// ============================================================================
 void Face::printInfos (std::vector<Face* >& faces)
 {
     size_t nbAssociatedPoint_ = 0;
@@ -23,19 +28,14 @@ void Face::printInfos (std::vector<Face* >& faces)
     std::cout << "min = " << minAssociatedPoint_ << std::endl;
     std::cout << "max = " << maxAssociatedPoint_ << std::endl;
 }
-
+// ----------------------------------------------------------------------------
 std::vector<Point2dColor* >& Face::getAssociatedPoints ()
 {
     return associatedPoints_;
 }
-
+// ----------------------------------------------------------------------------
 std::vector<Point3dColor* > Face::points_ = std::vector<Point3dColor* > ();
-
-/** @brief Face
-  *
-  * @todo: document this function
-  */
-
+// ----------------------------------------------------------------------------
  Face::Face(int p1, int p2, int p3)
     : plan_(Plan(0, 0, 0, 0)),
       an_(Plan(0, 0, 0, 0)),
@@ -87,59 +87,59 @@ std::vector<Point3dColor* > Face::points_ = std::vector<Point3dColor* > ();
     associatePoint (p3_2D);
 
 }
-
+// ----------------------------------------------------------------------------
 void Face::setCoordTexture(Point2d* p0, Point2d* p1, Point2d* p2)
 {
     coordTexture_[0] = p0;
     coordTexture_[1] = p1;
     coordTexture_[2] = p2;
 }
-
+// ----------------------------------------------------------------------------
 Point3d* Face::getOrigine ()
 {
     return o_;
 }
-
+// ----------------------------------------------------------------------------
 void Face::associatePoint(Point2dColor* p)
 {
     associatedPoints_.push_back (p);
 }
-
+// ----------------------------------------------------------------------------
 Point3d& Face::getCentroid()
 {
     return centroid_;
 }
-
+// ----------------------------------------------------------------------------
 Plan& Face::getPlan()
 {
     return plan_;
 }
-
+// ----------------------------------------------------------------------------
 Plan& Face::getPlanAN()
 {
     return an_;
 }
-
+// ----------------------------------------------------------------------------
 Plan& Face::getPlanBN()
 {
     return bn_;
 }
-
+// ----------------------------------------------------------------------------
 Point3d* Face::getVectA()
 {
     return a_;
 }
-
+// ----------------------------------------------------------------------------
 Point3d* Face::getVectB()
 {
     return b_;
 }
-
+// ----------------------------------------------------------------------------
 Point2d** Face::getCoordTexture()
 {
     return coordTexture_;
 }
-
+// ----------------------------------------------------------------------------
 Color Face::getApproxColor (Point2d p)
 {
     Color closestColor = Color (0, 0, 0);
@@ -181,12 +181,16 @@ Color Face::getApproxColor (Point2d p)
                     c0.g_ * (d1 * d2) / sommeDeProduitNormatif + c1.g_ * (d0 * d2) / sommeDeProduitNormatif + c2.g_ * (d0 * d1) / sommeDeProduitNormatif,
                     c0.b_ * (d1 * d2) / sommeDeProduitNormatif + c1.b_ * (d0 * d2) / sommeDeProduitNormatif + c2.b_ * (d0 * d1) / sommeDeProduitNormatif);
 }
-
-
-/*
+// ============================================================================
+// ----------------------------------------------------------------------------
+// ============================================================================
+#if 0
 std::ostream& operator<<( std::ostream &flux, Face* const& f)
 {
     flux << "X";
     return flux;
 }
-*/
+#endif
+// ============================================================================
+// ----------------------------------------------------------------------------
+// ============================================================================
