@@ -10,7 +10,9 @@ import logging
 import Scripts.osmbundler
 import time
 import Scripts.osmcmvs
-import Scripts.plyMerger
+import subprocess
+from Scripts import plyMerger as plyMerger 
+from Scripts import ply2npts as ply2npts
 
 currentPath = os.getcwd()
 distrPath = os.path.dirname( os.path.abspath(sys.argv[0]) )
@@ -37,7 +39,7 @@ print "###############################"
 print "##       RedClouds :)        ##"
 print "###############################"
 
-Benchmark = []
+Benchmark = {}
 
 #Options + Dossier temporaires
 working_dir = os.path.dirname(os.path.realpath(sys.argv[0]));
@@ -65,16 +67,19 @@ print "## PreparePhotos:"
 start = time.time()
 manager.preparePhotos()
 print "--> Done in: ", time.time() - start, "secs" 
+Benchmark["PreparePhotos"] = time.time() - start
 
 print "## MatchFeatures:"
 start = time.time()
 manager.matchFeatures()
 print "--> Done in: ", time.time() - start, "secs" 
+Benchmark["MatchFeatures"] = time.time() - start
 
 print "## DoBundleAdjustment:"
 start = time.time()
 manager.doBundleAdjustment()
 print "--> Done in: ", time.time() - start, "secs" 
+Benchmark["BundleAdjustment"] = time.time() - start
 
 print "## doCMVS:"
 start = time.time()
@@ -82,31 +87,36 @@ manager = Scripts.osmcmvs.OsmCmvs(resultDir, binDirPath)
 manager.doBundle2PMVS()
 manager.doCMVS()
 print "--> Done in: ", time.time() - start, "secs" 
+Benchmark["CMVS"] = time.time() - start
 
-print "LOL"
-
-print "## CMVS Fusion:"
+print "## plyMerge:"
 start = time.time()
 redCouldDir = os.path.join(resultDir, "RedClouds") 
 if (not os.path.exists(redCouldDir)):
     os.mkdir(redCouldDir)
 print resultDir
 modelsDir = os.path.join(resultDir, "pmvs", "models")
-Scripts.plyMerger.plyFusion(modelsDir, os.path.join(redCouldDir, "fusion.ply"))
+plyMerge = os.path.join(redCouldDir, "merge.ply")
+plyMerger.plyFusion(modelsDir, plyMerge)
 print "--> Done in: ", time.time() - start, "secs" 
+Benchmark["plyMerge"] = time.time() - start
 
-#PoissonRecon
-'''
-sys.argv=[working_dir + "\PoissonRecon\ply2npts.py",
-          bundler_tmp + "\cmvs.ply"]
-exec(open(working_dir + "\PoissonRecon\ply2npts.py").read())
+print "## ply2npts:"
+start = time.time()
+nptsFile = os.path.join(redCouldDir, "merge.npts")
+ply2npts.ply2npts(plyMerge, nptsFile)
+print "--> Done in: ", time.time() - start, "secs" 
+Benchmark["ply2npts"] = time.time() - start
 
-os.system(working_dir + "\PoissonRecon\PoissonRecon.exe --in " + bundler_tmp + "\cmvs.npts " +
-	"--out " + optim_tmp + "\mesh.ply" + " --depth 11")
-'''
-
-#cleaning
-#FIXME
+print "## PoissonRecon:"
+start = time.time()
+poissonReconExecutable = os.path.join(binDirPath, "PoissonRecon")
+plyPoisson = os.path.join(redCouldDir, "poisson.ply")
+print nptsFile
+print plyPoisson
+subprocess.call([poissonReconExecutable, "--in" , nptsFile, "--out", plyPoisson, "--depth",  "11"])
+print "--> Done in: ", time.time() - start, "secs" 
+Benchmark["PoissonRecon"] = time.time() - start
 
 #MeshSimplification
 
@@ -118,8 +128,6 @@ os.system(working_dir + "\Simplifier\QuadricBasedMeshSimplifier.exe " + optim_tm
 
 os.system(working_dir + "\VertexRecolor\VertexRecolor.exe " + bundler_tmp + "\cmvs.ply "
 	+ optim_tmp + "\mesh_simplified.ply " + optim_tmp + "\mesh_recolor.ply")
-
-
 
 
 #TextureMaker
