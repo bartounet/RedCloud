@@ -113,12 +113,25 @@ print "## PoissonRecon:"
 start = time.time()
 poissonReconExecutable = os.path.join(binDirPath, "PoissonRecon")
 plyPoisson = os.path.join(redCouldDir, "poisson.ply")
-print nptsFile
-print plyPoisson
 subprocess.call([poissonReconExecutable, "--in" , nptsFile, "--out", plyPoisson, "--depth",  "11"])
 print "--> Done in: ", time.time() - start, "secs" 
 Benchmark["PoissonRecon"] = time.time() - start
 
+print "## Cleaner:"
+start = time.time()
+cleanerExecutable = os.path.join(binDirPath, "Cleaner")
+plyClean = os.path.join(redCouldDir, "clean.ply")
+subprocess.call([cleanerExecutable, "-v" , plyPoisson, plyClean])
+print "--> Done in: ", time.time() - start, "secs" 
+Benchmark["Cleaner"] = time.time() - start
+
+print "## Simplifier:"
+start = time.time()
+simplifierExecutable = os.path.join(binDirPath, "qbms_final")
+plySimplify = os.path.join(redCouldDir, "clean.ply")
+subprocess.call([simplifierExecutable, plyClean, plySimplify])
+print "--> Done in: ", time.time() - start, "secs" 
+Benchmark["Simplifier"] = time.time() - start
 
 print Benchmark
 
