@@ -13,34 +13,52 @@
 namespace Com
 {
 // ----------------------------------------------------------------------------
-struct Vertex
+struct VertexPOD // needed for C++ compatibily with offsetof() macro
 {
 	float x, y, z; // position
 	float nx, ny, nz; // normal
 	uchar r, g, b; // color
-
-	Vertex(const Vec4& parPos) :
-		x((float)parPos.x), y((float)parPos.y), z((float)parPos.z),
-		nx(0.0f), ny(0.0f), nz(0.0f),
-		r(255), g(0), b(0)
+};
+// ----------------------------------------------------------------------------
+struct Vertex : public VertexPOD
+{
+	Vertex(const Vec4& parPos)
 	{
+		x = (float) parPos.x;
+		y = (float) parPos.y;
+		z = (float) parPos.z;
+		nx = 0.f;
+		ny = 0.f;
+		nz = 0.f;
+		r = 255;
+		g = 0;
+		b = 0;
 	}
 
-	Vertex() :
-		x(0.0f), y(0.0f), z(0.0f),
-		nx(0.0f), ny(0.0f), nz(0.0f),
-		r(255), g(0), b(0)
+	Vertex()
 	{
+		x = 0.f;
+		y = 0.f;
+		z = 0.f;
+		nx = 0.f;
+		ny = 0.f;
+		nz = 0.f;
+		r = 255;
+		g = 0;
+		b = 0;
 	}
 };
 // ----------------------------------------------------------------------------
 // Bart: As we only work with triangles I would prefer another form, but we have
 // to follow the ply file format style (... then the parsing is easier ...)
-struct Face 
+struct FacePOD // needed for C++ compatibily with offsetof() macro
 {
 	int *vertices;
 	uchar nbVertices;
-
+};
+// ----------------------------------------------------------------------------
+struct Face : public FacePOD
+{
 	Face(uint parV0, uint parV1, uint parV2)
 	{
 		nbVertices = (uchar) 3;
@@ -51,10 +69,10 @@ struct Face
 		vertices[2] = (int) parV2;
 	}
 
-	Face() :
-		vertices(0),
-		nbVertices(0)
+	Face()
 	{
+		vertices = 0;
+		nbVertices = 0;
 	}
 };
 // ----------------------------------------------------------------------------

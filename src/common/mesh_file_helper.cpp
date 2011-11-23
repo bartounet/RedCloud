@@ -16,21 +16,21 @@ namespace MeshFileHelper
 // ============================================================================
 static PlyProperty vertProps[] =
 {
-	{"x", PLY_FLOAT, PLY_FLOAT, offsetof(Vertex,x), 0, 0, 0, 0},
-	{"y", PLY_FLOAT, PLY_FLOAT, offsetof(Vertex,y), 0, 0, 0, 0},
-	{"z", PLY_FLOAT, PLY_FLOAT, offsetof(Vertex,z), 0, 0, 0, 0},
-	{"nx", PLY_FLOAT, PLY_FLOAT, offsetof(Vertex,nx), 0, 0, 0, 0},
-	{"ny", PLY_FLOAT, PLY_FLOAT, offsetof(Vertex,ny), 0, 0, 0, 0},
-	{"nz", PLY_FLOAT, PLY_FLOAT, offsetof(Vertex,nz), 0, 0, 0, 0},
-	{"diffuse_red", PLY_UCHAR, PLY_UCHAR, offsetof(Vertex,r), 0, 0, 0, 0},
-	{"diffuse_green", PLY_UCHAR, PLY_UCHAR, offsetof(Vertex,g), 0, 0, 0, 0},
-	{"diffuse_blue", PLY_UCHAR, PLY_UCHAR, offsetof(Vertex,b), 0, 0, 0, 0},
+	{"x", PLY_FLOAT, PLY_FLOAT, offsetof(VertexPOD,x), 0, 0, 0, 0},
+	{"y", PLY_FLOAT, PLY_FLOAT, offsetof(VertexPOD,y), 0, 0, 0, 0},
+	{"z", PLY_FLOAT, PLY_FLOAT, offsetof(VertexPOD,z), 0, 0, 0, 0},
+	{"nx", PLY_FLOAT, PLY_FLOAT, offsetof(VertexPOD,nx), 0, 0, 0, 0},
+	{"ny", PLY_FLOAT, PLY_FLOAT, offsetof(VertexPOD,ny), 0, 0, 0, 0},
+	{"nz", PLY_FLOAT, PLY_FLOAT, offsetof(VertexPOD,nz), 0, 0, 0, 0},
+	{"diffuse_red", PLY_UCHAR, PLY_UCHAR, offsetof(VertexPOD,r), 0, 0, 0, 0},
+	{"diffuse_green", PLY_UCHAR, PLY_UCHAR, offsetof(VertexPOD,g), 0, 0, 0, 0},
+	{"diffuse_blue", PLY_UCHAR, PLY_UCHAR, offsetof(VertexPOD,b), 0, 0, 0, 0},
 };
 // ----------------------------------------------------------------------------
 static PlyProperty faceProps[] =
 {
-	{"vertex_indices", PLY_INT, PLY_INT, offsetof(Face,vertices),
-		1, PLY_UCHAR, PLY_UCHAR, offsetof(Face,nbVertices)},
+	{"vertex_indices", PLY_INT, PLY_INT, offsetof(FacePOD,vertices),
+		1, PLY_UCHAR, PLY_UCHAR, offsetof(FacePOD,nbVertices)},
 };
 // ============================================================================
 // ----------------------------------------------------------------------------
