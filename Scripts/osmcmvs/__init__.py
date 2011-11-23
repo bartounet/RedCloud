@@ -34,17 +34,12 @@ class OsmCmvs():
 
         self.bundleOutArg = workDir
         self.clusterToCompute = 20 #FIXXXXXXXX
- 
-        cmvsBinDir = os.path.join(binDirPath, "Cmvs")
-        self.pmvsExecutable = getExecPath(cmvsBinDir, "pmvs2")
-        self.cmvsExecutable = getExecPath(cmvsBinDir, "cmvs")
-        self.genOptionExecutable = getExecPath(cmvsBinDir, "genOption")
-
-        bundlerBinPath = os.path.join(binDirPath, "Bundler")
-        self.bundler2PmvsExecutable = getExecPath(bundlerBinPath, "Bundle2PMVS")
-        print self.bundler2PmvsExecutable
-        self.RadialUndistordExecutable = getExecPath(bundlerBinPath, "RadialUndistort")
-        self.Bundle2VisExecutable = getExecPath(bundlerBinPath, "Bundle2Vis")
+        self.pmvsExecutable = getExecPath(binDirPath, "pmvs2")
+        self.cmvsExecutable = getExecPath(binDirPath, "cmvs")
+        self.genOptionExecutable = getExecPath(binDirPath, "genOption")
+        self.bundler2PmvsExecutable = getExecPath(binDirPath, "Bundle2PMVS")
+        self.RadialUndistordExecutable = getExecPath(binDirPath, "RadialUndistort")
+        self.Bundle2VisExecutable = getExecPath(binDirPath, "Bundle2Vis")
      
 #        self.parseCommandLineFlags()
 
@@ -121,8 +116,6 @@ class OsmCmvs():
     
     def doCMVS(self):
       os.chdir(os.path.join(self.workDir,"pmvs"))
-      print self.cmvsExecutable
-      print self.genOptionExecutable
       subprocess.call([self.cmvsExecutable, "./", str(self.clusterToCompute)])
       print "--------------------------------------"
       subprocess.call([self.genOptionExecutable, "./"])

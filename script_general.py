@@ -16,11 +16,6 @@ currentPath = os.getcwd()
 distrPath = os.path.dirname( os.path.abspath(sys.argv[0]) )
 binDirPath =  os.path.join(distrPath, "Bin")
 
-if sys.platform == "win32": 
-    binDirPath =  os.path.join(binDirPath, "Windows")
-else:
-    binDirPath =  os.path.join(binDirPath, "Linux")
-
 def Usage() :
 	print("Usage : ./ScriptGeneral <Dossier Photos> <Dossier de sortie>");
 	sys.exit(1);
@@ -72,7 +67,7 @@ manager.preparePhotos()
 print "--> Done in: ", time.time() - start, "secs" 
 
 print "## MatchFeatures:"
-start = time.clock()
+start = time.time()
 manager.matchFeatures()
 print "--> Done in: ", time.time() - start, "secs" 
 

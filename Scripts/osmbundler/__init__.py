@@ -245,7 +245,7 @@ class OsmBundler():
             raise Exception, "Unable initialize feature extractor %s" % self.featureExtractor
 
     def initBundler(self):
-        self.bundlerExecutable = os.path.join(self.binDirPath, "Bundler/bundler")
+        self.bundlerExecutable = os.path.join(self.binDirPath, "bundler")
         print "----------------", self.bundlerExecutable
 
     def extractFeatures(self, photo):

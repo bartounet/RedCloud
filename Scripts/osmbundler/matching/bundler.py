@@ -9,9 +9,9 @@ class BundlerMatching(MatchingEngine):
     
     def __init__(self, distrDir):
         if sys.platform == "win32":
-            self.executable = os.path.join(distrDir, "bundler/bin/KeyMatchFull.exe")
+            self.executable = os.path.join(distrDir, "KeyMatchFull.exe")
         else:
-            self.executable = os.path.join(distrDir, "Bundler/KeyMatchFull")
+            self.executable = os.path.join(distrDir, "KeyMatchFull")
         logging.info("BundlerMatching executable path: %s" % self.executable)
 
     def match(self):
