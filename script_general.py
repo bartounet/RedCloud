@@ -7,10 +7,11 @@ import getopt
 import os
 import shutil
 import logging
-import Scripts.osmbundler
 import time
-import Scripts.osmcmvs
 import subprocess
+
+from Scripts import osmcmvs as osmcmvs 
+from Scripts import osmbundler as osmbundler 
 from Scripts import plyMerger as plyMerger 
 from Scripts import ply2npts as ply2npts
 
@@ -61,7 +62,7 @@ print "## initialize OsmBundler manager class:"
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 # initialize OsmBundler manager class
-manager = Scripts.osmbundler.OsmBundler(photoDir, resultDir, binDirPath)
+manager = osmbundler.OsmBundler(photoDir, resultDir, binDirPath)
 print resultDir
 print "## PreparePhotos:"
 start = time.time()
@@ -83,7 +84,7 @@ Benchmark["BundleAdjustment"] = time.time() - start
 
 print "## doCMVS:"
 start = time.time()
-manager = Scripts.osmcmvs.OsmCmvs(resultDir, binDirPath)
+manager = osmcmvs.OsmCmvs(resultDir, binDirPath)
 manager.doBundle2PMVS()
 manager.doCMVS()
 print "--> Done in: ", time.time() - start, "secs" 
@@ -117,6 +118,9 @@ print plyPoisson
 subprocess.call([poissonReconExecutable, "--in" , nptsFile, "--out", plyPoisson, "--depth",  "11"])
 print "--> Done in: ", time.time() - start, "secs" 
 Benchmark["PoissonRecon"] = time.time() - start
+
+
+print Benchmark
 
 #MeshSimplification
 
