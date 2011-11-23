@@ -9,8 +9,8 @@
 *.pyc
 Res/*
 bin/*
-dataset/*
-output/*
+datasets/*
+outputs/*
 *.ncb
 *.suo
 Makefile.rules
