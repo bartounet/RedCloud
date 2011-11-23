@@ -38,7 +38,7 @@ WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 #include <string.h>
 #include "ply.h"
 
-char *type_names[] = {
+const char *type_names[] = {
 "invalid",
 "char", "short", "int",
 "uchar", "ushort", "uint",
@@ -59,10 +59,10 @@ int ply_type_size[] = {
 
 
 /* returns 1 if strings are equal, 0 if not */
-int equal_strings(char *, char *);
+int equal_strings(const char *, const char *);
 
 /* find an element in a plyfile's list */
-PlyElement *find_element(PlyFile *, char *);
+PlyElement *find_element(PlyFile *, const char *);
 
 /* find a property in an element's list */
 PlyProperty *find_property(PlyElement *, char *, int *);
@@ -106,7 +106,7 @@ void ascii_get_element(PlyFile *, char *);
 void binary_get_element(PlyFile *, char *);
 
 /* memory allocation */
-static char *my_alloc(int, int, char *);
+static char *my_alloc(int, int, const char *);
 
 
 /*************/
@@ -130,7 +130,7 @@ Exit:
 PlyFile *ply_write(
   FILE *fp,
   int nelems,
-  char **elem_names,
+  const char **elem_names,
   int file_type
 )
 {
@@ -188,9 +188,9 @@ Exit:
 ******************************************************************************/
 
 PlyFile *ply_open_for_writing(
-  char *filename,
+  const char *filename,
   int nelems,
-  char **elem_names,
+  const char **elem_names,
   int file_type,
   float *version
 )
@@ -287,7 +287,7 @@ Entry:
 
 void ply_describe_property(
   PlyFile *plyfile,
-  char *elem_name,
+  const char *elem_name,
   PlyProperty *prop
 )
 {
@@ -393,7 +393,7 @@ Entry:
 
 void ply_element_count(
   PlyFile *plyfile,
-  char *elem_name,
+  const char *elem_name,
   int nelems
 )
 {
@@ -491,7 +491,7 @@ Entry:
   elem_name - name of element we're talking about
 ******************************************************************************/
 
-void ply_put_element_setup(PlyFile *plyfile, char *elem_name)
+void ply_put_element_setup(PlyFile *plyfile, const char *elem_name)
 {
   PlyElement *elem;
 
@@ -628,7 +628,7 @@ Entry:
   comment - the comment to be written
 ******************************************************************************/
 
-void ply_put_comment(PlyFile *plyfile, char *comment)
+void ply_put_comment(PlyFile *plyfile, const char *comment)
 {
   /* (re)allocate space for new comment */
   if (plyfile->num_comments == 0)
@@ -866,7 +866,7 @@ Exit:
 
 PlyProperty **ply_get_element_description(
   PlyFile *plyfile,
-  char *elem_name,
+  const char *elem_name,
   int *nelems,
   int *nprops
 )
@@ -961,7 +961,7 @@ Entry:
 
 void ply_get_property(
   PlyFile *plyfile,
-  char *elem_name,
+  const char *elem_name,
   PlyProperty *prop
 )
 {
@@ -1064,6 +1064,8 @@ void setup_other_props(PlyFile *plyfile, PlyElement *elem)
   PlyProperty *prop;
   int size = 0;
   int type_size;
+
+  plyfile = plyfile; // FIXME: avoid warning (unused variable)
 
   /* Examine each property in decreasing order of size. */
   /* We do this so that all data types will be aligned by */
@@ -1363,7 +1365,7 @@ Entry:
 
 void ply_free_other_elements (PlyOtherElems *other_elems)
 {
-
+	other_elems = other_elems; // FIXME: avoid warning (unused variable)
 }
 
 
@@ -1415,7 +1417,7 @@ void ply_get_info(PlyFile *ply, float *version, int *file_type)
 Compare two strings.  Returns 1 if they are the same, 0 if not.
 ******************************************************************************/
 
-int equal_strings(char *s1, char *s2)
+int equal_strings(const char *s1, const char *s2)
 {
   while (*s1 && *s2)
     if (*s1++ != *s2++)
@@ -1439,7 +1441,7 @@ Exit:
   returns the element, or NULL if not found
 ******************************************************************************/
 
-PlyElement *find_element(PlyFile *plyfile, char *element)
+PlyElement *find_element(PlyFile *plyfile, const char *element)
 {
   int i;
 
@@ -1494,7 +1496,7 @@ void ascii_get_element(PlyFile *plyfile, char *elem_ptr)
   char **words;
   int nwords;
   int which_word;
-  FILE *fp = plyfile->fp;
+  //FILE *fp = plyfile->fp; // FIXME: avoid warnings (unused variable)
   char *elem_data,*item;
   char *item_ptr;
   int item_size;
@@ -2356,6 +2358,7 @@ Entry:
 void add_element (PlyFile *plyfile, char **words, int nwords)
 {
   PlyElement *elem;
+  nwords = nwords; // FIXME: avoid warnings (unused variable)	
 
   /* create the new element */
   elem = (PlyElement *) myalloc (sizeof (PlyElement));
@@ -2416,6 +2419,8 @@ void add_property (PlyFile *plyfile, char **words, int nwords)
 {
   PlyProperty *prop;
   PlyElement *elem;
+
+  nwords = nwords; // FIXME: avoid warning (unused variable)
 
   /* create the new property */
 
@@ -2529,7 +2534,7 @@ Entry:
   fname - file name from which memory was requested
 ******************************************************************************/
 
-static char *my_alloc(int size, int lnum, char *fname)
+static char *my_alloc(int size, int lnum, const char *fname)
 {
   char *ptr;
 
