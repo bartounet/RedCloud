@@ -70,6 +70,44 @@ struct Mesh
 			delete faces[face].vertices;
 		printf("[+] Mesh freed\n");
 	}
+
+#ifdef JO_FIXME
+/*
+** Does 2 things : updates the faces after vertices swap, and gets the faces that contain the vertex which is
+** going to be deleted
+*/
+	void updateFacesToBeDeleted(size_t parToBeDeleted, size_t parToMove, std::vector<size_t>& facesToFill)
+	{
+		for (size_t curFace = 0; curFace < faces.size(); curFace++)
+			for (int i = 0; i < 3; i++)
+				if (faces[curFace].vertices[i] == parToBeDeleted)
+				{
+					faces[curFace].vertices[i] = parToMove;
+					facesToFill.push_back(curFace);
+				}
+				else if (faces[curFace].vertices[i] == parToMove)
+					faces[curFace].vertices[i] = parToBeDeleted;
+	}
+/*
+** Does 2 things : updates the faces after vertices merge, and gets the faces that are degenerated
+*/
+	void mergeVerticesInFaces(size_t parToBeMerged, size_t parToMerge, std::vector<size_t>& facesToFill)
+	{
+		for (size_t curFace = 0; curFace < faces.size(); curFace++)
+			for (int i = 0; i < 3; i++)
+				if (faces[curFace].vertices[i] == parToBeMerged)
+					faces[curFace].vertices[i] = parToMerge;
+	}
+
+	// Awful to code there, but it's temporary
+	void swapVertex(size_t parToBeDeleted, size_t parToMove)
+	{
+		Vertex tmp;
+		tmp = vertices[parToBeDeleted];
+		vertices[parToBeDeleted] = vertices[parToMove];
+		vertices[parToMove] = tmp;
+	}
+#endif
 };
 // ----------------------------------------------------------------------------
 }

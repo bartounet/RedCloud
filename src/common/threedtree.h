@@ -33,6 +33,28 @@ public:
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
+#ifdef JO_FIXME
+class ThreeDNode : public Node
+{
+public:
+	ThreeDNode(std::pair<const Vertex*, size_t> parVertex, AlignedAxisDir parDir);
+	virtual ~ThreeDNode();
+
+public:
+	static Node* BuildTree(const std::vector<std::pair<const Vertex*, size_t> >& parVertices, int parDepth);
+	static void NearestNeighbor(const Node* parNode,
+								const Vertex& parTarget,
+								int parDepth,
+								float& minDist,
+								size_t* minVertexIndex);
+
+private:
+	AlignedAxisDir dir_;
+	std::pair<const Vertex*, size_t> vertex_;
+	Node* left_; // lesser and equal
+	Node* right_; // greater
+};
+#else
 class ThreeDNode : public Node
 {
 public:
@@ -53,9 +75,23 @@ private:
 	Node* left_; // lesser and equal
 	Node* right_; // greater
 };
+#endif
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
+#ifdef JO_FIXME
+class LeafNode : public Node
+{
+public:
+	LeafNode(const std::vector<std::pair<const Vertex*, size_t> > parVertices);
+	virtual ~LeafNode();
+
+	const std::vector<std::pair<const Vertex*, size_t> >& Vertices() const { return vertices_; }
+
+private:
+	std::vector<std::pair<const Vertex*, size_t> > vertices_;
+};
+#else
 class LeafNode : public Node
 {
 public:
@@ -67,6 +103,7 @@ public:
 private:
 	std::vector<const Vertex*> vertices_;
 };
+#endif
 // ----------------------------------------------------------------------------
 }
 // ============================================================================
