@@ -1,6 +1,6 @@
 
 #include "quadric.h"
-#include "../VertexRecolor/types.h"
+#include "../common/types.h"
 
 
 // ============================================================================

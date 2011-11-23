@@ -12,7 +12,7 @@ namespace QBMS
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
-Mesh::Mesh(const VR::Mesh& parVRMesh)
+Mesh::Mesh(const Com::Mesh& parVRMesh)
 {
 	printf("[ ] Constructing Mesh from VRMesh\n");
 
@@ -114,7 +114,7 @@ void Mesh::ReassignVerticesIdAndSetDeleteUnusedVertices_()
 	printf("[+] Vertex Id reassigned...\n");
 }
 // ----------------------------------------------------------------------------
-void Mesh::ExportToVRMesh(VR::Mesh& parDstMesh) const
+void Mesh::ExportToVRMesh(Com::Mesh& parDstMesh) const
 {
 	assert(parDstMesh.faces.size() == 0);
 	assert(parDstMesh.vertices.size() == 0);
@@ -124,7 +124,7 @@ void Mesh::ExportToVRMesh(VR::Mesh& parDstMesh) const
 		const Face& face = faces_[curFace];
 		if (!face.IsDegenerated())
 		{
-			parDstMesh.faces.push_back(VR::Face(face.V0()->Id(), 
+			parDstMesh.faces.push_back(Com::Face(face.V0()->Id(), 
 												face.V1()->Id(),
 												face.V2()->Id()));
 		}
@@ -134,7 +134,7 @@ void Mesh::ExportToVRMesh(VR::Mesh& parDstMesh) const
 	{
 		const Vertex& vertex = vertices_[curVertex];
 		if (!vertex.DeleteMe())
-			parDstMesh.vertices.push_back(VR::Vertex(vertex.Pos()));
+			parDstMesh.vertices.push_back(Com::Vertex(vertex.Pos()));
 	}
 }
 // ----------------------------------------------------------------------------
@@ -145,7 +145,7 @@ void Mesh::ComputeInitialQuadrics()
 	for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
 	{
 		Vertex& vertex = vertices_[curVertex];
-		std::vector<VR::Vec4> planes;
+		std::vector<Com::Vec4> planes;
 
 		// for each incident faces, compute the plane
 		for (uint curFace = 0; curFace < vertex.IncidentFaces().size(); ++curFace)
@@ -156,19 +156,19 @@ void Mesh::ComputeInitialQuadrics()
 			const Vertex& v1 = *face->V1();
 			const Vertex& v2 = *face->V2();
 
-			VR::Vec4 edge1(v0.Pos(), v1.Pos());
+			Com::Vec4 edge1(v0.Pos(), v1.Pos());
 			assert(edge1.Length() > 0.0); // no degenerated edge ?
-			VR::Vec4 edge2(v0.Pos(), v2.Pos());
+			Com::Vec4 edge2(v0.Pos(), v2.Pos());
 			assert(edge2.Length() > 0.0); // no degenerated edge ?
 
-			VR::Vec4 normal = VR::Vec4::CrossProduct(edge1, edge2);
-			normal = VR::Vec4::Normalize(normal);
+			Com::Vec4 normal = Com::Vec4::CrossProduct(edge1, edge2);
+			normal = Com::Vec4::Normalize(normal);
 
 			double dPlaneComponent = normal.x * vertex.Pos().x;
 			dPlaneComponent += normal.y * vertex.Pos().y;
 			dPlaneComponent += normal.z * vertex.Pos().z;
 			dPlaneComponent *= -1.0;
-			VR::Vec4 newPlane(normal.x, normal.y, normal.z, dPlaneComponent);
+			Com::Vec4 newPlane(normal.x, normal.y, normal.z, dPlaneComponent);
 			planes.push_back(newPlane);
 		}
 
@@ -176,7 +176,7 @@ void Mesh::ComputeInitialQuadrics()
 		Quadric quadric;
 		for (uint curPlane = 0; curPlane < planes.size(); ++curPlane)
 		{
-			const VR::Vec4& p = planes[curPlane];
+			const Com::Vec4& p = planes[curPlane];
 			double vals[] = {p.x*p.x, p.x*p.y, p.x*p.z, p.x*p.w,
 							p.y*p.y, p.y*p.z, p.y*p.w, 
 							p.z*p.z, p.z*p.w,

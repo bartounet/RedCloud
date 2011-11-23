@@ -2,7 +2,7 @@
 #define MESH_H_
 
 
-#include "../VertexRecolor/geometry.h"
+#include "../common/geometry.h"
 #include "vertex.h"
 #include "face.h"
 #include "vertex_pair_heap.h"
@@ -21,11 +21,11 @@ public:
 	typedef std::pair<Vertex*, Vertex*> PairType;
 
 public:
-	Mesh(const VR::Mesh& parVRMesh);
+	Mesh(const Com::Mesh& parVRMesh);
 	~Mesh();
 
 public:
-	void ExportToVRMesh(VR::Mesh& parDstMesh) const;
+	void ExportToVRMesh(Com::Mesh& parDstMesh) const;
 	void ComputeInitialQuadrics();
 	void SelectAndComputeVertexPairs();
 	void Simplify(uint parMaxFaces);

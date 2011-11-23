@@ -1,7 +1,7 @@
 #ifndef VERTEX_PAIR_HEAP_H_
 
 
-#include "../VertexRecolor/types.h"
+#include "../common/types.h"
 #include <vector>
 
 

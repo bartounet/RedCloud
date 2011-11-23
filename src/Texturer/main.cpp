@@ -13,7 +13,7 @@
 #include "World.h"
 #include "Texture.h"
 
-#include "mesh_file_helper.h"
+#include "../common/mesh_file_helper.h"
 
 bool load_point_cloud (std::string filename, std::vector<Point3dColor* >& points, Point3d& min, Point3d& max)
 {
@@ -21,8 +21,8 @@ bool load_point_cloud (std::string filename, std::vector<Point3dColor* >& points
     strncpy (cfilename, filename.c_str (), filename.size ());
     cfilename[filename.size ()] = '\0';
 
-    VR::Mesh mesh;
-	bool result = VR::MeshFileHelper::LoadMeshFromPlyFile(mesh, cfilename);
+    Com::Mesh mesh;
+	bool result = Com::MeshFileHelper::LoadMeshFromPlyFile(mesh, cfilename);
 	if (!result)
 	{
 		printf("[-] Failed to load triangularized mesh '%s'\n", filename.c_str());
@@ -52,8 +52,8 @@ bool load_faces (std::string filename, std::vector<Face* >& faces, std::vector<P
     strncpy (cfilename, filename.c_str (), filename.size ());
     cfilename[filename.size ()] = '\0';
 
-    VR::Mesh mesh;
-	bool result = VR::MeshFileHelper::LoadMeshFromPlyFile(mesh, cfilename);
+    Com::Mesh mesh;
+	bool result = Com::MeshFileHelper::LoadMeshFromPlyFile(mesh, cfilename);
 	if (!result)
 	{
 		printf("[-] Failed to load triangularized mesh '%s'\n", filename.c_str());

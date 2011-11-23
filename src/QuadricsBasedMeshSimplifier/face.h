@@ -2,7 +2,7 @@
 #define FACE_H_
 
 
-#include "../VertexRecolor/geometry.h"
+#include "../common/geometry.h"
 
 
 // ============================================================================

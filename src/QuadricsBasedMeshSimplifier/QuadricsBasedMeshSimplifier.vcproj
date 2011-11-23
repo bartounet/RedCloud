@@ -245,11 +245,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\VertexRecolor\mesh_file_helper.cpp"
+				RelativePath="..\common\mesh_file_helper.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\VertexRecolor\ply.c"
+				RelativePath="..\common\ply.c"
 				>
 			</File>
 			<File
@@ -279,19 +279,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\VertexRecolor\geometry.h"
-				>
-			</File>
-			<File
 				RelativePath=".\mesh.h"
 				>
 			</File>
 			<File
-				RelativePath="..\VertexRecolor\mesh_file_helper.h"
+				RelativePath="..\common\mesh_file_helper.h"
 				>
 			</File>
 			<File
-				RelativePath="..\VertexRecolor\ply.h"
+				RelativePath="..\common\ply.h"
 				>
 			</File>
 			<File
@@ -299,7 +295,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\VertexRecolor\types.h"
+				RelativePath="..\common\types.h"
 				>
 			</File>
 			<File

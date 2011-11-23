@@ -46,12 +46,12 @@ public:
 
 private:
 	void ComputeOptimalPos_();
-	double ComputeQuadricError_(const VR::Vec4& parPos) const;
+	double ComputeQuadricError_(const Com::Vec4& parPos) const;
 
 private:
 	Vertex* v0_;
 	Vertex* v1_;
-	VR::Vec4 pos_;
+	Com::Vec4 pos_;
 	Quadric quadric_;
 
 	double quadricError_;

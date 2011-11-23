@@ -2,7 +2,7 @@
 #define COLOR_H_INCLUDED
 
 
-#include "../VertexRecolor/types.h"
+#include "../common/types.h"
 #include <iostream>
 
 

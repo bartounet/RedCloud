@@ -1,7 +1,7 @@
 
 #include "vertex_recolor.h"
-#include "mesh_file_helper.h"
-#include "threedtree.h"
+#include "../common/mesh_file_helper.h"
+#include "../common/threedtree.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -11,7 +11,9 @@ namespace VR
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
-void VertexRecolor(Mesh& parFinalMesh, const Mesh& parColoredMesh, const Mesh& parTriMesh)
+void VertexRecolor(Com::Mesh&		parFinalMesh,
+				   const Com::Mesh& parColoredMesh,
+				   const Com::Mesh& parTriMesh)
 {
 	assert(parFinalMesh.vertices.size() == 0);
 	assert(parFinalMesh.faces.size() == 0);
@@ -20,15 +22,15 @@ void VertexRecolor(Mesh& parFinalMesh, const Mesh& parColoredMesh, const Mesh& p
 	assert(parTriMesh.vertices.size() > 0);
 	assert(parTriMesh.faces.size() > 0);
 
-	MeshFileHelper::DeepCopyMesh(parFinalMesh, parTriMesh);
+	Com::MeshFileHelper::DeepCopyMesh(parFinalMesh, parTriMesh);
 
 	printf("\t[ ] Building 3d-Tree...\n");
 
-	std::vector<const Vertex*> verticesPtr;
+	std::vector<const Com::Vertex*> verticesPtr;
 	for (size_t curVertex = 0; curVertex < parColoredMesh.vertices.size(); ++curVertex)
 		verticesPtr.push_back(&parColoredMesh.vertices[curVertex]);
 
-	ThreeDNode* tree = static_cast<ThreeDNode*>( ThreeDNode::BuildTree(verticesPtr, 0) );
+	Com::ThreeDNode* tree = static_cast<Com::ThreeDNode*>( Com::ThreeDNode::BuildTree(verticesPtr, 0) );
 
 	printf("\t[+] 3D-Tree build\n");
 
@@ -43,10 +45,10 @@ void VertexRecolor(Mesh& parFinalMesh, const Mesh& parColoredMesh, const Mesh& p
 			curDecimalPercent++;
 		}
 
-		Vertex& dstVertex = parFinalMesh.vertices[curDstVertex];
-		const Vertex* nearestVertex = &parColoredMesh.vertices[0];
+		Com::Vertex& dstVertex = parFinalMesh.vertices[curDstVertex];
+		const Com::Vertex* nearestVertex = &parColoredMesh.vertices[0];
 		float minDist = 10000000.f;
-		ThreeDNode::NearestNeighbor(tree, dstVertex, 0, minDist, &nearestVertex);
+		Com::ThreeDNode::NearestNeighbor(tree, dstVertex, 0, minDist, &nearestVertex);
 		dstVertex.r = nearestVertex->r;
 		dstVertex.g = nearestVertex->g;
 		dstVertex.b = nearestVertex->b;

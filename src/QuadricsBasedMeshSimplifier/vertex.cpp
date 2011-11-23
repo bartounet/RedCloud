@@ -10,7 +10,7 @@ namespace QBMS
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
-Vertex::Vertex(const VR::Vertex& parVertex, uint parId) :
+Vertex::Vertex(const Com::Vertex& parVertex, uint parId) :
 	pos_((double)parVertex.x, (double)parVertex.y, (double)parVertex.z, 1.0f),
 	id_(parId),
 	deleteMe_(false)
