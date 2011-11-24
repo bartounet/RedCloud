@@ -35,6 +35,14 @@ int main(int argc, char **argv)
 
 	QBMS::Mesh mesh(srcMesh);
 
+	printf("[ ] Checking zero area faces\n");
+	if (mesh.HasZeroAreaSurfaceFaces())
+	{
+		printf("[-] Zero area faces found! Abort...\n");
+		exit(2);
+	}
+	printf("[+] No degenerated faces found\n");
+
 	mesh.ComputeInitialQuadrics();
 	mesh.SelectAndComputeVertexPairs();
 	mesh.Simplify(20000);

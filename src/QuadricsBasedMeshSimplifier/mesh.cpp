@@ -227,9 +227,18 @@ uint Mesh::NbValidFaces_() const
 	return nbValidFaces;
 }
 // ---------------------------------------------------------------------------
+bool Mesh::HasZeroAreaSurfaceFaces() const
+{
+	for (uint curFace = 0; curFace < faces_.size(); ++curFace)
+		if (faces_[curFace].HasZeroAreaSurface())
+			return true;
+	return false;
+}
+// ---------------------------------------------------------------------------
 void Mesh::Simplify(uint parMaxFaces)
 {
 	assert(parMaxFaces > 0); // the simpliest mesh will be a triangle
+	assert(!HasZeroAreaSurfaceFaces());
 	assert(faces_.size() > parMaxFaces);
 
 	printf("[ ] Simplifying mesh...\n");
@@ -247,17 +256,16 @@ void Mesh::Simplify(uint parMaxFaces)
 		assert(!pair->V1()->DeleteMe());
 
 #if 0
-		//if ((curNbFaces & 127) == 0)
+		if ((curNbFaces & 1023) == 0)
 			printf("curNbFaces: %d\n", curNbFaces);
 		//printf("contracting: %d -> %d\n", pair->V0()->Id(), pair->V1()->Id());
-		if ((nbContractions & 127) == 0)
-			printf("\tfaces: %d\n", NbValidFaces_());
 #endif
 
 		std::vector<VertexPair*> deletePairs;
 		std::vector<VertexPair*> updatePairs;
 
-		curNbFaces -= pair->Contract(deletePairs, updatePairs);
+		uint nbFaceDeleted = pair->Contract(deletePairs, updatePairs);
+		curNbFaces -= nbFaceDeleted;
 
 		pairsHeap_.Delete(deletePairs);
 		pairsHeap_.Update(updatePairs);
@@ -267,6 +275,7 @@ void Mesh::Simplify(uint parMaxFaces)
 	}
 
 	assert(NbValidFaces_() <= parMaxFaces);
+	//assert(!HasZeroAreaSurfaceFaces()); // FIXME: Need post-clean
 
 	ReassignVerticesIdAndSetDeleteUnusedVertices_();
 

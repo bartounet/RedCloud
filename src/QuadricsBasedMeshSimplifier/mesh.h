@@ -30,6 +30,9 @@ public:
 	void SelectAndComputeVertexPairs();
 	void Simplify(uint parMaxFaces);
 
+public:
+	bool HasZeroAreaSurfaceFaces() const; // can be slow
+
 private:
 	void GenerateAdjacency_();
 	uint NbValidFaces_() const;

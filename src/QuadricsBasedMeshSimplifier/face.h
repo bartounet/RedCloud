@@ -20,7 +20,10 @@ public:
 	~Face();
 
 public:
-	bool IsDegenerated() const { return (v0_ == v1_) || (v0_ == v2_) || (v1_ == v2_); }
+	bool IsDegenerated() const;
+	bool HasZeroAreaSurface() const;
+
+public:
 	void RemoveOnRelatedVertex();
 
 public:
