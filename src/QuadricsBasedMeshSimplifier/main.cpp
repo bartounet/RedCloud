@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 		printf("[-] Zero area faces found! Abort...\n");
 		exit(2);
 	}
-	printf("[+] No degenerated faces found\n");
+	printf("[+] No zero area faces found\n");
 
 	mesh.ComputeInitialQuadrics();
 	mesh.SelectAndComputeVertexPairs();
