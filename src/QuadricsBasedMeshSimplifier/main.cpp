@@ -35,6 +35,10 @@ int main(int argc, char **argv)
 
 	QBMS::Mesh mesh(srcMesh);
 
+	printf("[ ] Cleaning mesh\n");
+	mesh.Clean();
+	printf("[+] Mesh cleaned\n");
+
 	printf("[ ] Checking zero area faces\n");
 	if (mesh.HasZeroAreaSurfaceFaces())
 	{

@@ -29,6 +29,7 @@ public:
 	void ComputeInitialQuadrics();
 	void SelectAndComputeVertexPairs();
 	void Simplify(uint parMaxFaces);
+	void Clean();
 
 public:
 	bool HasZeroAreaSurfaceFaces() const; // can be slow

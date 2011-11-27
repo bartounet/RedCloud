@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <algorithm>
 #include <limits>
+#include "../common/threedtree.h"
 
 
 namespace QBMS
@@ -71,6 +72,23 @@ void Mesh::GenerateAdjacency_()
 	}
 
 	printf("\t[+] Adjacency generated\n");
+}
+// ----------------------------------------------------------------------------
+void Mesh::Clean()
+{
+	std::vector<const Vertex*> verticesPtr;
+	for (size_t curVertex = 0; curVertex < vertices_.size(); ++curVertex)
+		verticesPtr.push_back(&vertices_[curVertex]);
+	Com::ThreeDNode<Vertex>* tree = static_cast<Com::ThreeDNode<Vertex>*>( Com::ThreeDNode<Vertex>::BuildTree(verticesPtr, 0, 1000) );
+	assert(tree);
+
+	// Calculer la distance moyenne (au carre) entre chaque vertex
+		// Pour chaque vertex
+		//   Trouver son plus proche voisin
+		//   calculer la distance avec ce voisin
+	// Pour chaque vertex
+	//  Si sa distance avec son plus proche voisin est inferieur a 1% de la moyenne
+	//  Merger les vertices
 }
 // ----------------------------------------------------------------------------
 void Mesh::ReassignVerticesIdAndSetDeleteUnusedVertices_()
