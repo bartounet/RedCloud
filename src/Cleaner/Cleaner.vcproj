@@ -179,10 +179,6 @@
 				RelativePath="..\common\ply.c"
 				>
 			</File>
-			<File
-				RelativePath="..\common\threedtree.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

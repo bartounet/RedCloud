@@ -295,6 +295,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\threedtree.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\threedtree.impl.hpp"
+				>
+			</File>
+			<File
 				RelativePath="..\common\types.h"
 				>
 			</File>
