@@ -4,7 +4,6 @@ include Makefile.rules
 OBJS=main.o\
 ../common/mesh_file_helper.o\
 ../common/ply.o\
-../common/threedtree.o\
 vertex_recolor.o\
 
 

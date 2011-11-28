@@ -173,22 +173,22 @@ void Mesh::Clean()
 	printf("\t[+] Vertices merged (nbVerticesToDelete: %d)\n", nbVerticesToDelete);
 }
 // ----------------------------------------------------------------------------
+struct VertexDeleteCmp
+{
+	bool operator()(Vertex* parA, Vertex* parB)
+	{
+		if (parA->DeleteMe() == parB->DeleteMe())
+			return parA < parB;
+		return !(parA->DeleteMe());
+	}
+};
 void Mesh::DeleteVerticesIFN()
 {
-	typedef std::vector<Vertex*>::const_iterator VertexItType;
+	typedef std::vector<Vertex*>::iterator VertexItType;
 
 	if (vertices_.size() == 0)
 		return;
 
-	struct VertexDeleteCmp
-	{
-		bool operator()(Vertex* parA, Vertex* parB)
-		{
-			if (parA->DeleteMe() == parB->DeleteMe())
-				return parA < parB;
-			return !(parA->DeleteMe());
-		}
-	};
 	std::sort(vertices_.begin(), vertices_.end(), VertexDeleteCmp());
 
 	assert(vertices_.size() > 0);
@@ -218,22 +218,22 @@ void Mesh::DeleteVerticesIFN()
 #endif
 }
 // ----------------------------------------------------------------------------
+struct FaceDeleteCmp
+{
+	bool operator()(Face* parA, Face* parB)
+	{
+		if (parA->DeleteMe() == parB->DeleteMe())
+			return parA < parB;
+		return !(parA->DeleteMe());
+	}
+};
 void Mesh::DeleteFacesIFN()
 {
-	typedef std::vector<Face*>::const_iterator FaceItType;
+	typedef std::vector<Face*>::iterator FaceItType;
 
 	if (faces_.size() == 0)
 		return;
 
-	struct FaceDeleteCmp
-	{
-		bool operator()(Face* parA, Face* parB)
-		{
-			if (parA->DeleteMe() == parB->DeleteMe())
-				return parA < parB;
-			return !(parA->DeleteMe());
-		}
-	};
 	std::sort(faces_.begin(), faces_.end(), FaceDeleteCmp());
 
 	assert(faces_.size() > 0);

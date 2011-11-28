@@ -148,16 +148,6 @@ void ThreeDNode<VertexType>::NearestPoint(		const Node* parNode,
 }
 
 template <>
-void ThreeDNode<QBMS::Vertex>::NearestPoint(	const Node* parNode,
-												const QBMS::Vertex& parTarget,
-												int parDepth,
-												double& minDist,
-												const QBMS::Vertex** minVertex)
-{
-	assert(false);
-}
-
-template <>
 void ThreeDNode<Com::Vertex>::NearestPoint(	const Node* parNode,
 											const Com::Vertex& parTarget,
 											int parDepth,
