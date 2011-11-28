@@ -44,7 +44,6 @@ private:
 private:
 	std::vector<Vertex*> vertices_;
 	std::vector<Face*> faces_;
-	std::set<PairType> edges_;
 
 	VertexPairHeap pairsHeap_;
 };

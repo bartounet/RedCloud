@@ -52,13 +52,12 @@ Mesh::~Mesh()
 // ----------------------------------------------------------------------------
 void Mesh::GenerateAdjacency_()
 {
-	assert(edges_.size() == 0);
 	assert(vertices_.size() > 0);
 	assert(faces_.size() > 0);
 
 	printf("\t[ ] Generating adjacency\n");
 
-	// incident face + edges
+	// incident face
 	for (uint curFace = 0; curFace < faces_.size(); ++curFace)
 	{
 		Face* face = faces_[curFace];
@@ -66,10 +65,6 @@ void Mesh::GenerateAdjacency_()
 		face->V0()->AddIncidentFace(face);
 		face->V1()->AddIncidentFace(face);
 		face->V2()->AddIncidentFace(face);
-
-		edges_.insert(PairType(std::min(face->V0(), face->V1()), std::max(face->V0(), face->V1())));
-		edges_.insert(PairType(std::min(face->V0(), face->V2()), std::max(face->V0(), face->V2())));
-		edges_.insert(PairType(std::min(face->V1(), face->V2()), std::max(face->V1(), face->V2())));
 	}
 
 	printf("\t[+] Adjacency generated\n");
@@ -175,7 +170,7 @@ void Mesh::Clean()
 	// FIXME: clean unreferenced vertices check
 #endif
 
-	printf("\t[+] Vertices merged (nbVerticesToDelete: %d\n", nbVerticesToDelete);
+	printf("\t[+] Vertices merged (nbVerticesToDelete: %d)\n", nbVerticesToDelete);
 }
 // ----------------------------------------------------------------------------
 void Mesh::DeleteVerticesIFN()
@@ -306,8 +301,6 @@ void Mesh::SetDeleteUnusedVerticesAndReassignVerticesId()
 		}
 	}
 
-	DeleteVerticesIFN();
-
 	printf("[+] Vertex Id reassigned...\n");
 }
 // ----------------------------------------------------------------------------
@@ -401,13 +394,24 @@ void Mesh::SelectAndComputeVertexPairs()
 
 	printf("[ ] Selecting and computing valid pairs\n");
 
-	std::set<PairType>::const_iterator it = edges_.begin();
-	std::set<PairType>::const_iterator end = edges_.end();
+	std::set<PairType> edges;
+	for (uint curFace = 0; curFace < faces_.size(); ++curFace)
+	{
+		const Face* face = faces_[curFace];
+		edges.insert(PairType(std::min(face->V0(), face->V1()), std::max(face->V0(), face->V1())));
+		edges.insert(PairType(std::min(face->V0(), face->V2()), std::max(face->V0(), face->V2())));
+		edges.insert(PairType(std::min(face->V1(), face->V2()), std::max(face->V1(), face->V2())));
+	}
+
+	// FIXME: Add non-edge vertex pair
+
+	std::set<PairType>::const_iterator it = edges.begin();
+	std::set<PairType>::const_iterator end = edges.end();
 	for (; it != end; ++it)
 	{
 		VertexPair* newPair = new VertexPair(it->first, it->second);
-		// FIXME: re-generate edge adjacency
 		newPair->ComputePosAndQuadric();
+		newPair->AssignQuadricErrorWithNewValue();
 		assert(newPair->QuadricError() >= 0.0);
 
 		pairsHeap_.Insert(newPair);
@@ -418,7 +422,7 @@ void Mesh::SelectAndComputeVertexPairs()
 
 	printf("[+] Valid pairs selected and computed\n");
 
-	assert(pairsHeap_.Size() >= edges_.size()); // there is at least all edges
+	assert(pairsHeap_.Size() >= edges.size()); // there is at least all edges
 }
 // ---------------------------------------------------------------------------
 uint Mesh::NbValidFaces_() const
