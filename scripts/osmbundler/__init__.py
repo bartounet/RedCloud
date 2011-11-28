@@ -15,7 +15,7 @@ from features import *
 
 
 basePath = os.path.dirname( os.path.abspath(sys.argv[0]) )
-distrPath = os.path.join( basePath, "Scripts/")
+distrPath = os.path.join( basePath, "scripts/")
 
 SCALE = 1.0
 bundlerListFileName = "list.txt"

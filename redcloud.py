@@ -10,17 +10,17 @@ import logging
 import time
 import subprocess
 
-from Scripts import osmcmvs as osmcmvs 
-from Scripts import osmbundler as osmbundler 
-from Scripts import plyMerger as plyMerger 
-from Scripts import ply2npts as ply2npts
+from scripts import osmcmvs as osmcmvs 
+from scripts import osmbundler as osmbundler 
+from scripts import plyMerger as plyMerger 
+from scripts import ply2npts as ply2npts
 
 currentPath = os.getcwd()
 distrPath = os.path.dirname( os.path.abspath(sys.argv[0]) )
-binDirPath =  os.path.join(distrPath, "Bin")
+binDirPath =  os.path.join(distrPath, "bin")
 
 def Usage() :
-	print("Usage : ./ScriptGeneral <Dossier Photos> <Dossier de sortie>");
+	print("Usage : ./redcloud.py <Dossier Photos> <Dossier de sortie>");
 	sys.exit(1);
 
 def manage_options() :	
