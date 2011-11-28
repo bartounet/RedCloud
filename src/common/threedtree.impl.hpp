@@ -141,19 +141,39 @@ template <typename VertexType>
 void ThreeDNode<VertexType>::NearestPoint(		const Node* parNode,
 									const VertexType& parTarget,
 									int parDepth,
-									float& minDist,
+									double& minDist,
 									const VertexType** minVertex)
 {
-	const LeafNode<VertexType>* leafNode = dynamic_cast<const LeafNode<VertexType>*>(parNode);
+	assert(false);
+}
+
+template <>
+void ThreeDNode<QBMS::Vertex>::NearestPoint(	const Node* parNode,
+												const QBMS::Vertex& parTarget,
+												int parDepth,
+												double& minDist,
+												const QBMS::Vertex** minVertex)
+{
+	assert(false);
+}
+
+template <>
+void ThreeDNode<Com::Vertex>::NearestPoint(	const Node* parNode,
+											const Com::Vertex& parTarget,
+											int parDepth,
+											double& minDist,
+											const Com::Vertex** minVertex)
+{
+	const LeafNode<Com::Vertex>* leafNode = dynamic_cast<const LeafNode<Com::Vertex>*>(parNode);
 	if (leafNode)
 	{
-		const std::vector<const VertexType*>& vertices = leafNode->Vertices();
+		const std::vector<const Com::Vertex*>& vertices = leafNode->Vertices();
 		if (vertices.size() <= 0)
 			return;
 		for (size_t curVertex = 0; curVertex < vertices.size(); ++curVertex)
 		{
-			const VertexType* v = vertices[curVertex];
-			float dist = SQ(parTarget.x - v->x) + SQ(parTarget.y - v->y) + SQ(parTarget.z - v->z);
+			const Com::Vertex* v = vertices[curVertex];
+			double dist = SQ(parTarget.x - v->x) + SQ(parTarget.y - v->y) + SQ(parTarget.z - v->z);
 			if (dist < minDist)
 			{
 				minDist = dist;
@@ -164,7 +184,7 @@ void ThreeDNode<VertexType>::NearestPoint(		const Node* parNode,
 	else
 	{
 		const ThreeDNode* threeDNode = static_cast<const ThreeDNode*>(parNode);
-		float dist = SQ(parTarget.x - threeDNode->vertex_->x);
+		double dist = SQ(parTarget.x - threeDNode->vertex_->x);
 		dist += SQ(parTarget.y - threeDNode->vertex_->y);
 		dist += SQ(parTarget.z - threeDNode->vertex_->z);
 		if (dist < minDist)
@@ -193,6 +213,84 @@ void ThreeDNode<VertexType>::NearestPoint(		const Node* parNode,
 				NearestPoint(threeDNode->left_, parTarget, parDepth + 1, minDist, minVertex);
 			else
 				NearestPoint(threeDNode->right_, parTarget, parDepth + 1, minDist, minVertex);
+			break;
+		default:
+			assert(false); // it should never happen
+			break;
+		}
+	}
+}
+#undef SQ
+// ----------------------------------------------------------------------------
+#define SQ(x) ((x) * (x))
+template <typename VertexType>
+void ThreeDNode<VertexType>::NearestNeighbour(	const Node* parTree,
+												const VertexType& parTarget,
+												int parDepth,
+												double& parMinDist,
+												const VertexType** parMinVertex)
+{
+	assert(false);
+}
+
+template <>
+void ThreeDNode<QBMS::Vertex>::NearestNeighbour(	const Node* parTree,
+													const QBMS::Vertex& parTarget,
+													int parDepth,
+													double& parMinDist,
+													const QBMS::Vertex** parMinVertex)
+{
+	const LeafNode<QBMS::Vertex>* leafNode = dynamic_cast<const LeafNode<QBMS::Vertex>*>(parTree);
+	if (leafNode)
+	{
+		const std::vector<const QBMS::Vertex*>& vertices = leafNode->Vertices();
+		if (vertices.size() <= 0)
+			return;
+		for (size_t curVertex = 0; curVertex < vertices.size(); ++curVertex)
+		{
+			const QBMS::Vertex* v = vertices[curVertex];
+			double dist = SQ(parTarget.Pos().x - v->Pos().x)
+				+ SQ(parTarget.Pos().y - v->Pos().y)
+				+ SQ(parTarget.Pos().z - v->Pos().z);
+			if ((dist < parMinDist) && (v != &parTarget))
+			{
+				parMinDist = dist;
+				*parMinVertex = v;
+			}
+		}
+	}
+	else
+	{
+		const ThreeDNode* threeDNode = static_cast<const ThreeDNode*>(parTree);
+		double dist = SQ(parTarget.Pos().x - threeDNode->vertex_->Pos().x);
+		dist += SQ(parTarget.Pos().y - threeDNode->vertex_->Pos().y);
+		dist += SQ(parTarget.Pos().z - threeDNode->vertex_->Pos().z);
+		if ((dist < parMinDist) && (threeDNode->vertex_ != &parTarget))
+		{
+			parMinDist = dist;
+			*parMinVertex = threeDNode->vertex_;
+		}
+
+		AlignedAxisDir dir = planeDir[parDepth % MAX_PLANE_DIR];
+		switch (dir)
+		{
+		case AADIR_X:
+			if (parTarget.Pos().x <= threeDNode->vertex_->Pos().x)
+				NearestNeighbour(threeDNode->left_, parTarget, parDepth + 1, parMinDist, parMinVertex);
+			else
+				NearestNeighbour(threeDNode->right_, parTarget, parDepth + 1, parMinDist, parMinVertex);
+			break;
+		case AADIR_Y:
+			if (parTarget.Pos().y <= threeDNode->vertex_->Pos().y)
+				NearestNeighbour(threeDNode->left_, parTarget, parDepth + 1, parMinDist, parMinVertex);
+			else
+				NearestNeighbour(threeDNode->right_, parTarget, parDepth + 1, parMinDist, parMinVertex);
+			break;
+		case AADIR_Z:
+			if (parTarget.Pos().z <= threeDNode->vertex_->Pos().z)
+				NearestNeighbour(threeDNode->left_, parTarget, parDepth + 1, parMinDist, parMinVertex);
+			else
+				NearestNeighbour(threeDNode->right_, parTarget, parDepth + 1, parMinDist, parMinVertex);
 			break;
 		default:
 			assert(false); // it should never happen

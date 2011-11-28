@@ -30,14 +30,17 @@ public:
 	Vertex* V0() const { return v0_; }
 	Vertex* V1() const { return v1_; }
 	Vertex* V2() const { return v2_; }
+	bool DeleteMe() const { return deleteMe_; }
 	void SetV0(Vertex* parVertex) { assert(parVertex); v0_ = parVertex; }
 	void SetV1(Vertex* parVertex) { assert(parVertex); v1_ = parVertex; }
 	void SetV2(Vertex* parVertex) { assert(parVertex); v2_ = parVertex; }
+	void SetDeleteMe() { deleteMe_ = true; }
 
 private:
 	Vertex* v0_;
 	Vertex* v1_;
 	Vertex* v2_;
+	bool deleteMe_;
 };
 // ----------------------------------------------------------------------------
 }

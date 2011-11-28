@@ -30,6 +30,8 @@ public:
 	void SelectAndComputeVertexPairs();
 	void Simplify(uint parMaxFaces);
 	void Clean();
+	void ReassignVerticesIdAndSetDeleteUnusedVertices();
+	void DeleteFacesIFN();
 
 public:
 	bool HasZeroAreaSurfaceFaces() const; // can be slow
@@ -37,11 +39,10 @@ public:
 private:
 	void GenerateAdjacency_();
 	uint NbValidFaces_() const;
-	void ReassignVerticesIdAndSetDeleteUnusedVertices_();
 
 private:
 	std::vector<Vertex> vertices_;
-	std::vector<Face> faces_;
+	std::vector<Face*> faces_;
 	std::set<PairType> edges_;
 
 	VertexPairHeap pairsHeap_;

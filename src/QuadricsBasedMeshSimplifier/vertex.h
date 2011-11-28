@@ -42,6 +42,7 @@ public:
 	void UpdatePairPosAndQuadric(std::vector<VertexPair*>& parUpdatePairs);
 
 	void RemoveIncidentFace(Face* parFace);
+	void RemoveIncidentFaceIFN(Face* parFace);
 	uint RemoveDegeneratedFaces();
 	void RemovePair(VertexPair* parPair);
 	void RemoveInvalidPair(std::vector<VertexPair*>& parDeletePairs);

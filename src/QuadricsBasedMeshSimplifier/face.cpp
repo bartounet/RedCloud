@@ -13,18 +13,21 @@ namespace QBMS
 Face::Face() :
 	v0_(0),
 	v1_(0),
-	v2_(0)
+	v2_(0),
+	deleteMe_(false)
 {
 }
 // ----------------------------------------------------------------------------
 Face::Face(Vertex* parV0, Vertex* parV1, Vertex* parV2) :
 	v0_(parV0),
 	v1_(parV1),
-	v2_(parV2)
+	v2_(parV2),
+	deleteMe_(false)
 {
 	assert(v0_);
 	assert(v1_);
 	assert(v2_);
+	assert(!IsDegenerated());
 }
 // ----------------------------------------------------------------------------
 Face::~Face()
@@ -44,6 +47,8 @@ void Face::RemoveOnRelatedVertex()
 		v1_->RemoveIncidentFace(this);
 
 	v0_->RemoveIncidentFace(this);
+
+	deleteMe_ = true;
 }
 // ----------------------------------------------------------------------------
 bool Face::IsDegenerated() const

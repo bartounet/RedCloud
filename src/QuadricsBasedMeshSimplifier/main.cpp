@@ -47,9 +47,13 @@ int main(int argc, char **argv)
 	}
 	printf("[+] No zero area faces found\n");
 
+	system("pause");
+
 	mesh.ComputeInitialQuadrics();
 	mesh.SelectAndComputeVertexPairs();
 	mesh.Simplify(20000);
+
+	//assert(!mesh.HasZeroAreaSurfaceFaces()); // FIXME: Post CLEAN !
 
 	Com::Mesh dstMesh;
 	mesh.ExportToVRMesh(dstMesh);

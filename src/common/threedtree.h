@@ -42,8 +42,13 @@ public:
 	static void NearestPoint(const Node* parNode,
 							 const VertexType& parTarget,
 							 int parDepth,
-							 float& minDist,
+							 double& minDist,
 							 const VertexType** minVertex);
+	static void NearestNeighbour(	const Node* parTree,
+									const VertexType& parTarget,
+									int parDepth,
+									double& parMinDist,
+									const VertexType** parMinVertex);
 
 private:
 	AlignedAxisDir dir_;
