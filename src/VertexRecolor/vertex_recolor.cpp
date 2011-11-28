@@ -48,7 +48,7 @@ void VertexRecolor(Com::Mesh&		parFinalMesh,
 
 		Com::Vertex& dstVertex = parFinalMesh.vertices[curDstVertex];
 		const Com::Vertex* nearestVertex = &parColoredMesh.vertices[0];
-		float minDist = 10000000.f;
+		double minDist = 10000000.f;
 		Com::ThreeDNode<Com::Vertex>::NearestPoint(tree, dstVertex, 0, minDist, &nearestVertex);
 		dstVertex.r = nearestVertex->r;
 		dstVertex.g = nearestVertex->g;
