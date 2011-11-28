@@ -18,4 +18,7 @@ class BundlerMatching(MatchingEngine):
         logging.info("\nPerforming feature matching...")
         print self.executable
         print self.featuresListFileName
-        subprocess.call([self.executable, self.featuresListFileName, self.outputFileName])
+        if os.path.exists(self.outputFileName):
+            print "Feature matching already exist, skip..."
+        else:
+            subprocess.call([self.executable, self.featuresListFileName, self.outputFileName])
