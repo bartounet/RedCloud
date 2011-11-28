@@ -30,8 +30,9 @@ public:
 	void SelectAndComputeVertexPairs();
 	void Simplify(uint parMaxFaces);
 	void Clean();
-	void ReassignVerticesIdAndSetDeleteUnusedVertices();
+	void SetDeleteUnusedVerticesAndReassignVerticesId();
 	void DeleteFacesIFN();
+	void DeleteVerticesIFN();
 
 public:
 	bool HasZeroAreaSurfaceFaces() const; // can be slow
@@ -41,7 +42,7 @@ private:
 	uint NbValidFaces_() const;
 
 private:
-	std::vector<Vertex> vertices_;
+	std::vector<Vertex*> vertices_;
 	std::vector<Face*> faces_;
 	std::set<PairType> edges_;
 
