@@ -148,7 +148,7 @@ class OsmBundler():
     def _preparePhoto(self, photoInfo):
         photo = photoInfo['basename']
         photoDir = photoInfo['dirname']
-        logging.info("\nProcessing photo '%s':" % photo)
+        #logging.info("\nProcessing photo '%s':" % photo)
         inputFileName = os.path.join(photoDir, photo)
         photo = self._getPhotoCopyName(photo)
         outputFileNameJpg = "%s.jpg" % os.path.join(self.workDir, photo)
@@ -178,7 +178,10 @@ class OsmBundler():
         # put photoInfo to self.photoDict
         self.photoDict[photo] = photoInfo
         
-        if self.matchingEngine.featureExtractionNeeded:
+        keyGzName = "%s.key.gz" % os.path.join(self.workDir, photo)
+        if os.path.exists(keyGzName):
+            print photo, ": SiftKey already exist, skip..."
+        elif self.matchingEngine.featureExtractionNeeded:
             self.extractFeatures(photo)
         os.remove(outputFileNamePgm)
 
@@ -275,7 +278,7 @@ class OsmBundler():
         optionsFile.close()
 
         bundlerOutputFile = open("bundle/out", "w")
-        subprocess.call([self.bundlerExecutable, "list.txt", "--options_file", "options.txt"], **dict(stdout=bundlerOutputFile))
+        subprocess.call([self.bundlerExecutable, "list.txt", "--options_file", "options.txt",  "--init_pair1", "1",   "--init_pair2", "5"], **dict(stdout=bundlerOutputFile))
         bundlerOutputFile.close()
         os.chdir(self.currentDir)
         logging.info("Finished!")
