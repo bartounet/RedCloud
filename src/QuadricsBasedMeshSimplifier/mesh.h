@@ -29,16 +29,21 @@ public:
 	void ComputeInitialQuadrics();
 	void SelectAndComputeVertexPairs();
 	void Simplify(uint parMaxFaces);
+	void Clean();
+	void SetDeleteUnusedVerticesAndReassignVerticesId();
+	void DeleteFacesIFN();
+	void DeleteVerticesIFN();
+
+public:
+	bool HasZeroAreaSurfaceFaces() const; // can be slow
 
 private:
 	void GenerateAdjacency_();
 	uint NbValidFaces_() const;
-	void ReassignVerticesIdAndSetDeleteUnusedVertices_();
 
 private:
-	std::vector<Vertex> vertices_;
-	std::vector<Face> faces_;
-	std::set<PairType> edges_;
+	std::vector<Vertex*> vertices_;
+	std::vector<Face*> faces_;
 
 	VertexPairHeap pairsHeap_;
 };

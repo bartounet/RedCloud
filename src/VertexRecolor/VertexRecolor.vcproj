@@ -259,11 +259,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\threedtree.cpp"
+				RelativePath="..\common\threedtree.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\threedtree.h"
+				RelativePath="..\common\threedtree.impl.hpp"
 				>
 			</File>
 			<File

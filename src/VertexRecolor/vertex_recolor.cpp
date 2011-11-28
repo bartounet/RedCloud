@@ -30,7 +30,8 @@ void VertexRecolor(Com::Mesh&		parFinalMesh,
 	for (size_t curVertex = 0; curVertex < parColoredMesh.vertices.size(); ++curVertex)
 		verticesPtr.push_back(&parColoredMesh.vertices[curVertex]);
 
-	Com::ThreeDNode* tree = static_cast<Com::ThreeDNode*>( Com::ThreeDNode::BuildTree(verticesPtr, 0) );
+	Com::ThreeDNode<Com::Vertex>* tree = 
+		static_cast<Com::ThreeDNode<Com::Vertex>*>( Com::ThreeDNode<Com::Vertex>::BuildTree(verticesPtr, 0, 1000) );
 
 	printf("\t[+] 3D-Tree build\n");
 
@@ -47,8 +48,8 @@ void VertexRecolor(Com::Mesh&		parFinalMesh,
 
 		Com::Vertex& dstVertex = parFinalMesh.vertices[curDstVertex];
 		const Com::Vertex* nearestVertex = &parColoredMesh.vertices[0];
-		float minDist = 10000000.f;
-		Com::ThreeDNode::NearestPoint(tree, dstVertex, 0, minDist, &nearestVertex);
+		double minDist = 10000000.f;
+		Com::ThreeDNode<Com::Vertex>::NearestPoint(tree, dstVertex, 0, minDist, &nearestVertex);
 		dstVertex.r = nearestVertex->r;
 		dstVertex.g = nearestVertex->g;
 		dstVertex.b = nearestVertex->b;

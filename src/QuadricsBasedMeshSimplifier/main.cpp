@@ -35,9 +35,23 @@ int main(int argc, char **argv)
 
 	QBMS::Mesh mesh(srcMesh);
 
+	printf("[ ] Cleaning mesh\n");
+	mesh.Clean();
+	printf("[+] Mesh cleaned\n");
+
+	printf("[ ] Checking zero area faces\n");
+	if (mesh.HasZeroAreaSurfaceFaces())
+	{
+		printf("[-] Zero area faces found! Abort...\n");
+		exit(2);
+	}
+	printf("[+] No zero area faces found\n");
+
 	mesh.ComputeInitialQuadrics();
 	mesh.SelectAndComputeVertexPairs();
 	mesh.Simplify(20000);
+
+	//assert(!mesh.HasZeroAreaSurfaceFaces()); // FIXME: Post CLEAN !
 
 	Com::Mesh dstMesh;
 	mesh.ExportToVRMesh(dstMesh);

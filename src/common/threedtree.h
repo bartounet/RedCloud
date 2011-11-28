@@ -6,14 +6,11 @@
 #include <vector>
 
 
-#define MAX_VERTEX_PER_LEAF 1000
-
-
+namespace Com
+{
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
-namespace Com
-{
 // ----------------------------------------------------------------------------
 enum AlignedAxisDir
 {
@@ -33,82 +30,53 @@ public:
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
-#ifdef JO_FIXME
+template <typename VertexType>
 class ThreeDNode : public Node
 {
 public:
-	ThreeDNode(std::pair<const Vertex*, size_t> parVertex, AlignedAxisDir parDir);
+	ThreeDNode(const VertexType* parVertex, AlignedAxisDir parDir);
 	virtual ~ThreeDNode();
 
 public:
-	static Node* BuildTree(const std::vector<std::pair<const Vertex*, size_t> >& parVertices, int parDepth);
-	static void NearestNeighbor(const Node* parNode,
-								const Vertex& parTarget,
-								int parDepth,
-								float& minDist,
-								size_t* minVertexIndex);
-
-private:
-	AlignedAxisDir dir_;
-	std::pair<const Vertex*, size_t> vertex_;
-	Node* left_; // lesser and equal
-	Node* right_; // greater
-};
-#else
-class ThreeDNode : public Node
-{
-public:
-	ThreeDNode(const Vertex* parVertex, AlignedAxisDir parDir);
-	virtual ~ThreeDNode();
-
-public:
-	static Node* BuildTree(const std::vector<const Vertex*>& parVertices, int parDepth);
+	static Node* BuildTree(const std::vector<const VertexType*>& parVertices, int parDepth, const uint parMaxVertexPerLeaf);
 	static void NearestPoint(const Node* parNode,
-							 const Vertex& parTarget,
+							 const VertexType& parTarget,
 							 int parDepth,
-							 float& minDist,
-							 const Vertex** minVertex);
+							 double& minDist,
+							 const VertexType** minVertex);
+	static void NearestNeighbour(	const Node* parTree,
+									const VertexType& parTarget,
+									int parDepth,
+									double& parMinDist,
+									const VertexType** parMinVertex);
 
 private:
 	AlignedAxisDir dir_;
-	const Vertex* vertex_;
+	const VertexType* vertex_;
 	Node* left_; // lesser and equal
 	Node* right_; // greater
 };
-#endif
 // ============================================================================
 // ----------------------------------------------------------------------------
 // ============================================================================
-#ifdef JO_FIXME
+template <typename VertexType>
 class LeafNode : public Node
 {
 public:
-	LeafNode(const std::vector<std::pair<const Vertex*, size_t> > parVertices);
+	LeafNode(const std::vector<const VertexType*> parVertices);
 	virtual ~LeafNode();
 
-	const std::vector<std::pair<const Vertex*, size_t> >& Vertices() const { return vertices_; }
+	const std::vector<const VertexType*>& Vertices() const { return vertices_; }
 
 private:
-	std::vector<std::pair<const Vertex*, size_t> > vertices_;
+	std::vector<const VertexType*> vertices_;
 };
-#else
-class LeafNode : public Node
-{
-public:
-	LeafNode(const std::vector<const Vertex*> parVertices);
-	virtual ~LeafNode();
-
-	const std::vector<const Vertex*>& Vertices() const { return vertices_; }
-
-private:
-	std::vector<const Vertex*> vertices_;
-};
-#endif
+// ============================================================================
 // ----------------------------------------------------------------------------
+// ============================================================================
 }
-// ============================================================================
-// ----------------------------------------------------------------------------
-// ============================================================================
+
+#include "threedtree.impl.hpp"
 
 
 #endif

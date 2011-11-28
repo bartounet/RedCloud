@@ -4,7 +4,7 @@ MAKE=gmake
 all: install
 
 install:
-	cd src && $(MAKE) FINAL && cd ..
+	cd src && $(MAKE) RELEASE && cd ..
 
 distclean:
 	cd src && $(MAKE) distclean && cd ..
