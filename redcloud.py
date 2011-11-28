@@ -9,6 +9,7 @@ import shutil
 import logging
 import time
 import subprocess
+import Image
 
 from scripts import osmcmvs as osmcmvs 
 from scripts import osmbundler as osmbundler 
@@ -58,14 +59,14 @@ if (not os.path.exists(resultDir)):
 else:
     print "--Result directory (already exist): ", resultDir
     
-print "## initialize OsmBundler manager class:"
-logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 # initialize OsmBundler manager class
-manager = osmbundler.OsmBundler(photoDir, resultDir, binDirPath)
 print resultDir
+
 print "## PreparePhotos:"
 start = time.time()
+#logging.basicConfig(level=logging.INFO, format="%(message)s")
+manager = osmbundler.OsmBundler(photoDir, resultDir, binDirPath)
 manager.preparePhotos()
 print "--> Done in: ", time.time() - start, "secs" 
 Benchmark["PreparePhotos"] = time.time() - start
@@ -113,7 +114,7 @@ print "## PoissonRecon:"
 start = time.time()
 poissonReconExecutable = os.path.join(binDirPath, "PoissonRecon")
 plyPoisson = os.path.join(redCouldDir, "poisson.ply")
-subprocess.call([poissonReconExecutable, "--in" , nptsFile, "--out", plyPoisson, "--depth",  "11"])
+subprocess.call([poissonReconExecutable, "--in" , nptsFile, "--out", plyPoisson, "--depth",  "10", "--manifold"])
 print "--> Done in: ", time.time() - start, "secs" 
 Benchmark["PoissonRecon"] = time.time() - start
 
@@ -133,28 +134,26 @@ subprocess.call([simplifierExecutable, plyClean, plySimplify])
 print "--> Done in: ", time.time() - start, "secs" 
 Benchmark["Simplifier"] = time.time() - start
 
-print Benchmark
+print "## Recolor:"
+start = time.time()
+recolorExecutable = os.path.join(binDirPath, "vr_final")
+plySimplyRecolor = os.path.join(redCouldDir, "plySimplyRecolor.ply")
+subprocess.call([recolorExecutable, "-v" , plyMerge, plySimplify, plySimplyRecolor])
+print "--> Done in: ", time.time() - start, "secs" 
+Benchmark["Recolor"] = time.time() - start
 
-#MeshSimplification
-
-os.system(working_dir + "\Simplifier\QuadricBasedMeshSimplifier.exe " + optim_tmp + "\mesh.ply "
-	+ optim_tmp + "\mesh_simplified.ply")
-
-
-#VertexRecolor
-
-os.system(working_dir + "\VertexRecolor\VertexRecolor.exe " + bundler_tmp + "\cmvs.ply "
-	+ optim_tmp + "\mesh_simplified.ply " + optim_tmp + "\mesh_recolor.ply")
-
-
-#TextureMaker
-
-os.system(working_dir + "\Texturer\Texturer.exe " + bundler_tmp + "\cmvs.ply "
-	+ optim_tmp + "\mesh_recolor.ply " + optim_tmp + "\mesh_textured.dae")
+print "## Texturer:"
+start = time.time()
+texturerExecutable = os.path.join(binDirPath, "Texturer")
+daeModel = os.path.join(redCouldDir, "model.dae")
+subprocess.call([texturerExecutable, plyMerge, plySimplyRecolor, daeModel])
+print "--> Done in: ", time.time() - start, "secs" 
+Benchmark["Texturer"] = time.time() - start
 
 im = Image.open("./texture.ppm")
 im.save("texture.png")	
-	
+
+print Benchmark	
 #Ply2Kml
 sys.argv=[working_dir + "\daeTokmz\DaeToKmz.py",
           optim_tmp + "\mesh_textured.dae", optim_tmp + "\\texture.png", geo_tmp + "\point.gps", working_dir + "\\" + output]
