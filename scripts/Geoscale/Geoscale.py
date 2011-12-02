@@ -48,7 +48,7 @@ def doGeoscale(PhotoFolder, bundlerOut, outFile, outGeo):
     Og_RT = np.transpose(np.mean(C0_RT[:,:3], axis=0)) #Og_RT est defini comme un vecteur colonne
 
 
-    outGeoFile = open(outGeo + "/point.gps", 'w')
+    outGeoFile = open(outGeo, 'w')
     phi = math.acos(math.sqrt(Og_RT[0]**2 + Og_RT[1]**2)/math.sqrt(Og_RT[0]**2 + Og_RT[1]**2 + Og_RT[2]**2))
     print Og_RT[0]/math.sqrt(Og_RT[0]**2 + Og_RT[1]**2)
     lanbda = math.acos(Og_RT[0]/math.sqrt(Og_RT[0]**2 + Og_RT[1]**2))
