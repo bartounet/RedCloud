@@ -15,6 +15,7 @@ from scripts import osmcmvs as osmcmvs
 from scripts import osmbundler as osmbundler 
 from scripts import plyMerger as plyMerger 
 from scripts import ply2npts as ply2npts
+from scripts import Geoscale as Geoscale
 
 currentPath = os.getcwd()
 distrPath = os.path.dirname( os.path.abspath(sys.argv[0]) )
@@ -24,7 +25,7 @@ def Usage() :
 	print("Usage : ./redcloud.py <Dossier Photos> <Dossier de sortie>");
 	sys.exit(1);
 
-def manage_options() :	
+def getArgs() :	
     if (len(sys.argv) != 3) :
 	    Usage();	
     photoDir = sys.argv[1]
@@ -43,9 +44,8 @@ print "###############################"
 
 Benchmark = {}
 
-#Options + Dossier temporaires
-working_dir = os.path.dirname(os.path.realpath(sys.argv[0]));
-photoDir, resultDir = manage_options();
+#getArgs
+photoDir, resultDir = getArgs();
 
 print "## Checking parameters:"
 if not(os.path.exists(photoDir)):
@@ -83,6 +83,15 @@ manager.doBundleAdjustment()
 print "--> Done in: ", time.time() - start, "secs" 
 Benchmark["BundleAdjustment"] = time.time() - start
 
+print "## DoGeoscale:"
+start = time.time()
+bundlerOut = os.path.join(resultDir, "bundle", "bundle.out") 
+#outFile = os.path.join(resultDir, "bundle", "bundle.out") 
+outGeo =  os.path.join(resultDir, "redClouds", "geoData.txt") 
+Geoscale.doGeoscale(photoDir, bundlerOut, outFile, outGeo)
+print "--> Done in: ", time.time() - start, "secs" 
+Benchmark["Geoscale"] = time.time() - start
+
 print "## doCMVS:"
 start = time.time()
 manager = osmcmvs.OsmCmvs(resultDir, binDirPath)
@@ -118,6 +127,7 @@ subprocess.call([poissonReconExecutable, "--in" , nptsFile, "--out", plyPoisson,
 print "--> Done in: ", time.time() - start, "secs" 
 Benchmark["PoissonRecon"] = time.time() - start
 
+'''
 print "## Cleaner:"
 start = time.time()
 cleanerExecutable = os.path.join(binDirPath, "Cleaner")
@@ -125,12 +135,13 @@ plyClean = os.path.join(redCouldDir, "clean.ply")
 subprocess.call([cleanerExecutable, "-v" , plyPoisson, plyClean])
 print "--> Done in: ", time.time() - start, "secs" 
 Benchmark["Cleaner"] = time.time() - start
+'''
 
 print "## Simplifier:"
 start = time.time()
 simplifierExecutable = os.path.join(binDirPath, "qbms_final")
-plySimplify = os.path.join(redCouldDir, "clean.ply")
-subprocess.call([simplifierExecutable, plyClean, plySimplify])
+plySimplify = os.path.join(redCouldDir, "simplify.ply")
+subprocess.call([simplifierExecutable, plyPoisson, plySimplify])
 print "--> Done in: ", time.time() - start, "secs" 
 Benchmark["Simplifier"] = time.time() - start
 
