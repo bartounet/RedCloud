@@ -49,7 +49,7 @@ Benchmark = {}
 #getArgs
 photoDir, resultDir = getArgs();
 
-maxPhotoDimension = 10000
+maxPhotoDimension = 2000
 
 print "## Checking parameters:"
 if not(os.path.exists(photoDir)):
@@ -84,7 +84,10 @@ Benchmark["MatchFeatures"] = time.time() - start
 
 print "## DoBundleAdjustment:"
 start = time.time()
-manager.doBundleAdjustment()
+if (not os.path.exists(os.path.join(resultDir, "bundle", "bundle.out"))):
+    manager.doBundleAdjustment()
+else:
+    print "Skip BundleAdjustment"
 print "--> Done in: ", time.time() - start, "secs" 
 Benchmark["BundleAdjustment"] = time.time() - start
 
@@ -98,9 +101,8 @@ start = time.time()
 bundlerOut = os.path.join(resultDir, "bundle", "bundle.out")
 bundlerOutTmp = os.path.join(resultDir, "bundle", "bundleTmp.out")
 shutil.copyfile(bundlerOut, bundlerOutTmp)
-outFile = os.path.join(resultDir, "bundle", "bundle.out") 
 outGeo =  os.path.join(redCouldDir, "geoData.txt")
-geoscale.doGeoscale(photoDir, bundlerOut, outFile, outGeo)
+#geoscale.doGeoscale(photoDir, bundlerOut, bundlerOut, outGeo)
 print "--> Done in: ", time.time() - start, "secs"
 Benchmark["Geoscale"] = time.time() - start
 
