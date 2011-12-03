@@ -17,7 +17,7 @@ class SiftGPU(Sift):
         #print "%s.jpg.pgm" % photo
         #print os.getcwd()
         #print self.executable
-        subprocess.call([self.executable, "-i" , "%s.jpg.pgm" % photo, "-o", "%s.key" % photo, "-v", "1", "-maxd" , "100000", "-nomc", "-v", "0"])
+        subprocess.call([self.executable, "-i" , "%s.jpg.pgm" % photo, "-o", "%s.key" % photo, "-nomc", "-v", "0"])
         photoFile.close()
         siftTextFile.close()
         # gzip SIFT file and remove it

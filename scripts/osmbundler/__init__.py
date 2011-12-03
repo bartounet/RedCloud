@@ -52,11 +52,12 @@ class OsmBundler():
     # photo file name in self.workDir is used as the key in this dictionary
     photoDict = {}
 
-    def __init__(self, photoDir, workDir, binDirPath):
+    def __init__(self, photoDir, workDir, binDirPath, maxPhotoDimension):
         for attr in dir(defaults):
             if attr[0]!='_':
                 setattr(self, attr, getattr(defaults, attr))
         
+        self.maxPhotoDimension = maxPhotoDimension
         self.photosArg = photoDir
         #self.featureExtractor = sift
         self.binDirPath = binDirPath
@@ -91,8 +92,8 @@ class OsmBundler():
         for opt,val in opts:
             if opt=="--photos":
                 self.photosArg = val
-            elif opt=="--maxPhotoDimension":
-                if val.isdigit() and int(val)>0: self.maxPhotoDimension = int(val)
+           # elif opt=="--maxPhotoDimension":
+            #    if val.isdigit() and int(val)>0: self.maxPhotoDimension = int(val)
             elif opt=="--matchingEngine":
                 self.matchingEngine = val
             elif opt=="--featureExtractor":
@@ -151,6 +152,13 @@ class OsmBundler():
         #logging.info("\nProcessing photo '%s':" % photo)
         inputFileName = os.path.join(photoDir, photo)
         photo = self._getPhotoCopyName(photo)
+
+        ## SKIP _preparePhoto
+        keyGzName = "%s.key.gz" % os.path.join(self.workDir, photo)
+        if os.path.exists(keyGzName):
+            print photo, ": SiftKey already exist, skip..."
+            return
+
         outputFileNameJpg = "%s.jpg" % os.path.join(self.workDir, photo)
         outputFileNamePgm = "%s.pgm" % outputFileNameJpg
         # open photo
@@ -167,7 +175,7 @@ class OsmBundler():
             newWidth = int(scale * photoHandle.size[0])
             newHeight = int(scale * photoHandle.size[1])
             photoHandle = photoHandle.resize((newWidth, newHeight))
-            logging.info("\tCopy of the photo has been scaled down to %sx%s" % (newWidth,newHeight))
+            print "Copy of the photo has been scaled down to ", newWidth, "x" ,newHeight
         
         photoInfo['width'] = photoHandle.size[0]
         photoInfo['height'] = photoHandle.size[1]
@@ -178,10 +186,7 @@ class OsmBundler():
         # put photoInfo to self.photoDict
         self.photoDict[photo] = photoInfo
         
-        keyGzName = "%s.key.gz" % os.path.join(self.workDir, photo)
-        if os.path.exists(keyGzName):
-            print photo, ": SiftKey already exist, skip..."
-        elif self.matchingEngine.featureExtractionNeeded:
+        if (self.matchingEngine.featureExtractionNeeded):
             self.extractFeatures(photo)
         os.remove(outputFileNamePgm)
 
@@ -278,7 +283,8 @@ class OsmBundler():
         optionsFile.close()
 
         bundlerOutputFile = open("bundle/out", "w")
-        subprocess.call([self.bundlerExecutable, "list.txt", "--options_file", "options.txt",  "--init_pair1", "1",   "--init_pair2", "5"], **dict(stdout=bundlerOutputFile))
+        #subprocess.call([self.bundlerExecutable, "list.txt", "--options_file", "options.txt",  "--init_pair1", "1",   "--init_pair2", "2"], **dict(stdout=bundlerOutputFile))
+        subprocess.call([self.bundlerExecutable, "list.txt", "--options_file", "options.txt"], **dict(stdout=bundlerOutputFile))        
         bundlerOutputFile.close()
         os.chdir(self.currentDir)
         logging.info("Finished!")
