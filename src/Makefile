@@ -1,5 +1,5 @@
 
-MAKE=gmake
+MAKE=make
 
 all: FINAL
 
