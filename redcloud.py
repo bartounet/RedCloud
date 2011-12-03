@@ -11,11 +11,13 @@ import time
 import subprocess
 import Image
 
+sys.path.append('scripts/Geoscale/')
+import geoscale as geoscale
+
 from scripts import osmcmvs as osmcmvs 
 from scripts import osmbundler as osmbundler 
 from scripts import plyMerger as plyMerger 
 from scripts import ply2npts as ply2npts
-from scripts import Geoscale as Geoscale
 
 currentPath = os.getcwd()
 distrPath = os.path.dirname( os.path.abspath(sys.argv[0]) )
@@ -47,6 +49,8 @@ Benchmark = {}
 #getArgs
 photoDir, resultDir = getArgs();
 
+maxPhotoDimension = 10000
+
 print "## Checking parameters:"
 if not(os.path.exists(photoDir)):
     print ("*-ERROR: no photos directory at: ", photoDir)
@@ -65,8 +69,8 @@ print resultDir
 
 print "## PreparePhotos:"
 start = time.time()
-#logging.basicConfig(level=logging.INFO, format="%(message)s")
-manager = osmbundler.OsmBundler(photoDir, resultDir, binDirPath)
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+manager = osmbundler.OsmBundler(photoDir, resultDir, binDirPath, maxPhotoDimension)
 manager.preparePhotos()
 print "--> Done in: ", time.time() - start, "secs" 
 Benchmark["PreparePhotos"] = time.time() - start
@@ -74,8 +78,9 @@ Benchmark["PreparePhotos"] = time.time() - start
 print "## MatchFeatures:"
 start = time.time()
 manager.matchFeatures()
-print "--> Done in: ", time.time() - start, "secs" 
+print "--> Done in: ", time.time() - start, "secs"
 Benchmark["MatchFeatures"] = time.time() - start
+
 
 print "## DoBundleAdjustment:"
 start = time.time()
@@ -83,13 +88,20 @@ manager.doBundleAdjustment()
 print "--> Done in: ", time.time() - start, "secs" 
 Benchmark["BundleAdjustment"] = time.time() - start
 
+redCouldDir = os.path.join(resultDir, "RedClouds") 
+if (not os.path.exists(redCouldDir)):
+    os.mkdir(redCouldDir)
+
+
 print "## DoGeoscale:"
 start = time.time()
-bundlerOut = os.path.join(resultDir, "bundle", "bundle.out") 
-#outFile = os.path.join(resultDir, "bundle", "bundle.out") 
-outGeo =  os.path.join(resultDir, "redClouds", "geoData.txt") 
-Geoscale.doGeoscale(photoDir, bundlerOut, outFile, outGeo)
-print "--> Done in: ", time.time() - start, "secs" 
+bundlerOut = os.path.join(resultDir, "bundle", "bundle.out")
+bundlerOutTmp = os.path.join(resultDir, "bundle", "bundleTmp.out")
+shutil.copyfile(bundlerOut, bundlerOutTmp)
+outFile = os.path.join(resultDir, "bundle", "bundle.out") 
+outGeo =  os.path.join(redCouldDir, "geoData.txt")
+geoscale.doGeoscale(photoDir, bundlerOut, outFile, outGeo)
+print "--> Done in: ", time.time() - start, "secs"
 Benchmark["Geoscale"] = time.time() - start
 
 print "## doCMVS:"
@@ -102,9 +114,6 @@ Benchmark["CMVS"] = time.time() - start
 
 print "## plyMerge:"
 start = time.time()
-redCouldDir = os.path.join(resultDir, "RedClouds") 
-if (not os.path.exists(redCouldDir)):
-    os.mkdir(redCouldDir)
 print resultDir
 modelsDir = os.path.join(resultDir, "pmvs", "models")
 plyMerge = os.path.join(redCouldDir, "merge.ply")
@@ -139,7 +148,7 @@ Benchmark["Cleaner"] = time.time() - start
 
 print "## Simplifier:"
 start = time.time()
-simplifierExecutable = os.path.join(binDirPath, "qbms_final")
+simplifierExecutable = os.path.join(binDirPath, "qbms_release")
 plySimplify = os.path.join(redCouldDir, "simplify.ply")
 subprocess.call([simplifierExecutable, plyPoisson, plySimplify])
 print "--> Done in: ", time.time() - start, "secs" 
@@ -147,7 +156,7 @@ Benchmark["Simplifier"] = time.time() - start
 
 print "## Recolor:"
 start = time.time()
-recolorExecutable = os.path.join(binDirPath, "vr_final")
+recolorExecutable = os.path.join(binDirPath, "vr_release")
 plySimplyRecolor = os.path.join(redCouldDir, "plySimplyRecolor.ply")
 subprocess.call([recolorExecutable, "-v" , plyMerge, plySimplify, plySimplyRecolor])
 print "--> Done in: ", time.time() - start, "secs" 
