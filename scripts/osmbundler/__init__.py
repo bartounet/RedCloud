@@ -153,12 +153,6 @@ class OsmBundler():
         inputFileName = os.path.join(photoDir, photo)
         photo = self._getPhotoCopyName(photo)
 
-        ## SKIP _preparePhoto
-        keyGzName = "%s.key.gz" % os.path.join(self.workDir, photo)
-        if os.path.exists(keyGzName):
-            print photo, ": SiftKey already exist, skip..."
-            return
-
         outputFileNameJpg = "%s.jpg" % os.path.join(self.workDir, photo)
         outputFileNamePgm = "%s.pgm" % outputFileNameJpg
         # open photo
@@ -166,7 +160,7 @@ class OsmBundler():
         # get EXIF information as a dictionary
         exif = self._getExif(photoHandle)
         self._calculateFocalDistance(photo, photoInfo, exif)
-        
+
         # resize photo if necessary
         maxDimension = photoHandle.size[0]
         if photoHandle.size[1]>maxDimension: maxDimension = photoHandle.size[1]
@@ -179,14 +173,18 @@ class OsmBundler():
         
         photoInfo['width'] = photoHandle.size[0]
         photoInfo['height'] = photoHandle.size[1]
-        
+
         photoHandle.save(outputFileNameJpg)
         photoHandle.convert("L").save(outputFileNamePgm)
-        
+
         # put photoInfo to self.photoDict
         self.photoDict[photo] = photoInfo
-        
-        if (self.matchingEngine.featureExtractionNeeded):
+
+        ## SKIP _preparePhoto
+        keyGzName = "%s.key.gz" % os.path.join(self.workDir, photo)
+        if os.path.exists(keyGzName):
+            print photo, ": SiftKey already exist, skip..."
+        elif (self.matchingEngine.featureExtractionNeeded):
             self.extractFeatures(photo)
         os.remove(outputFileNamePgm)
 
