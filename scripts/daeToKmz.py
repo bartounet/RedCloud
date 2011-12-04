@@ -2,7 +2,7 @@ import sys
 
 #TODO: define arguments
 
-def daeTokmz(daeModel, daeTexture, geofile, kmlPath):
+def doDaeToKmz(daeModel, daeTexture, geofile, kmlPath):
     fIn = open(geofile, 'r')
     coord = fIn.readline().split()
     scale = 1

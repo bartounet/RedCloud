@@ -14,6 +14,8 @@ import Image
 sys.path.append('scripts/Geoscale/')
 import Geoscale as geoscale
 
+sys.path.append('scripts/')
+
 from scripts import osmcmvs as osmcmvs 
 from scripts import osmbundler as osmbundler 
 from scripts import plyMerger as plyMerger 
@@ -92,7 +94,8 @@ def stepCreateKMZ():
     subprocess.call([texturerExecutable, plyMerge, plySimplyRecolor, daeDir])
     im = Image.open(daeTexturePPM)
     im.save(daeTexturePNG)
-    daeToKmz.daeToKmz(daeModel, daeTexturePNG, geofile, kmlPath)
+    print daeToKmz 
+    daeToKmz.doDaeToKmz(daeModel, daeTexturePNG, outGeo, kmlPath)
 
 def printKiKoo(title):
     kikoo = 51
@@ -137,11 +140,14 @@ plySimplify = os.path.join(redCouldDir, "simplify.ply")
 recolorExecutable = os.path.join(binDirPath, "vr_release")
 plySimplyRecolor = os.path.join(redCouldDir, "plySimplyRecolor.ply")
 
-texturerExecutable = os.path.join(binDirPath, "Texturer")
+
 daeDir = os.path.join(redCouldDir, "dae")
+if (not os.path.exists(daeDir)):
+    os.mkdir(daeDir)
+texturerExecutable = os.path.join(binDirPath, "texturer_release")
 daeModel = os.path.join(daeDir, "model.dae")
 daeTexturePPM = os.path.join(daeDir, "texture.ppm")
-daeTexturePNG = os.path.join(daeDir, "texture.jpg")
+daeTexturePNG = os.path.join(daeDir, "texture.png")
 kmlPath = os.path.join(redCouldDir, "model.kml")
 
 
