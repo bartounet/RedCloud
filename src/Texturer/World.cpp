@@ -1,3 +1,4 @@
+
 #include <algorithm>
 #include <list>
 #include <math.h>
@@ -6,10 +7,10 @@
 
 #include "World.h"
 
-/** @brief associatePoints
-  *
-  * @todo: document this function
-  */
+
+// ============================================================================
+// ----------------------------------------------------------------------------
+// ============================================================================
 bool World::associatePoints()
 {
     std::vector<Point3dColor* >::iterator currPoint = points_.begin ();
@@ -54,8 +55,7 @@ bool World::associatePoints()
     std::cout << std::endl;
     return false;
 }
-
-
+// ----------------------------------------------------------------------------
 Point2dColor* World::projectionOnTriangle(Point3dColor& point, Face& face)
 {
     Plan plan = face.getPlanBN();
@@ -78,7 +78,7 @@ Point2dColor* World::projectionOnTriangle(Point3dColor& point, Face& face)
 
     return new Point2dColor(u, v, point.color_);
 }
-
+// ----------------------------------------------------------------------------
 std::list<Face* >* World::getNeighbour (Point3d& p)
 {
 
@@ -137,7 +137,7 @@ std::list<Face* >* World::getNeighbour (Point3d& p)
 
     return fList;
 }
-
+// ----------------------------------------------------------------------------
 std::vector<Face*>& World::getAtIndex(float x, float y, float z)
 {
     int i = (int)((x - min_.x_) / gridSize_);
@@ -152,11 +152,7 @@ std::vector<Face*>& World::getAtIndex(float x, float y, float z)
 
     return faces_[i][j][k];
 }
-
-/** @brief World
-  *
-  * @todo: document this function
-  */
+// ----------------------------------------------------------------------------
  World::World(std::vector<Point3dColor* >& points, std::vector<Face* >& faces, Point3d& min, Point3d& max)
     : points_(points),
       gridSize_ (0.025),
@@ -237,4 +233,6 @@ std::vector<Face*>& World::getAtIndex(float x, float y, float z)
 
 */
 }
-
+// ============================================================================
+// ----------------------------------------------------------------------------
+// ============================================================================

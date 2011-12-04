@@ -1,44 +1,49 @@
 
-MAKE=make
-SHELL=/bin/sh
+MAKE=gmake
 
 all: FINAL
 
 DEBUG:
-	cd VertexRecolor && $(SHELL) configure DEBUG && $(MAKE) && cd ..
-	cd QuadricsBasedMeshSimplifier && $(SHELL) configure DEBUG && $(MAKE) && cd ..
-	cd Texturer && $(SHELL) configure DEBUG && $(MAKE) && cd ..
+	cd VertexRecolor && ./configure DEBUG && $(MAKE) clean && $(MAKE) && cd ..
+	cd QuadricsBasedMeshSimplifier && ./configure DEBUG && $(MAKE) clean && $(MAKE) && cd ..
+	cd Texturer && ./configure DEBUG && $(MAKE) clean && $(MAKE) && cd ..
 
 RELEASE:
-	cd VertexRecolor && $(SHELL) configure RELEASE && $(MAKE) && cd ..
-	cd QuadricsBasedMeshSimplifier && $(SHELL) configure RELEASE && $(MAKE) && cd ..
-	cd Texturer && $(SHELL) configure RELEASE && $(MAKE) && cd ..
+	cd VertexRecolor && ./configure RELEASE && $(MAKE) clean && $(MAKE) && cd ..
+	cd QuadricsBasedMeshSimplifier && ./configure RELEASE && $(MAKE) clean && $(MAKE) && cd ..
+	cd Texturer && ./configure RELEASE && $(MAKE) clean && $(MAKE) && cd ..
 
 FINAL:
-	cd VertexRecolor && $(SHELL) configure FINAL && $(MAKE) && cd ..
-	cd QuadricsBasedMeshSimplifier && $(SHELL) configure FINAL && $(MAKE) && cd ..
-	cd Texturer && $(SHELL) configure FINAL && $(MAKE) && cd ..
+	cd VertexRecolor && ./configure FINAL && $(MAKE) clean && $(MAKE) && cd ..
+	cd QuadricsBasedMeshSimplifier && ./configure FINAL && $(MAKE) clean && $(MAKE) && cd ..
+	cd Texturer && ./configure FINAL && $(MAKE) clean && $(MAKE) && cd ..
 
 clean:
-	cd VertexRecolor && $(MAKE) clean && cd ..
-	cd QuadricsBasedMeshSimplifier && $(MAKE) clean && cd ..
-	cd Texturer && $(MAKE) clean && cd ..
+	cd VertexRecolor && $(MAKE) clean && $(MAKE) clean && cd ..
+	cd QuadricsBasedMeshSimplifier && $(MAKE) clean && $(MAKE) clean && cd ..
+	cd Texturer && $(MAKE) clean && $(MAKE) clean && cd ..
 
 cleanVCPP:
 	rm -rf Release
 	rm -rf Final
 	rm -rf Debug
-	cd VertexRecolor && $(SHELL) configure DEBUG && $(MAKE) cleanVCPP && cd ..
-	cd VertexRecolor && $(SHELL) configure RELEASE && $(MAKE) cleanVCPP && cd ..
-	cd VertexRecolor && $(SHELL) configure FINAL && $(MAKE) cleanVCPP && cd ..
-	cd QuadricsBasedMeshSimplifier && $(SHELL) configure DEBUG && $(MAKE) cleanVCPP && cd ..
-	cd QuadricsBasedMeshSimplifier && $(SHELL) configure RELEASE && $(MAKE) cleanVCPP && cd ..
-	cd QuadricsBasedMeshSimplifier && $(SHELL) configure FINAL && $(MAKE) cleanVCPP && cd ..
+	cd VertexRecolor && ./configure DEBUG && $(MAKE) clean && $(MAKE) cleanVCPP && cd ..
+	cd VertexRecolor && ./configure RELEASE && $(MAKE) clean && $(MAKE) cleanVCPP && cd ..
+	cd VertexRecolor && ./configure FINAL && $(MAKE) clean && $(MAKE) cleanVCPP && cd ..
+	cd QuadricsBasedMeshSimplifier && ./configure DEBUG && $(MAKE) clean && $(MAKE) cleanVCPP && cd ..
+	cd QuadricsBasedMeshSimplifier && ./configure RELEASE && $(MAKE) clean && $(MAKE) cleanVCPP && cd ..
+	cd QuadricsBasedMeshSimplifier && ./configure FINAL && $(MAKE) clean && $(MAKE) cleanVCPP && cd ..
+	cd Texturer && ./configure DEBUG && $(MAKE) clean && $(MAKE) cleanVCPP && cd ..
+	cd Texturer && ./configure RELEASE && $(MAKE) clean && $(MAKE) cleanVCPP && cd ..
+	cd Texturer && ./configure FINAL && $(MAKE) clean && $(MAKE) cleanVCPP && cd ..
 
 distclean: cleanVCPP clean
-	cd VertexRecolor && $(SHELL) configure DEBUG && $(MAKE) distclean && cd ..
-	cd VertexRecolor && $(SHELL) configure RELEASE && $(MAKE) distclean && cd ..
-	cd VertexRecolor && $(SHELL) configure FINAL && $(MAKE) distclean && cd ..
-	cd QuadricsBasedMeshSimplifier && $(SHELL) configure DEBUG && $(MAKE) distclean && cd ..
-	cd QuadricsBasedMeshSimplifier && $(SHELL) configure RELEASE && $(MAKE) distclean && cd ..
-	cd QuadricsBasedMeshSimplifier && $(SHELL) configure FINAL && $(MAKE) distclean && cd ..
+	cd VertexRecolor && ./configure DEBUG && $(MAKE) clean && $(MAKE) distclean && cd ..
+	cd VertexRecolor && ./configure RELEASE && $(MAKE) clean && $(MAKE) distclean && cd ..
+	cd VertexRecolor && ./configure FINAL && $(MAKE) clean && $(MAKE) distclean && cd ..
+	cd QuadricsBasedMeshSimplifier && ./configure DEBUG && $(MAKE) clean && $(MAKE) distclean && cd ..
+	cd QuadricsBasedMeshSimplifier && ./configure RELEASE && $(MAKE) clean && $(MAKE) distclean && cd ..
+	cd QuadricsBasedMeshSimplifier && ./configure FINAL && $(MAKE) clean && $(MAKE) distclean && cd ..
+	cd Texturer && ./configure DEBUG && $(MAKE) clean && $(MAKE) distclean && cd ..
+	cd Texturer && ./configure RELEASE && $(MAKE) clean && $(MAKE) distclean && cd ..
+	cd Texturer && ./configure FINAL && $(MAKE) clean && $(MAKE) distclean && cd ..

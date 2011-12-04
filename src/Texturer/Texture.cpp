@@ -1,3 +1,4 @@
+
 #include <math.h>
 #include <fstream>
 #include <assert.h>
@@ -5,10 +6,9 @@
 #include "Texture.h"
 
 
-/** @brief createMapping
-  *
-  * @todo: document this function
-  */
+// ============================================================================
+// ----------------------------------------------------------------------------
+// ============================================================================
 void Texture::createMapping()
 {
     sizeTriangle_ = (-5 + sqrt(9 + 4 * pow((float)width_, 2) / faces_.size ())) / 2;
@@ -75,11 +75,7 @@ void Texture::createMapping()
         }
     }
 }
-
-/** @brief Texture
-  *
-  * @todo: document this function
-  */
+// ----------------------------------------------------------------------------
 Texture::Texture(size_t w, std::vector<Face* >& faces)
         : width_ (w),
         heigth_ (w),
@@ -98,23 +94,12 @@ Texture::Texture(size_t w, std::vector<Face* >& faces)
         }
     }
 }
-
-/** @brief getSizeTriangle
-  *
-  * @todo: document this function
-  */
-
+// ----------------------------------------------------------------------------
 size_t Texture::getSizeTriangle()
 {
     return sizeTriangle_;
 }
-
-
-
-/** @brief fill
-  *
-  * @todo: document this function
-  */
+// ----------------------------------------------------------------------------
 void Texture::fill()
 {
     for (size_t f = 0; f < faces_.size (); f++)
@@ -165,11 +150,7 @@ void Texture::fill()
 
 */
 }
-
-/** @brief dump
-  *
-  * @todo: document this function
-  */
+// ----------------------------------------------------------------------------
 bool Texture::dump(std::string filename)
 {
     std::ofstream fichier(filename.c_str (), std::ios::out | std::ios::trunc | std::ios::binary);
@@ -188,4 +169,6 @@ bool Texture::dump(std::string filename)
     }
     return false;
 }
-
+// ============================================================================
+// ----------------------------------------------------------------------------
+// ============================================================================

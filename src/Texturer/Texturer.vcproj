@@ -40,6 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				PreprocessorDefinitions="USE_VS_2008"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -109,6 +110,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				PreprocessorDefinitions="USE_VS_2008"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -174,7 +176,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\mesh_file_helper.cpp"
+				RelativePath="..\common\mesh_file_helper.cpp"
 				>
 			</File>
 			<File
@@ -182,7 +184,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ply.c"
+				RelativePath="..\common\ply.c"
 				>
 			</File>
 			<File
@@ -224,11 +226,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\geometry.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mesh_file_helper.h"
+				RelativePath="..\common\mesh_file_helper.h"
 				>
 			</File>
 			<File
@@ -236,7 +234,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ply.h"
+				RelativePath="..\common\ply.h"
 				>
 			</File>
 			<File
@@ -257,10 +255,6 @@
 			</File>
 			<File
 				RelativePath=".\Texture.h"
-				>
-			</File>
-			<File
-				RelativePath=".\types.h"
 				>
 			</File>
 			<File

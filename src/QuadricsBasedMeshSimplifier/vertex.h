@@ -2,8 +2,8 @@
 #define VERTEX_H_
 
 
-#include "../VertexRecolor/types.h"
-#include "../VertexRecolor/geometry.h"
+#include "../common/types.h"
+#include "../common/geometry.h"
 #include "quadric.h"
 #include <vector>
 #include <assert.h>
@@ -27,7 +27,7 @@ public:
 	typedef std::vector<Face*> FaceListType;
 
 public:
-	Vertex(const VR::Vertex& parVertex, uint parId);
+	Vertex(const Com::Vertex& parVertex, uint parId);
 	~Vertex();
 
 public:
@@ -42,6 +42,7 @@ public:
 	void UpdatePairPosAndQuadric(std::vector<VertexPair*>& parUpdatePairs);
 
 	void RemoveIncidentFace(Face* parFace);
+	void RemoveIncidentFaceIFN(Face* parFace);
 	uint RemoveDegeneratedFaces();
 	void RemovePair(VertexPair* parPair);
 	void RemoveInvalidPair(std::vector<VertexPair*>& parDeletePairs);
@@ -49,7 +50,7 @@ public:
 	void RemoveDegeneratedPairs(std::vector<VertexPair*>& parDeletePairs);
 
 public:
-	inline const VR::Vec4& Pos() const { return pos_; }
+	inline const Com::Vec4& Pos() const { return pos_; }
 	inline const FaceListType& IncidentFaces() const { return incidentFaces_; }
 	inline const Quadric& GetQuadric() const { return quadric_; }
 	inline uint Id() const { return id_; }
@@ -59,7 +60,7 @@ public:
 public:
 	inline void SetId(uint parId) { id_ = parId; }
 	inline void SetDeleteMe() { deleteMe_ = true; }
-	inline void SetPos(const VR::Vec4& parPos) { pos_ = parPos; }
+	inline void SetPos(const Com::Vec4& parPos) { pos_ = parPos; }
 #ifdef _DEBUG
 	void SetQuadric(const Quadric& parQuadric);
 #else
@@ -70,7 +71,7 @@ private:
 	FaceListType incidentFaces_;
 	PairListType pairs_;
 
-	VR::Vec4 pos_;
+	Com::Vec4 pos_;
 	Quadric quadric_;
 	
 	uint id_;

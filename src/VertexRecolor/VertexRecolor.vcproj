@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;USE_VS_2008"
+				PreprocessorDefinitions="USE_VS_2008"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -110,7 +110,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;USE_VS_2008"
+				PreprocessorDefinitions="USE_VS_2008"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -181,7 +181,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;USE_VS_2008;NDEBUG"
+				PreprocessorDefinitions="USE_VS_2008;NDEBUG"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -235,15 +235,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\easy_cleaner.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\easy_cleaner.h"
-				>
-			</File>
-			<File
-				RelativePath=".\geometry.h"
+				RelativePath="..\common\geometry.h"
 				>
 			</File>
 			<File
@@ -251,31 +243,31 @@
 				>
 			</File>
 			<File
-				RelativePath=".\mesh_file_helper.cpp"
+				RelativePath="..\common\mesh_file_helper.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\mesh_file_helper.h"
+				RelativePath="..\common\mesh_file_helper.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ply.c"
+				RelativePath="..\common\ply.c"
 				>
 			</File>
 			<File
-				RelativePath=".\ply.h"
+				RelativePath="..\common\ply.h"
 				>
 			</File>
 			<File
-				RelativePath=".\threedtree.cpp"
+				RelativePath="..\common\threedtree.h"
 				>
 			</File>
 			<File
-				RelativePath=".\threedtree.h"
+				RelativePath="..\common\threedtree.impl.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\types.h"
+				RelativePath="..\common\types.h"
 				>
 			</File>
 			<File

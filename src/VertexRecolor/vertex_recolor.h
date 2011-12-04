@@ -2,7 +2,7 @@
 #define VERTEX_RECOLOR_H_
 
 
-#include "geometry.h"
+#include "../common/geometry.h"
 
 
 // ============================================================================
@@ -11,7 +11,9 @@
 namespace VR
 {
 // ----------------------------------------------------------------------------
-void VertexRecolor(Mesh& parFinalMesh, const Mesh& parColoredMesh, const Mesh& parTriMesh);
+void VertexRecolor(Com::Mesh&			parFinalMesh,
+				   const Com::Mesh&		parColoredMesh,
+				   const Com::Mesh&		parTriMesh);
 // ----------------------------------------------------------------------------
 }
 // ============================================================================

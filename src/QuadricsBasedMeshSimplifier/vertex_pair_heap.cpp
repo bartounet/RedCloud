@@ -183,8 +183,7 @@ uint VertexPairHeap::DownHeap_(uint parInd)
 // ----------------------------------------------------------------------------
 uint VertexPairHeap::UpHeap_(uint parInd)
 {
-	uint size = tree_.size();
-	assert(parInd < size);
+	assert(parInd < tree_.size());
 
 	uint curInd = parInd;
 	while (curInd > 0)

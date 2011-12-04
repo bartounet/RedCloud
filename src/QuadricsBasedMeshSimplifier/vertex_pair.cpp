@@ -38,13 +38,13 @@ void VertexPair::ComputeOptimalPos_()
 
 // FIXME: Rendre ce code plus classe et gerer le point optimal !
 
-	const VR::Vec4& pos0 = v0_->Pos();
-	const VR::Vec4& pos1 = v1_->Pos();
+	const Com::Vec4& pos0 = v0_->Pos();
+	const Com::Vec4& pos1 = v1_->Pos();
 
 	pos_ = pos0;
 	double minError = ComputeQuadricError_(pos0);
 
-	VR::Vec4 midPos;
+	Com::Vec4 midPos;
 	midPos.x = (pos0.x + pos1.x) / 2;
 	midPos.y = (pos0.y + pos1.y) / 2;
 	midPos.z = (pos0.z + pos1.z) / 2;
@@ -105,7 +105,7 @@ void VertexPair::ComputePosAndQuadric()
 	ComputeOptimalPos_();
 }
 // ----------------------------------------------------------------------------
-double VertexPair::ComputeQuadricError_(const VR::Vec4& parPos) const
+double VertexPair::ComputeQuadricError_(const Com::Vec4& parPos) const
 {
 #ifdef _DEBUG
 	assert(!quadricErrorComputed_);

@@ -1,7 +1,7 @@
 // Quadrics based mesh simplifier
 
-#include "../VertexRecolor/geometry.h"
-#include "../VertexRecolor/mesh_file_helper.h"
+#include "../common/geometry.h"
+#include "../common/mesh_file_helper.h"
 #include "mesh.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,26 +16,44 @@ void Usage(const char* parProgName)
 int main(int argc, char **argv)
 {
 #ifdef _DEBUG
-	printf("=== Quadrics based mesh simplifier (DEBUG MODE)===\n");
+	printf("=== Quadrics based mesh simplifier (DEBUG MODE) ===\n");
 #else
-	printf("=== Quadrics based mesh simplifier ===\n");
+ #ifndef NDEBUG
+	printf("=== Quadrics based mesh simplifier (RELEASE MODE) ===\n");
+ #else
+	printf("=== Quadrics based mesh simplifier (FINAL MODE) ===\n");
+ #endif
 #endif
 
 	if (argc != 3)
 		Usage(argv[0]);
 
 	printf("[ ] Loading '%s' mesh file\n", argv[1]);
-	VR::Mesh srcMesh;
-	VR::MeshFileHelper::LoadMeshFromPlyFile(srcMesh, argv[1]);
+	Com::Mesh srcMesh;
+	Com::MeshFileHelper::LoadMeshFromPlyFile(srcMesh, argv[1]);
 	printf("[+] Mesh loaded\n");
 
 	QBMS::Mesh mesh(srcMesh);
+
+	printf("[ ] Cleaning mesh\n");
+	mesh.Clean();
+	printf("[+] Mesh cleaned\n");
+
+	printf("[ ] Checking zero area faces\n");
+	if (mesh.HasZeroAreaSurfaceFaces())
+	{
+		printf("[-] Zero area faces found! Abort...\n");
+		exit(2);
+	}
+	printf("[+] No zero area faces found\n");
 
 	mesh.ComputeInitialQuadrics();
 	mesh.SelectAndComputeVertexPairs();
 	mesh.Simplify(20000);
 
-	VR::Mesh dstMesh;
+	//assert(!mesh.HasZeroAreaSurfaceFaces()); // FIXME: Post CLEAN !
+
+	Com::Mesh dstMesh;
 	mesh.ExportToVRMesh(dstMesh);
 
 	printf("\t[.] Vertices reduction: %.2f percent\n",
@@ -44,7 +62,7 @@ int main(int argc, char **argv)
 		100.f * (1.f - (float)dstMesh.faces.size() / (float)srcMesh.faces.size()));
 
 	printf("[ ] Saving '%s' mesh file (vertices: %d, faces: %d)\n", argv[2], dstMesh.vertices.size(), dstMesh.faces.size());
-	VR::MeshFileHelper::SaveMeshToPlyFile(dstMesh, argv[2], true);
+	Com::MeshFileHelper::SaveMeshToPlyFile(dstMesh, argv[2], true);
 	printf("[+] Mesh saved\n");
 
 	exit(0);	// FIXME: As long as mesh destructor (and its attribute) is empty,
