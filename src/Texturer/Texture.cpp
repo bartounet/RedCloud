@@ -11,7 +11,7 @@
 // ============================================================================
 void Texture::createMapping()
 {
-    sizeTriangle_ = (size_t)(width_ / (ceil (sqrt (faces_.size () / 2.0))) - 1);
+    sizeTriangle_ = (-5 + sqrt(9 + 4 * pow((float)width_, 2) / faces_.size ())) / 2;
 
     std::cout << "size triangle : " << sizeTriangle_ << std::endl;
 
@@ -23,9 +23,9 @@ void Texture::createMapping()
     {
         if (i % 2 == 0)
         {
-            Point2d* p0 = new Point2d(c * (sizeTriangle_ + 1), l * sizeTriangle_);
-            Point2d* p1 = new Point2d(c * (sizeTriangle_ + 1), (l + 1) * sizeTriangle_);
-            Point2d* p2 = new Point2d(c * (sizeTriangle_ + 1) + sizeTriangle_, l * sizeTriangle_);
+            Point2d* p0 = new Point2d(0.5 + c * (sizeTriangle_ + 4), 0.5 + l * (sizeTriangle_ + 1));
+            Point2d* p1 = new Point2d(p0->x_, p0->y_ + sizeTriangle_);
+            Point2d* p2 = new Point2d(p0->x_ + sizeTriangle_, p0->y_);
             faces_[i]->setCoordTexture(p0, p1, p2);
 
             assert (p0->x_ >= 0);
@@ -46,9 +46,9 @@ void Texture::createMapping()
         }
         else
         {
-            Point2d* p0 = new Point2d((c + 1) * (sizeTriangle_ + 1), (l + 1) * sizeTriangle_);
-            Point2d* p1 = new Point2d((c + 1) * (sizeTriangle_ + 1), l * sizeTriangle_);
-            Point2d* p2 = new Point2d(c * (sizeTriangle_ + 1) + 1, (l + 1) * sizeTriangle_);
+            Point2d* p0 = new Point2d(sizeTriangle_ + 4 - 0.5 + c * (sizeTriangle_ + 4), sizeTriangle_ + 1 - 0.5 + l * (sizeTriangle_ + 1));
+            Point2d* p1 = new Point2d(p0->x_, p0->y_ - sizeTriangle_);
+            Point2d* p2 = new Point2d(p0->x_ - sizeTriangle_, p0->y_);
             faces_[i]->setCoordTexture(p0, p1, p2);
 
             assert (p0->x_ >= 0);
@@ -67,7 +67,7 @@ void Texture::createMapping()
             assert (p0->x_ - p2->x_ == sizeTriangle_);
 
             c++;
-            if ((c + 1) * (sizeTriangle_ + 1) > width_)
+            if ((c + 1) * (sizeTriangle_ + 4) > width_)
             {
                 c = 0;
                 l++;
@@ -112,11 +112,14 @@ void Texture::fill()
 
 
 
-        for (float u = 1. / (2. * sizeTriangle_); u <= 1; u += 1. / sizeTriangle_)
-            for (float v = 1. / (2. * sizeTriangle_); v <= 1; v += 1. / sizeTriangle_)
+        for (float i = 0; i <= sizeTriangle_; i += 1)
+            for (float j = 0; j <= sizeTriangle_; j += 1)
             {
-                if (u + v <= 1)
+                if (i + j <= sizeTriangle_ + 1)
                 {
+                    float u = i / sizeTriangle_;
+                    float v = j / sizeTriangle_;
+
                     float x = faces_[f]->getCoordTexture ()[0]->x_ + u * vectU.x_ + v * vectV.x_;
                     float y = faces_[f]->getCoordTexture ()[0]->y_ + u * vectU.y_ + v * vectV.y_;
 

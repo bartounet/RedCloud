@@ -115,6 +115,7 @@ std::list<Face* >* World::getNeighbour (Point3d& p)
                     std::list<float >::iterator currDist = distList.begin ();
                     std::list<float >::iterator distEnd = distList.end ();
                     std::list<Face* >::iterator currFace = fList->begin ();
+                    std::list<Face* >::iterator endFace = fList->end ();
 
 
                     for (; currDist != distEnd; ++currDist, currFace++)
@@ -125,7 +126,7 @@ std::list<Face* >* World::getNeighbour (Point3d& p)
                         if (dist == *currDist && *currFace == f)
                             break;
 
-                    if (*currFace != f)
+                    if (currFace == endFace || *currFace != f)
                     {
                         distList.insert (currDist, dist);
                         fList->insert (currFace, f);
