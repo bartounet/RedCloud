@@ -155,10 +155,10 @@ std::vector<Face*>& World::getAtIndex(float x, float y, float z)
 // ----------------------------------------------------------------------------
  World::World(std::vector<Point3dColor* >& points, std::vector<Face* >& faces, Point3d& min, Point3d& max)
     : points_(points),
-      gridSize_ (0.025),
-      maxFaceDist_ (0.0175),
-      //gridSize_ (1),
-      //maxFaceDist_ (0.5),
+      //gridSize_ (0.025),
+      //maxFaceDist_ (0.0175),
+      gridSize_ (1),
+      maxFaceDist_ (0.5),
       min_ (min),
       max_ (max)
 {
