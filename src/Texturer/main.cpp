@@ -327,9 +327,9 @@ int main (int argc, char** argv)
     std::cout << "4" << std::endl;
     texture.fill ();
     std::cout << "5" << std::endl;
-    texture.dump ("texture.ppm");
+	texture.dump (std::string(argv[3]) + "/texture.ppm");
 
-    write_ply (argv[3], faces, Face::points_, texture.getSizeTriangle (), sizeTexture);
+    write_ply (std::string(argv[3]) + "/model.dae", faces, Face::points_, texture.getSizeTriangle (), sizeTexture);
 
     std::cout << "end" << std::endl;
     return 0;
