@@ -41,9 +41,7 @@ def getArgs() :
 
 def do(step):
     stepName = step.__name__
-    print "#############################"
-    print "## ", stepName
-    print "#############################"
+    printKiKoo(stepName)
     start = time.time()
     step()
     execTimeMin = (int)((time.time() - start) / 60.)
@@ -96,11 +94,18 @@ def stepCreateKMZ():
     im.save("texture.png")	
     daeToKmz.daeToKmz(daeModel, daeTexture, geofile, kmlPath)
 
+def printKiKoo(title):
+    kikoo = 51
+    print "#"*kikoo
+    space = abs((kikoo - 4 - len(title)))
+    modulo = space % 2
+    space /= 2
+    print str("##"+" "*(space)+title+" "*(space + modulo)+"##")
+    print "#"*kikoo
 
 begin = time.time()
-print "###############################"
-print "##       RedClouds :)        ##"
-print "###############################"
+
+printKiKoo("RedClouds Starting :)")
 
 photoDir, resultDir = getArgs();
 if (not os.path.exists(resultDir)):
@@ -174,8 +179,6 @@ for step in steps:
 
 end = time.time() - begin
 
-print Benchmark	
+print "See results at ", redCouldDir
+printKiKoo("RedClouds - FINNISH :)")
 
-print "###############################"
-print "## RedClouds - FINNISH :)    ##"
-print "###############################"
