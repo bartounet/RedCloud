@@ -47,9 +47,9 @@ def do(step):
     step()
     execTimeMin = (int)((time.time() - start) / 60.)
     execTimeSec = (int)((time.time() - start) % 60)
-    execTime = str(execTimeMin + " mins and " + execTimeSec + "secs")
-    print "--> Done in: ", execTime, "mins\n\n"
-    benchmarkFile = open(os.path.join(redCouldDir, "Benchmark.ply"), 'w')
+    execTime = str(str(execTimeMin) + " mins and " + str(execTimeSec) + "secs")
+    print "--> Done in: ", execTime, "\n\n"
+    benchmarkFile = open(os.path.join(redCouldDir, "Benchmark.txt"), 'a+')
     benchmarkFile.write(str("-" + stepName + ": " + execTime))
     benchmarkFile.close
 
@@ -73,9 +73,12 @@ def stepGeoscale():
     geoscale.doGeoscale(photoDir, bundlerOut, bundlerOut, outGeo)
 
 def stepCMVS():
-    cmvsManager = osmcmvs.OsmCmvs(resultDir, binDirPath)
-    cmvsManager.doBundle2PMVS()
-    cmvsManager.doCMVS()
+    if (not os.path.exists(os.path.join(resultDir, "pmvs"))):
+        cmvsManager = osmcmvs.OsmCmvs(resultDir, binDirPath)
+        cmvsManager.doBundle2PMVS()
+        cmvsManager.doCMVS()
+    else:
+        print "Folder pmvs already exist, Skip CMVS..."
 
 def stepPoissonReconstruction():
     plyMerger.plyFusion(modelsDir, plyMerge)
@@ -124,8 +127,6 @@ plySimplyRecolor = os.path.join(redCouldDir, "plySimplyRecolor.ply")
 texturerExecutable = os.path.join(binDirPath, "Texturer")
 daeModel = os.path.join(redCouldDir, "model.dae")
 
-
-
 Benchmark = {}
 
 ### OPTION:
@@ -155,6 +156,7 @@ stepMatchFeature,
 stepBundleAdjustment,
 stepGeoscale,
 stepCMVS,
+stepPoissonReconstruction,
 stepSimplify
 ]
 
@@ -162,6 +164,7 @@ for step in steps:
     do(step)
 
 end = time.time() - begin
+
 '''
 print "## Texturer:"
 start = time.time()
