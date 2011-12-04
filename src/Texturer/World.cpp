@@ -115,6 +115,7 @@ std::list<Face* >* World::getNeighbour (Point3d& p)
                     std::list<float >::iterator currDist = distList.begin ();
                     std::list<float >::iterator distEnd = distList.end ();
                     std::list<Face* >::iterator currFace = fList->begin ();
+                    std::list<Face* >::iterator endFace = fList->end ();
 
 
                     for (; currDist != distEnd; ++currDist, currFace++)
@@ -125,7 +126,7 @@ std::list<Face* >* World::getNeighbour (Point3d& p)
                         if (dist == *currDist && *currFace == f)
                             break;
 
-                    if (*currFace != f)
+                    if (currFace == endFace || *currFace != f)
                     {
                         distList.insert (currDist, dist);
                         fList->insert (currFace, f);
@@ -158,10 +159,10 @@ std::vector<Face*>& World::getAtIndex(float x, float y, float z)
   */
  World::World(std::vector<Point3dColor* >& points, std::vector<Face* >& faces, Point3d& min, Point3d& max)
     : points_(points),
-      //gridSize_ (0.025),
-      //maxFaceDist_ (0.0175),
-      gridSize_ (1),
-      maxFaceDist_ (0.5),
+      gridSize_ (0.025),
+      maxFaceDist_ (0.0175),
+      //gridSize_ (1),
+      //maxFaceDist_ (0.5),
       min_ (min),
       max_ (max)
 {
