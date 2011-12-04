@@ -12,24 +12,22 @@ import subprocess
 import Image
 
 sys.path.append('scripts/Geoscale/')
-import geoscale as geoscale
+import Geoscale as geoscale
 
 from scripts import osmcmvs as osmcmvs 
 from scripts import osmbundler as osmbundler 
 from scripts import plyMerger as plyMerger 
 from scripts import ply2npts as ply2npts
 
-currentPath = os.getcwd()
-distrPath = os.path.dirname( os.path.abspath(sys.argv[0]) )
-binDirPath =  os.path.join(distrPath, "bin")
 
 def Usage() :
 	print("Usage : ./redcloud.py <Dossier Photos> <Dossier de sortie>");
 	sys.exit(1);
 
-def getArgs() :	
+def getArgs() :
+    currentPath = os.getcwd()
     if (len(sys.argv) != 3) :
-	    Usage();	
+	    Usage();
     photoDir = sys.argv[1]
     if not(os.path.isabs(photoDir)):
         photoDir = os.path.join(currentPath, photoDir)
@@ -40,16 +38,99 @@ def getArgs() :
     return (photoDir, resultDir);
 
 
+def do(step):
+    stepName = step.__name__
+    print "#############################"
+    print "## ", stepName
+    print "#############################"
+    start = time.time()
+    step()
+    execTimeMin = (int)((time.time() - start) / 60.)
+    execTimeSec = (int)((time.time() - start) % 60)
+    execTime = str(execTimeMin + " mins and " + execTimeSec + "secs")
+    print "--> Done in: ", execTime, "mins\n\n"
+    benchmarkFile = open(os.path.join(redCouldDir, "Benchmark.ply"), 'w')
+    benchmarkFile.write(str("-" + stepName + ": " + execTime))
+    benchmarkFile.close
+
+
+def stepPreparePhotos():
+    bundleManager.initEngine()
+    bundleManager.preparePhotos()
+
+def stepMatchFeature():
+    bundleManager.matchFeatures()
+
+def stepBundleAdjustment():
+    if (not os.path.exists(os.path.join(resultDir, "bundle", "bundle.out"))):
+        bundleManager.doBundleAdjustment()
+    else:
+        print "Skip BundleAdjustment"
+
+def stepGeoscale():
+    shutil.copyfile(bundlerOut, bundlerOutTmp)
+    outGeo =  os.path.join(redCouldDir, "geoData.txt")
+    geoscale.doGeoscale(photoDir, bundlerOut, bundlerOut, outGeo)
+
+def stepCMVS():
+    cmvsManager = osmcmvs.OsmCmvs(resultDir, binDirPath)
+    cmvsManager.doBundle2PMVS()
+    cmvsManager.doCMVS()
+
+def stepPoissonReconstruction():
+    plyMerger.plyFusion(modelsDir, plyMerge)
+    ply2npts.ply2npts(plyMerge, nptsFile)
+    subprocess.call([poissonReconExecutable, "--in" , nptsFile, "--out", plyPoisson, "--depth",  "10", "--manifold"])
+
+def stepSimplify():
+    subprocess.call([simplifierExecutable, plyPoisson, plySimplify])
+    subprocess.call([recolorExecutable, "-v" , plyMerge, plySimplify, plySimplyRecolor])
+    print "###############################"
+    subprocess.call([texturerExecutable, plyMerge, plySimplyRecolor, daeModel])
+
+begin = time.time()
 print "###############################"
 print "##       RedClouds :)        ##"
 print "###############################"
 
+photoDir, resultDir = getArgs();
+if (not os.path.exists(resultDir)):
+    os.mkdir(resultDir)
+
+distrPath = os.path.dirname(os.path.abspath(sys.argv[0]) )
+binDirPath =  os.path.join(distrPath, "bin")
+redCouldDir = os.path.join(resultDir, "RedClouds")
+if (not os.path.exists(redCouldDir)):
+    os.mkdir(redCouldDir)
+
+
+bundlerOut = os.path.join(resultDir, "bundle", "bundle.out")
+bundlerOutTmp = os.path.join(resultDir, "bundle", "bundleTmp.out")
+outGeo =  os.path.join(redCouldDir, "geoData.txt")
+
+modelsDir = os.path.join(resultDir, "pmvs", "models")
+plyMerge = os.path.join(redCouldDir, "merge.ply")
+nptsFile = os.path.join(redCouldDir, "merge.npts")
+
+poissonReconExecutable = os.path.join(binDirPath, "PoissonRecon")
+plyPoisson = os.path.join(redCouldDir, "poisson.ply")
+
+simplifierExecutable = os.path.join(binDirPath, "qbms_release")
+plySimplify = os.path.join(redCouldDir, "simplify.ply")
+
+recolorExecutable = os.path.join(binDirPath, "vr_release")
+plySimplyRecolor = os.path.join(redCouldDir, "plySimplyRecolor.ply")
+
+texturerExecutable = os.path.join(binDirPath, "Texturer")
+daeModel = os.path.join(redCouldDir, "model.dae")
+
+
+
 Benchmark = {}
 
-#getArgs
-photoDir, resultDir = getArgs();
-
+### OPTION:
 maxPhotoDimension = 2000
+maxSiftPoints = 2000
 
 print "## Checking parameters:"
 if not(os.path.exists(photoDir)):
@@ -63,107 +144,25 @@ if (not os.path.exists(resultDir)):
 else:
     print "--Result directory (already exist): ", resultDir
     
-
 # initialize OsmBundler manager class
 print resultDir
 
-print "## PreparePhotos:"
-start = time.time()
-logging.basicConfig(level=logging.INFO, format="%(message)s")
-manager = osmbundler.OsmBundler(photoDir, resultDir, binDirPath, maxPhotoDimension)
-manager.preparePhotos()
-print "--> Done in: ", time.time() - start, "secs" 
-Benchmark["PreparePhotos"] = time.time() - start
+bundleManager = osmbundler.OsmBundler(photoDir, resultDir, binDirPath, maxPhotoDimension)
 
-print "## MatchFeatures:"
-start = time.time()
-manager.matchFeatures()
-print "--> Done in: ", time.time() - start, "secs"
-Benchmark["MatchFeatures"] = time.time() - start
+steps =[
+stepPreparePhotos,
+stepMatchFeature,
+stepBundleAdjustment,
+stepGeoscale,
+stepCMVS,
+stepSimplify
+]
 
+for step in steps:
+    do(step)
 
-print "## DoBundleAdjustment:"
-start = time.time()
-if (not os.path.exists(os.path.join(resultDir, "bundle", "bundle.out"))):
-    manager.doBundleAdjustment()
-else:
-    print "Skip BundleAdjustment"
-print "--> Done in: ", time.time() - start, "secs" 
-Benchmark["BundleAdjustment"] = time.time() - start
-
-redCouldDir = os.path.join(resultDir, "RedClouds") 
-if (not os.path.exists(redCouldDir)):
-    os.mkdir(redCouldDir)
-
-
-print "## DoGeoscale:"
-start = time.time()
-bundlerOut = os.path.join(resultDir, "bundle", "bundle.out")
-bundlerOutTmp = os.path.join(resultDir, "bundle", "bundleTmp.out")
-shutil.copyfile(bundlerOut, bundlerOutTmp)
-outGeo =  os.path.join(redCouldDir, "geoData.txt")
-#geoscale.doGeoscale(photoDir, bundlerOut, bundlerOut, outGeo)
-print "--> Done in: ", time.time() - start, "secs"
-Benchmark["Geoscale"] = time.time() - start
-
-print "## doCMVS:"
-start = time.time()
-manager = osmcmvs.OsmCmvs(resultDir, binDirPath)
-manager.doBundle2PMVS()
-manager.doCMVS()
-print "--> Done in: ", time.time() - start, "secs" 
-Benchmark["CMVS"] = time.time() - start
-
-print "## plyMerge:"
-start = time.time()
-print resultDir
-modelsDir = os.path.join(resultDir, "pmvs", "models")
-plyMerge = os.path.join(redCouldDir, "merge.ply")
-plyMerger.plyFusion(modelsDir, plyMerge)
-print "--> Done in: ", time.time() - start, "secs" 
-Benchmark["plyMerge"] = time.time() - start
-
-print "## ply2npts:"
-start = time.time()
-nptsFile = os.path.join(redCouldDir, "merge.npts")
-ply2npts.ply2npts(plyMerge, nptsFile)
-print "--> Done in: ", time.time() - start, "secs" 
-Benchmark["ply2npts"] = time.time() - start
-
-print "## PoissonRecon:"
-start = time.time()
-poissonReconExecutable = os.path.join(binDirPath, "PoissonRecon")
-plyPoisson = os.path.join(redCouldDir, "poisson.ply")
-subprocess.call([poissonReconExecutable, "--in" , nptsFile, "--out", plyPoisson, "--depth",  "10", "--manifold"])
-print "--> Done in: ", time.time() - start, "secs" 
-Benchmark["PoissonRecon"] = time.time() - start
-
+end = time.time() - begin
 '''
-print "## Cleaner:"
-start = time.time()
-cleanerExecutable = os.path.join(binDirPath, "Cleaner")
-plyClean = os.path.join(redCouldDir, "clean.ply")
-subprocess.call([cleanerExecutable, "-v" , plyPoisson, plyClean])
-print "--> Done in: ", time.time() - start, "secs" 
-Benchmark["Cleaner"] = time.time() - start
-'''
-
-print "## Simplifier:"
-start = time.time()
-simplifierExecutable = os.path.join(binDirPath, "qbms_release")
-plySimplify = os.path.join(redCouldDir, "simplify.ply")
-subprocess.call([simplifierExecutable, plyPoisson, plySimplify])
-print "--> Done in: ", time.time() - start, "secs" 
-Benchmark["Simplifier"] = time.time() - start
-
-print "## Recolor:"
-start = time.time()
-recolorExecutable = os.path.join(binDirPath, "vr_release")
-plySimplyRecolor = os.path.join(redCouldDir, "plySimplyRecolor.ply")
-subprocess.call([recolorExecutable, "-v" , plyMerge, plySimplify, plySimplyRecolor])
-print "--> Done in: ", time.time() - start, "secs" 
-Benchmark["Recolor"] = time.time() - start
-
 print "## Texturer:"
 start = time.time()
 texturerExecutable = os.path.join(binDirPath, "Texturer")
@@ -171,6 +170,7 @@ daeModel = os.path.join(redCouldDir, "model.dae")
 subprocess.call([texturerExecutable, plyMerge, plySimplyRecolor, daeModel])
 print "--> Done in: ", time.time() - start, "secs" 
 Benchmark["Texturer"] = time.time() - start
+'''
 
 im = Image.open("./texture.ppm")
 im.save("texture.png")	
