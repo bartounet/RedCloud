@@ -89,10 +89,10 @@ def stepSimplify():
     subprocess.call([recolorExecutable, "-v" , plyMerge, plySimplify, plySimplyRecolor])
 
 def stepCreateKMZ():
-    subprocess.call([texturerExecutable, plyMerge, plySimplyRecolor, daeModel])    
-    im = Image.open("./texture.ppm")
-    im.save("texture.png")	
-    daeToKmz.daeToKmz(daeModel, daeTexture, geofile, kmlPath)
+    subprocess.call([texturerExecutable, plyMerge, plySimplyRecolor, daeDir])
+    im = Image.open(daeTexturePPM)
+    im.save(daeTexturePNG)
+    daeToKmz.daeToKmz(daeModel, daeTexturePNG, geofile, kmlPath)
 
 def printKiKoo(title):
     kikoo = 51
@@ -103,6 +103,9 @@ def printKiKoo(title):
     print str("##"+" "*(space)+title+" "*(space + modulo)+"##")
     print "#"*kikoo
 
+###############################################################################
+## START
+###############################################################################
 begin = time.time()
 
 printKiKoo("RedClouds Starting :)")
@@ -116,7 +119,6 @@ binDirPath =  os.path.join(distrPath, "bin")
 redCouldDir = os.path.join(resultDir, "RedClouds")
 if (not os.path.exists(redCouldDir)):
     os.mkdir(redCouldDir)
-
 
 bundlerOut = os.path.join(resultDir, "bundle", "bundle.out")
 bundlerOutTmp = os.path.join(resultDir, "bundle", "bundleTmp.out")
@@ -136,9 +138,12 @@ recolorExecutable = os.path.join(binDirPath, "vr_release")
 plySimplyRecolor = os.path.join(redCouldDir, "plySimplyRecolor.ply")
 
 texturerExecutable = os.path.join(binDirPath, "Texturer")
-daeModel = os.path.join(redCouldDir, "model.dae")
+daeDir = os.path.join(redCouldDir, "dae")
+daeModel = os.path.join(daeDir, "model.dae")
+daeTexturePPM = os.path.join(daeDir, "texture.ppm")
+daeTexturePNG = os.path.join(daeDir, "texture.jpg")
+kmlPath = os.path.join(redCouldDir, "model.kml")
 
-Benchmark = {}
 
 ### OPTION:
 maxPhotoDimension = 2000
@@ -171,7 +176,7 @@ stepGeoscale,
 stepCMVS,
 stepPoissonReconstruction,
 stepSimplify,
-#stepCreateKMZ,
+stepCreateKMZ,
 ]
 
 for step in steps:
