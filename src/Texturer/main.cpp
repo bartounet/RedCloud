@@ -318,7 +318,7 @@ int main (int argc, char** argv)
     Face::printInfos (faces);
     std::cout << "2" << std::endl;
 
-    size_t sizeTexture = 8;
+    size_t sizeTexture = 2048;
 
     Texture texture = Texture (sizeTexture, faces);
     std::cout << "3" << std::endl;
