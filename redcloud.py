@@ -18,6 +18,7 @@ from scripts import osmcmvs as osmcmvs
 from scripts import osmbundler as osmbundler 
 from scripts import plyMerger as plyMerger 
 from scripts import ply2npts as ply2npts
+from scripts import daeToKmz as daeToKmz 
 
 
 def Usage() :
@@ -88,8 +89,13 @@ def stepPoissonReconstruction():
 def stepSimplify():
     subprocess.call([simplifierExecutable, plyPoisson, plySimplify])
     subprocess.call([recolorExecutable, "-v" , plyMerge, plySimplify, plySimplyRecolor])
-    print "###############################"
-    subprocess.call([texturerExecutable, plyMerge, plySimplyRecolor, daeModel])
+
+def stepCreateKMZ():
+    subprocess.call([texturerExecutable, plyMerge, plySimplyRecolor, daeModel])    
+    im = Image.open("./texture.ppm")
+    im.save("texture.png")	
+    daeToKmz.daeToKmz(daeModel, daeTexture, geofile, kmlPath)
+
 
 begin = time.time()
 print "###############################"
@@ -157,7 +163,8 @@ stepBundleAdjustment,
 stepGeoscale,
 stepCMVS,
 stepPoissonReconstruction,
-stepSimplify
+stepSimplify,
+#stepCreateKMZ,
 ]
 
 for step in steps:
@@ -165,22 +172,8 @@ for step in steps:
 
 end = time.time() - begin
 
-'''
-print "## Texturer:"
-start = time.time()
-texturerExecutable = os.path.join(binDirPath, "Texturer")
-daeModel = os.path.join(redCouldDir, "model.dae")
-subprocess.call([texturerExecutable, plyMerge, plySimplyRecolor, daeModel])
-print "--> Done in: ", time.time() - start, "secs" 
-Benchmark["Texturer"] = time.time() - start
-'''
-
-im = Image.open("./texture.ppm")
-im.save("texture.png")	
-
 print Benchmark	
-#Ply2Kml
-sys.argv=[working_dir + "\daeTokmz\DaeToKmz.py",
-          optim_tmp + "\mesh_textured.dae", optim_tmp + "\\texture.png", geo_tmp + "\point.gps", working_dir + "\\" + output]
-exec(open(working_dir + "\daeTokmz\DaeToKmz.py").read())
 
+print "###############################"
+print "## RedClouds - FINNISH :)    ##"
+print "###############################"
