@@ -48,10 +48,10 @@ def do(step):
     step()
     execTimeMin = (int)((time.time() - start) / 60.)
     execTimeSec = (int)((time.time() - start) % 60)
-    execTime = str(str(execTimeMin) + " mins and " + str(execTimeSec) + "secs")
+    execTime = str(str(execTimeMin) + " mins and " + str(execTimeSec) + " secs")
     print "--> Done in: ", execTime, "\n\n"
     benchmarkFile = open(os.path.join(redCouldDir, "Benchmark.txt"), 'a+')
-    benchmarkFile.write(str("-" + stepName + ": " + execTime))
+    benchmarkFile.write(str("-" + stepName + ": " + execTime + "\n"))
     benchmarkFile.close
 
 
@@ -75,9 +75,9 @@ def stepGeoscale():
 
 def stepCMVS():
     if (not os.path.exists(os.path.join(resultDir, "pmvs"))):
-        cmvsManager = osmcmvs.OsmCmvs(resultDir, binDirPath)
+        cmvsManager = osmcmvs.OsmCmvs(resultDir, binDirPath, CMVSNbClusters)
         cmvsManager.doBundle2PMVS()
-        cmvsManager.doCMVS()
+        cmvsManager.doCMVS(CMVSLevel)
     else:
         print "Folder pmvs already exist, Skip CMVS..."
 
@@ -138,6 +138,8 @@ Benchmark = {}
 ### OPTION:
 maxPhotoDimension = 2000
 maxSiftPoints = 2000
+CMVSLevel = 0
+CMVSNbClusters = 20
 
 print "## Checking parameters:"
 if not(os.path.exists(photoDir)):

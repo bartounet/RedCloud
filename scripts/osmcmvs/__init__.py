@@ -30,10 +30,10 @@ class OsmCmvs():
     # value of command line argument --bundlerOutputPath=<..>
     bundleOutArg = ""
 
-    def __init__(self, workDir, binDirPath):
+    def __init__(self, workDir, binDirPath, clusterToCompute):
 
         self.bundleOutArg = workDir
-        self.clusterToCompute = 20 #FIXXXXXXXX
+        self.clusterToCompute = clusterToCompute
         self.pmvsExecutable = getExecPath(binDirPath, "pmvs2")
         self.cmvsExecutable = getExecPath(binDirPath, "cmvs")
         self.genOptionExecutable = getExecPath(binDirPath, "genOption")
@@ -114,11 +114,11 @@ class OsmCmvs():
 		
         logging.info("Finished!")
     
-    def doCMVS(self):
+    def doCMVS(self, level):
       os.chdir(os.path.join(self.workDir,"pmvs"))
       subprocess.call([self.cmvsExecutable, "./", str(self.clusterToCompute)])
       print "--------------------------------------"
-      subprocess.call([self.genOptionExecutable, "./"])
+      subprocess.call([self.genOptionExecutable, "./", "level="+str(level)])
       print "--------------------------------------"
       #find all the option-XXX files and run PMVS2 on it
       # three conditions are checked in the list comprehension below:
