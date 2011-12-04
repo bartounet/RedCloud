@@ -26,28 +26,19 @@ exifAttrs = dict(Model=True,Make=True,ExifImageWidth=True,ExifImageHeight=True,F
 
 
 class OsmBundler():
-
     currentDir = ""
-
     workDir = ""
-    
     # value of command line argument --photos=<..>
     photosArg = ""
-    
     featureExtractor = None
     bundlerExecutable = ''
-    
     matchingEngine = None
-    
     # sqlite cursor
     dbCursor = None
-    
     # list of photos with focal distances for bundler input
     bundlerListFile = None
-    
     # list of files with extracted features
     featuresListFile = None
-    
     # information about each processed photo is stored in the following dictionary
     # photo file name in self.workDir is used as the key in this dictionary
     photoDict = {}
@@ -73,6 +64,7 @@ class OsmBundler():
         if not (os.path.isdir(self.photosArg) or os.path.isfile(self.photosArg)):
             raise Exception, "'%s' is neither directory nor a file name" % self.photosArg
         
+    def initEngine(self):
         # initialize feature extractor based on command line arguments
         self.initFeatureExtractor()
 
@@ -100,7 +92,6 @@ class OsmBundler():
                 self.featureExtractor = val
             elif opt=="--help":
                 self.printHelpExit()
-        
         if self.photosArg=="": self.printHelpExit()
 
     def preparePhotos(self):
@@ -145,7 +136,6 @@ class OsmBundler():
         self.bundlerListFile.close()
         self.dbCursor.close()
 
-
     def _preparePhoto(self, photoInfo):
         photo = photoInfo['basename']
         photoDir = photoInfo['dirname']
@@ -174,6 +164,8 @@ class OsmBundler():
         photoInfo['width'] = photoHandle.size[0]
         photoInfo['height'] = photoHandle.size[1]
 
+        keyGzName = "%s.key.gz" % os.path.join(self.workDir, photo)
+
         photoHandle.save(outputFileNameJpg)
         photoHandle.convert("L").save(outputFileNamePgm)
 
@@ -181,7 +173,6 @@ class OsmBundler():
         self.photoDict[photo] = photoInfo
 
         ## SKIP _preparePhoto
-        keyGzName = "%s.key.gz" % os.path.join(self.workDir, photo)
         if os.path.exists(keyGzName):
             print photo, ": SiftKey already exist, skip..."
         elif (self.matchingEngine.featureExtractionNeeded):
@@ -200,7 +191,6 @@ class OsmBundler():
             photo = "%s_%s" % (photo, suffix)
             suffix = suffix + 1
         return photo
-
 
     def _getExif(self, photoHandle):
         exif = {}
@@ -232,7 +222,6 @@ class OsmBundler():
         if not hasFocal:
             logging.info("\tCan't estimate focal length in pixels for the photo '%s'" % os.path.join(photoInfo['dirname'],photoInfo['basename']))
             self.bundlerListFile.writelines("%s.jpg\n" % photo)
-
 
     def initMatchingEngine(self):
         try:
@@ -274,19 +263,26 @@ class OsmBundler():
         os.chdir(self.workDir)
         if (not os.path.exists("bundle")):
             os.mkdir("bundle")
-        
+
         # create options.txt
         optionsFile = open("options.txt", "w")
         optionsFile.writelines(defaults.bundlerOptions)
         optionsFile.close()
 
         bundlerOutputFile = open("bundle/out", "w")
-        #subprocess.call([self.bundlerExecutable, "list.txt", "--options_file", "options.txt",  "--init_pair1", "1",   "--init_pair2", "2"], **dict(stdout=bundlerOutputFile))
-        subprocess.call([self.bundlerExecutable, "list.txt", "--options_file", "options.txt"], **dict(stdout=bundlerOutputFile))        
+        #TODO: Find a better init_pair than random...
+        for i in range(3, 11):
+            print "Try init bundle adjustment with picture 1 and picture ", i
+            subprocess.call([self.bundlerExecutable, "list.txt", "--options_file", "options.txt",  "--init_pair1", "1",   "--init_pair2", str(i)], **dict(stdout=bundlerOutputFile))
+            if (os.path.exists("bundle/bundle.out")):
+                break
+            if (i == 10):
+                print '\n####\nCANNOT INITIAT BUNDLER WITH INIT PAIR... ABORD!!\n'
+                exit()
         bundlerOutputFile.close()
         os.chdir(self.currentDir)
         logging.info("Finished!")
-    
+
     def printHelpExit(self):
         self.printHelp()
         sys.exit(2)
