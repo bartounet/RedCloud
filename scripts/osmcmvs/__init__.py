@@ -118,7 +118,7 @@ class OsmCmvs():
       os.chdir(os.path.join(self.workDir,"pmvs"))
       subprocess.call([self.cmvsExecutable, "./", str(self.clusterToCompute)])
       print "--------------------------------------"
-      subprocess.call([self.genOptionExecutable, "./", "level="+str(level)])
+      subprocess.call([self.genOptionExecutable, "./", str(level)])
       print "--------------------------------------"
       #find all the option-XXX files and run PMVS2 on it
       # three conditions are checked in the list comprehension below:

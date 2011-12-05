@@ -94,7 +94,6 @@ def stepCreateKMZ():
     subprocess.call([texturerExecutable, plyMerge, plySimplyRecolor, daeDir])
     im = Image.open(daeTexturePPM)
     im.save(daeTexturePNG)
-    print daeToKmz 
     daeToKmz.doDaeToKmz(daeModel, daeTexturePNG, outGeo, kmlPath)
 
 def printKiKoo(title):
@@ -152,10 +151,10 @@ kmlPath = os.path.join(redCouldDir, "model.kml")
 
 
 ### OPTION:
-maxPhotoDimension = 2000
+maxPhotoDimension = 20000
 maxSiftPoints = 2000
-CMVSLevel = 0
-CMVSNbClusters = 20
+CMVSLevel = 1
+CMVSNbClusters = 10
 
 print "## Checking parameters:"
 if not(os.path.exists(photoDir)):
