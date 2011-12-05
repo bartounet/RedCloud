@@ -22,3 +22,4 @@ Makefile.rules
 *.idb
 *.dep
 *.manifest
+src/CodeAnalyst/*
