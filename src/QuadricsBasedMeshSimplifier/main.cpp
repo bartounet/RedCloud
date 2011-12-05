@@ -30,7 +30,8 @@ int main(int argc, char **argv)
 
 	printf("[ ] Loading '%s' mesh file\n", argv[1]);
 	Com::Mesh srcMesh;
-	Com::MeshFileHelper::LoadMeshFromPlyFile(srcMesh, argv[1]);
+	bool result = Com::MeshFileHelper::LoadMeshFromPlyFile(srcMesh, argv[1]);
+	assert(result);
 	printf("[+] Mesh loaded\n");
 
 	QBMS::Mesh mesh(srcMesh);

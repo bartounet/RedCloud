@@ -48,6 +48,7 @@ public:
 	void RemoveInvalidPair(std::vector<VertexPair*>& parDeletePairs);
 	void RemoveDuplicatedPair(std::vector<VertexPair*>& parDeletePairs);
 	void RemoveDegeneratedPairs(std::vector<VertexPair*>& parDeletePairs);
+	void SetDeleteMeOnRelatedFaces();
 
 public:
 	inline const Com::Vec4& Pos() const { return pos_; }
