@@ -141,6 +141,12 @@ void Mesh::Clean()
 
 			v1->SetDeleteMe();
 			mergeDstVertices.insert(std::make_pair(v1, v0));
+		}
+		else if (distances[curVertex] > 20 * meanDist)
+		{
+			Vertex* v0 = vertices_[curVertex];
+			v0->SetDeleteMe();
+			v0->SetDeleteMeOnRelatedFaces();
 			nbVerticesToDelete++;
 		}
 	}

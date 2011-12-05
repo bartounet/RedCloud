@@ -109,13 +109,22 @@ void Vertex::RemoveIncidentFace(Face* parFace)
 void Vertex::RemoveIncidentFaceIFN(Face* parFace)
 {
 	assert(parFace);
-	assert(parFace->IsDegenerated());
+//	assert(parFace->IsDegenerated());
 
 	FaceListType::iterator faceIt = std::find(incidentFaces_.begin(), incidentFaces_.end(), parFace);
 	if (faceIt != incidentFaces_.end())
 		incidentFaces_.erase(faceIt);
 }
 // ----------------------------------------------------------------------------
+
+void Vertex::SetDeleteMeOnRelatedFaces()
+{
+	for (uint currFace = 0; currFace < incidentFaces_.size(); ++currFace)
+		incidentFaces_[currFace]->SetDeleteMe();
+}
+
+// ----------------------------------------------------------------------------
+
 uint Vertex::RemoveDegeneratedFaces()
 {
 	FaceListType facesToDelete;
