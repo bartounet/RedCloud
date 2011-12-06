@@ -8,9 +8,6 @@ import math
 # ----------------------------------------------------------
 # ==========================================================
 
-def compare(a, b):
-    return (a[0] > b[0])
-
 def plyCut(plyInput, plyOutput, ratio):
     
     plyInputFile = open(plyInput, 'r')
@@ -38,7 +35,6 @@ def plyCut(plyInput, plyOutput, ratio):
         
     plyInputFile.close()
     
-    print "nbVertex:", nbVertex
     xMoy = xTotal / nbVertex
     yMoy = yTotal / nbVertex
     zMoy = zTotal / nbVertex
@@ -56,11 +52,8 @@ def plyCut(plyInput, plyOutput, ratio):
         vertex.insert(0, dist)
      
     standarDerivation = math.sqrt(dists / len(vertexs))
-    print "standarDerivation", standarDerivation
-    print "Hmmmm"
-    
-    
-    
+    print "StandarDerivation:", standarDerivation
+        
     val = (ratio/0.341)
     vertexCut = []
     for vertex in vertexs:
@@ -70,8 +63,8 @@ def plyCut(plyInput, plyOutput, ratio):
         else:
             vertexCut.append(vertex)
           
-    print len(vertexs)
-    print len(vertexCut)
+    print "Nb inital Vertexs:",len(vertexs)
+    print "Nb Vertexs left:",len(vertexCut)
     print "ratio =", float(len(vertexCut)) / float(len(vertexs))
     nbMaxVertex = int(nbVertex * ratio)
     nbMaxVertex = len(vertexCut)
@@ -100,10 +93,9 @@ end_header\n''')
         if (i != nbMaxVertex):
             vertexStr += "\n"
         plyOutputFile.write(vertexStr)
-            
+         
     plyOutputFile.close()
-
-plyCut(sys.argv[1],sys.argv[2], float(sys.argv[3]))
+    print "Gaussian Cut Finnish!"
 
 # ==========================================================
 # ----------------------------------------------------------
