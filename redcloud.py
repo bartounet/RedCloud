@@ -72,14 +72,14 @@ def stepBundleAdjustment():
 
 def stepGeoscale():
     if (os.path.exists(outGeo)):
-        print "File", outGeo, "already exist, Skip Geoscale..."
+        print "File:", outGeo, "already exist, Skip Geoscale..."
     else:
         shutil.copyfile(bundlerOut, bundlerOutTmp)
         geoscale.doGeoscale(photoDir, bundlerOut, bundlerOut, outGeo)
 
 def stepCMVS():
     if (os.path.exists(pmvsDir)):
-        print "Folder",pmvsDir,"already exist, Skip CMVS..."
+        print "Folder:",pmvsDir,"already exist, Skip CMVS..."
     else:
         cmvsManager = osmcmvs.OsmCmvs(resultDir, binDirPath, CMVSNbClusters)
         cmvsManager.doBundle2PMVS()
@@ -87,37 +87,41 @@ def stepCMVS():
 
 def stepPoissonReconstruction():
     if (os.path.exists(plyPoisson)):
-        print "File "" Skip PoissonReconstruction..."
+        print "File:", plyPoisson, "Skip PoissonReconstruction..."
     else:
         plyMerger.plyFusion(modelsDir, plyMerge)
         plyCut.plyCut(plyMerge, plyMergeCut, cutCoef)
         ply2npts.ply2npts(plyMergeCut, nptsFile)
+        print "## Starting PoissonRecon"
         subprocess.call([poissonReconExecutable, "--in" , nptsFile, "--out", plyPoisson, "--depth",  str(poissonDepth), "--manifold"])
         os.remove(nptsFile)
 
 def stepSimplify():
     if (os.path.exists(plySimplify)):
-        print "Skip Simplify..."
+        print "File:", plySimplify, "Skip Simplify..."
     else:
         subprocess.call([simplifierExecutable, plyPoisson, plySimplify, str(numberOfFaces)])
     if (os.path.exists(plySimplyRecolor)):
-        print "Skip recolor..."
+        print "File:", plySimplyRecolor, "Skip Recolor..."
     else:
         subprocess.call([recolorExecutable, "-v" , plyMergeCut, plySimplify, plySimplyRecolor])
-
-def stepCreateKMZ():
     if not(os.path.exists(kmzPath)):
         os.mkdir(kmzPath)
     if not(os.path.exists(kmzFileDir)):
         os.mkdir(kmzFileDir)
-    subprocess.call([texturerExecutable, plyMergeCut, plySimplyRecolor, kmzFileDir])
-    im = Image.open(daeTexturePPM)
-    im.save(daeTexturePNG)
-    os.remove(daeTexturePPM)
+    if (os.path.exists(daeModel)):
+        print "File:", daeModel, "Skip Texturer..."
+    else:
+        subprocess.call([texturerExecutable, plyMergeCut, plySimplyRecolor, kmzFileDir])
+        im = Image.open(daeTexturePPM)
+        im.save(daeTexturePNG)
+        os.remove(daeTexturePPM)
+
+def stepCreateKMZ():
     if (numberOfFaces > 20000):
         print "WARNNING: KMZ will not be create, numberOfFaces: ", numberOfFaces, "should be lower than 20000!"
     else:
-        daeToKmz.doDaeToKmz(daeModel, daeTexturePNG, outGeo, kmzPath)
+        daeToKmz.doDaeToKmz(daeModel, daeTexturePNG, outGeo, kmzPath, redCouldDir)
 
 def printKiKoo(title):
     kikoo = 51
@@ -187,7 +191,9 @@ PMVSCPU = 8
 
 cutCoef = 0.5
 poissonDepth = 10
-numberOfFaces = 300000
+numberOfFaces = 20000
+
+
 
 print "## Checking parameters:"
 if not(os.path.exists(photoDir)):
