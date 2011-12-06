@@ -16,22 +16,21 @@ namespace QBMS
 // ============================================================================
 Mesh::Mesh(const Com::Mesh& parVRMesh)
 {
-	printf("[ ] Constructing Mesh from VRMesh\n");
+	printf("- Constructing Mesh from VRMesh\n");
 
 	uint nbVertices = parVRMesh.vertices.size();
 	assert(nbVertices > 0);
 	assert(nbVertices < BAD_VERTEX_ID); // if it fails, grow up the BAD_VERTEX_ID value
-	printf("\t[ ] Copying %d Vertices\n", nbVertices);
+	printf("\t- Copying %d Vertices\n", nbVertices);
 
 	vertices_.reserve(nbVertices);
 	for (uint curVertex = 0; curVertex < nbVertices; ++curVertex)
 		vertices_.push_back(new Vertex(parVRMesh.vertices[curVertex], curVertex));
 	assert(vertices_.size() == nbVertices);
-	printf("\t[+] Vertices copied\n");
 
 	uint nbFaces = parVRMesh.faces.size();
 	assert(nbFaces > 0);
-	printf("\t[ ] Copying %d Faces\n", nbFaces);
+	printf("\t- Copying %d Faces\n", nbFaces);
 	for (uint curFace = 0; curFace < nbFaces; ++curFace)
 	{
 		Vertex* v0 = vertices_[parVRMesh.faces[curFace].vertices[0]];
@@ -39,13 +38,9 @@ Mesh::Mesh(const Com::Mesh& parVRMesh)
 		Vertex* v2 = vertices_[parVRMesh.faces[curFace].vertices[2]];
 		faces_.push_back(new Face(v0, v1, v2));
 	}
-	printf("\t[+] Faces copied\n");
 
-	printf("\t[ ] Generating adjacency\n");
+	printf("\t- Generating adjacency\n");
 	GenerateAdjacency_();
-	printf("\t[+] Adjacency generated\n");
-
-	printf("[+] Mesh constructed\n");
 }
 // ----------------------------------------------------------------------------
 Mesh::~Mesh()
@@ -147,15 +142,14 @@ void Mesh::MarkDegeneratedFacesToDelete_()
 // ----------------------------------------------------------------------------
 void Mesh::Clean()
 {
-	printf("\t[ ] Building 3d-tree\n");
+	printf("\t- Building 3d-tree\n");
 	std::vector<const Vertex*> verticesPtr;
 	for (size_t curVertex = 0; curVertex < vertices_.size(); ++curVertex)
 		verticesPtr.push_back(vertices_[curVertex]);
 	Com::ThreeDNode<Vertex>* tree = static_cast<Com::ThreeDNode<Vertex>*>( Com::ThreeDNode<Vertex>::BuildTree(verticesPtr, 0, 1000) );
 	assert(tree);
-	printf("\t[+] 3d-Tree built\n");
 
-	printf("\t[ ] Searching nearest neighbours\n");
+	printf("\t- Searching nearest neighbours\n");
 	double meanAccum = 0.0;
 	std::vector<double> distances;
 	std::vector<Vertex*> nearestVertices;
@@ -175,19 +169,15 @@ void Mesh::Clean()
 	}
 	double meanDist = meanAccum / double(vertices_.size());
 	assert(meanDist >= 0.0);
-	printf("\t[+] Nearest neighbours found\n");
 
-	printf("\t[ ] Merging closes vertices\n");
+	printf("\t- Merging closes vertices\n");
 	MergeCloseVertices_(distances, nearestVertices, 0.03 * meanDist); // FIXME: Tweak dist value
-	printf("\t[+] Closes vertices merged\n");
 
-	printf("\t[ ] Remove isolated vertices and faces\n");
+	printf("\t- Remove isolated vertices and faces\n");
 	MarkIsolatedVerticesAndFacesToDelete_(distances, 20.0 * meanDist); // FIXME: Tweak dist value
-	printf("\t[+] Isolated vertices and faces deleted\n");
 
-	printf("\t[ ] Removing degenerated faces\n");
+	printf("\t- Removing degenerated faces\n");
 	MarkDegeneratedFacesToDelete_();
-	printf("\t[+] Degenerated faces removed\n");
 
 	DeleteFacesIFN();
 
@@ -297,7 +287,7 @@ void Mesh::DeleteFacesIFN()
 // ----------------------------------------------------------------------------
 void Mesh::SetDeleteUnusedVerticesAndReassignVerticesId()
 {
-	printf("[ ] Reassigning Vertex Id...\n");
+	printf("- Marking unreferenced vertices and reassigning Vertex Id...\n");
 
 	std::set<Vertex*> usedVertices;
 	for (uint curFace = 0; curFace < faces_.size(); ++curFace)
@@ -332,8 +322,6 @@ void Mesh::SetDeleteUnusedVerticesAndReassignVerticesId()
 			}
 		}
 	}
-
-	printf("[+] Vertex Id reassigned...\n");
 }
 // ----------------------------------------------------------------------------
 void Mesh::ExportToVRMesh(Com::Mesh& parDstMesh) const
@@ -363,7 +351,7 @@ void Mesh::ExportToVRMesh(Com::Mesh& parDstMesh) const
 // ----------------------------------------------------------------------------
 void Mesh::ComputeInitialQuadrics()
 {
-	printf("[ ] Computing initial quadrics\n");
+	printf("- Computing initial quadrics\n");
 
 #ifdef _DEBUG
 	for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
@@ -416,15 +404,13 @@ void Mesh::ComputeInitialQuadrics()
 		}
 		vertex.SetQuadric(quadric);
 	}
-
-	printf("[+] Initial quadrics computed\n");
 }
 // ----------------------------------------------------------------------------
 void Mesh::SelectAndComputeVertexPairs()
 {
 	assert(pairsHeap_.Size() == 0);
 
-	printf("[ ] Selecting and computing valid pairs\n");
+	printf("- Selecting and computing valid pairs\n");
 
 	std::set<PairType> edges;
 	for (uint curFace = 0; curFace < faces_.size(); ++curFace)
@@ -451,9 +437,6 @@ void Mesh::SelectAndComputeVertexPairs()
 		newPair->V0()->AddPair(newPair);
 		newPair->V1()->AddPair(newPair);
 	}
-
-	printf("[+] Valid pairs selected and computed\n");
-
 	assert(pairsHeap_.Size() >= edges.size()); // there is at least all edges
 }
 // ---------------------------------------------------------------------------
@@ -484,8 +467,7 @@ void Mesh::Simplify(uint parMaxFaces)
 	assert(!HasZeroAreaSurfaceFaces());
 	assert(faces_.size() > parMaxFaces);
 
-	printf("[ ] Simplifying mesh...\n");
-	printf("\t nbPairs: %d\n", pairsHeap_.Size());
+	printf("- Simplifying mesh (pairs count : %d)...\n", pairsHeap_.Size());
 
 	uint curNbFaces = faces_.size();
 	while (!pairsHeap_.Empty() && (curNbFaces > parMaxFaces))
@@ -520,8 +502,6 @@ void Mesh::Simplify(uint parMaxFaces)
 	assert(NbValidFaces_() <= parMaxFaces);
 
 	SetDeleteUnusedVerticesAndReassignVerticesId();
-
-	printf("[+] Mesh Simplified\n");
 }
 // ============================================================================
 // ----------------------------------------------------------------------------

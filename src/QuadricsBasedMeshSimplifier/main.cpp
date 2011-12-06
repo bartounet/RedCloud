@@ -28,25 +28,22 @@ int main(int argc, char **argv)
 	if (argc != 3)
 		Usage(argv[0]);
 
-	printf("[ ] Loading '%s' mesh file\n", argv[1]);
+	printf("- Loading '%s' mesh file\n", argv[1]);
 	Com::Mesh srcMesh;
 	bool result = Com::MeshFileHelper::LoadMeshFromPlyFile(srcMesh, argv[1]);
 	assert(result);
-	printf("[+] Mesh loaded\n");
 
 	QBMS::Mesh mesh(srcMesh);
 
-	printf("[ ] Cleaning mesh\n");
+	printf("- Cleaning mesh\n");
 	mesh.Clean();
-	printf("[+] Mesh cleaned\n");
 
-	printf("[ ] Checking zero area faces\n");
+	printf("- Checking zero area faces\n");
 	if (mesh.HasZeroAreaSurfaceFaces())
 	{
-		printf("[-] Zero area faces found! Abort...\n");
+		printf("- Zero area faces found! Abort...\n");
 		exit(2);
 	}
-	printf("[+] No zero area faces found\n");
 
 	mesh.ComputeInitialQuadrics();
 	mesh.SelectAndComputeVertexPairs();
@@ -61,14 +58,13 @@ int main(int argc, char **argv)
 	Com::Mesh dstMesh;
 	mesh.ExportToVRMesh(dstMesh);
 
-	printf("\t[.] Vertices reduction: %.2f percent\n",
+	printf("\t- Vertices reduction: %.2f percent\n",
 		100.f * (1.f - (float)dstMesh.vertices.size() / (float)srcMesh.vertices.size()));
-	printf("\t[.] Faces reduction: %.2f percent\n",
+	printf("\t- Faces reduction: %.2f percent\n",
 		100.f * (1.f - (float)dstMesh.faces.size() / (float)srcMesh.faces.size()));
 
-	printf("[ ] Saving '%s' mesh file (vertices: %d, faces: %d)\n", argv[2], dstMesh.vertices.size(), dstMesh.faces.size());
+	printf("- Saving '%s' mesh file (vertices: %d, faces: %d)\n", argv[2], dstMesh.vertices.size(), dstMesh.faces.size());
 	Com::MeshFileHelper::SaveMeshToPlyFile(dstMesh, argv[2], true);
-	printf("[+] Mesh saved\n");
 
 	exit(0);	// FIXME: As long as mesh destructor (and its attribute) is empty,
 				// we avoid a massive call to empty destructor. But it leak...

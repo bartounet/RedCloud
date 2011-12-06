@@ -169,10 +169,6 @@
 				RelativePath=".\ply.c"
 				>
 			</File>
-			<File
-				RelativePath=".\threedtree.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -193,6 +189,10 @@
 			</File>
 			<File
 				RelativePath=".\threedtree.h"
+				>
+			</File>
+			<File
+				RelativePath=".\threedtree.impl.hpp"
 				>
 			</File>
 			<File
