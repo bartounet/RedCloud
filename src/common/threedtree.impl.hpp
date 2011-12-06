@@ -242,30 +242,26 @@ void ThreeDNode<VertexType>::NearestNeighbour(	const Node* parTree,
 		}
 
 		AlignedAxisDir dir = planeDir[parDepth % MAX_PLANE_DIR];
+		const Node* nextNode = 0;
+		
+		#define LOCAL_COMPONENT_TEST(parCompo)										\
+			if (parTarget.Pos().parCompo <= threeDNode->vertex_->Pos().parCompo)	\
+				nextNode = threeDNode->left_;										\
+			else																	\
+				nextNode = threeDNode->right_;										\
+			break;
+
 		switch (dir)
 		{
-		case AADIR_X:
-			if (parTarget.Pos().x <= threeDNode->vertex_->Pos().x)
-				NearestNeighbour(threeDNode->left_, parTarget, parDepth + 1, parMinDist, parMinVertex);
-			else
-				NearestNeighbour(threeDNode->right_, parTarget, parDepth + 1, parMinDist, parMinVertex);
-			break;
-		case AADIR_Y:
-			if (parTarget.Pos().y <= threeDNode->vertex_->Pos().y)
-				NearestNeighbour(threeDNode->left_, parTarget, parDepth + 1, parMinDist, parMinVertex);
-			else
-				NearestNeighbour(threeDNode->right_, parTarget, parDepth + 1, parMinDist, parMinVertex);
-			break;
-		case AADIR_Z:
-			if (parTarget.Pos().z <= threeDNode->vertex_->Pos().z)
-				NearestNeighbour(threeDNode->left_, parTarget, parDepth + 1, parMinDist, parMinVertex);
-			else
-				NearestNeighbour(threeDNode->right_, parTarget, parDepth + 1, parMinDist, parMinVertex);
-			break;
-		default:
-			assert(false); // it should never happen
-			break;
+		case AADIR_X: LOCAL_COMPONENT_TEST(x)
+		case AADIR_Y: LOCAL_COMPONENT_TEST(y)
+		case AADIR_Z: LOCAL_COMPONENT_TEST(z)
+		default: assert(false); break; // it should never happen
 		}
+
+		#undef LOCAL_COMPONENT_TEST
+
+		NearestNeighbour(nextNode, parTarget, parDepth + 1, parMinDist, parMinVertex);
 	}
 }
 #undef SQ
