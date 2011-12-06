@@ -40,10 +40,10 @@ public:
 public:
 	static Node* BuildTree(const std::vector<const VertexType*>& parVertices, int parDepth, const uint parMaxVertexPerLeaf);
 	static void NearestPoint(const Node* parNode,
-							 const VertexType& parTarget,
+							 const Vec4& parTargetPos,
 							 int parDepth,
-							 double& minDist,
-							 const VertexType** minVertex);
+							 double& parMinDist,
+							 const VertexType** parMinVertex);
 	static void NearestNeighbour(	const Node* parTree,
 									const VertexType& parTarget,
 									int parDepth,
