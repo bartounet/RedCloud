@@ -35,98 +35,34 @@ static AlignedAxisDir planeDir[] = {AADIR_X, AADIR_Y, AADIR_Z};
 template <typename VertexType>
 Node* ThreeDNode<VertexType>::BuildTree(const std::vector<const VertexType*>& parVertices, int parDepth, const uint parMaxVertexPerLeaf)
 {
-	assert(false);
-	return 0;
-}
-
-template <>
-Node* ThreeDNode<QBMS::Vertex>::BuildTree(const std::vector<const QBMS::Vertex*>& parVertices, int parDepth, const uint parMaxVertexPerLeaf)
-{
 	if (parVertices.size() <= parMaxVertexPerLeaf)
-		return new LeafNode<QBMS::Vertex>(parVertices);
+		return new LeafNode<VertexType>(parVertices);
 
 	AlignedAxisDir dir = planeDir[parDepth % MAX_PLANE_DIR];
-	const QBMS::Vertex* pivot = parVertices[rand() % parVertices.size()];
+	const VertexType* pivot = parVertices[rand() % parVertices.size()];
 
-	std::vector<const QBMS::Vertex*> left;
-	std::vector<const QBMS::Vertex*> right;
+	std::vector<const VertexType*> left;
+	std::vector<const VertexType*> right;
 	for (size_t curVertex = 0; curVertex < parVertices.size(); ++curVertex)
 	{
-		const QBMS::Vertex* vertex = parVertices[curVertex];
+		const VertexType* vertex = parVertices[curVertex];
+
+		#define LOCAL_COMPONENT_TEST_AND_PUSH(parComponent)					\
+			if (vertex->Pos().parComponent <= pivot->Pos().parComponent)	\
+				left.push_back(vertex);										\
+			else															\
+				right.push_back(vertex);									\
+			break;
 
 		switch (dir)
 		{
-		case AADIR_X:
-			if (vertex->Pos().x <= pivot->Pos().x)
-				left.push_back(vertex);
-			else
-				right.push_back(vertex);
-			break;
-		case AADIR_Y:
-			if (vertex->Pos().y <= pivot->Pos().y)
-				left.push_back(vertex);
-			else
-				right.push_back(vertex);
-			break;
-		case AADIR_Z: 
-			if (vertex->Pos().z <= pivot->Pos().z)
-				left.push_back(vertex);
-			else
-				right.push_back(vertex);
-			break;
-		default:
-			assert(false); // it should never happen
-			break;
-		};
-	}
+		case AADIR_X: LOCAL_COMPONENT_TEST_AND_PUSH(x)
+		case AADIR_Y: LOCAL_COMPONENT_TEST_AND_PUSH(y)
+		case AADIR_Z: LOCAL_COMPONENT_TEST_AND_PUSH(z)
+		default: assert(false); break; // it should never happen
+		}
 
-	ThreeDNode* node = new ThreeDNode(pivot, dir);
-	node->left_ = BuildTree(left, parDepth + 1, parMaxVertexPerLeaf);
-	node->right_ = BuildTree(right, parDepth + 1, parMaxVertexPerLeaf);
-
-	return node;
-
-}
-
-template <>
-Node* ThreeDNode<Com::Vertex>::BuildTree(const std::vector<const Com::Vertex*>& parVertices, int parDepth, const uint parMaxVertexPerLeaf)
-{
-	if (parVertices.size() <= parMaxVertexPerLeaf)
-		return new LeafNode<Com::Vertex>(parVertices);
-
-	AlignedAxisDir dir = planeDir[parDepth % MAX_PLANE_DIR];
-	const Com::Vertex* pivot = parVertices[rand() % parVertices.size()];
-
-	std::vector<const Com::Vertex*> left;
-	std::vector<const Com::Vertex*> right;
-	for (size_t curVertex = 0; curVertex < parVertices.size(); ++curVertex)
-	{
-		const Com::Vertex* vertex = parVertices[curVertex];
-
-		switch (dir)
-		{
-		case AADIR_X:
-			if (vertex->x <= pivot->x)
-				left.push_back(vertex);
-			else
-				right.push_back(vertex);
-			break;
-		case AADIR_Y:
-			if (vertex->y <= pivot->y)
-				left.push_back(vertex);
-			else
-				right.push_back(vertex);
-			break;
-		case AADIR_Z: 
-			if (vertex->z <= pivot->z)
-				left.push_back(vertex);
-			else
-				right.push_back(vertex);
-			break;
-		default:
-			assert(false); // it should never happen
-			break;
-		};
+		#undef LOCAL_COMPONENT_TEST_AND_PUSH
 	}
 
 	ThreeDNode* node = new ThreeDNode(pivot, dir);
