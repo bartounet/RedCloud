@@ -5,8 +5,8 @@ import linecache
 
 
 def plyFusion(ply_dir, output_ply):
-    #ply_dir = sys.argv[1]
-    #output_ply = sys.argv[2]
+    print "## Starting Fusion of point cloud:"
+    
     if (not os.path.isdir(ply_dir)) :
       print "Error : '%s' is not a directory" % ply_dir
       sys.exit(1)
@@ -19,13 +19,12 @@ def plyFusion(ply_dir, output_ply):
 
     nb_vertex = 0
     for f in ply_files :
-      print f
+      print " -",f
       line = linecache.getline(f, 3)
-      print line
       fields = line.split()
       nb_vertex = nb_vertex + int(fields[2])
 
-    print nb_vertex
+    print "nbVertex total:",nb_vertex
 
     output = open(output_ply, 'w')
     output.write("ply\n")
@@ -54,3 +53,4 @@ def plyFusion(ply_dir, output_ply):
         output.write(line)
 
     output.close()
+    print "-> Fusion of point cloud Finnish!"

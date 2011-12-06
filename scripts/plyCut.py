@@ -9,6 +9,7 @@ import math
 # ==========================================================
 
 def plyCut(plyInput, plyOutput, ratio):
+    print "## Starting Gaussian Cut of point cloud:"
     
     plyInputFile = open(plyInput, 'r')
     xTotal = 0
