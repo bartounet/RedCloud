@@ -40,6 +40,12 @@ public:
 private:
 	void GenerateAdjacency_();
 	uint NbValidFaces_() const;
+	void MergeCloseVertices_(	const std::vector<double>& parNNDists,
+								const std::vector<Vertex*> parNNs,
+								double parMergeDist);
+	void MarkIsolatedVerticesAndFacesToDelete_(	const std::vector<double>& parNNDists,
+												double parIsolateDist);
+	void MarkDegeneratedFacesToDelete_();
 
 private:
 	std::vector<Vertex*> vertices_;

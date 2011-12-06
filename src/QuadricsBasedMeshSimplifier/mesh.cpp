@@ -16,22 +16,21 @@ namespace QBMS
 // ============================================================================
 Mesh::Mesh(const Com::Mesh& parVRMesh)
 {
-	printf("[ ] Constructing Mesh from VRMesh\n");
+	printf("- Constructing Mesh from VRMesh\n");
 
 	uint nbVertices = parVRMesh.vertices.size();
 	assert(nbVertices > 0);
 	assert(nbVertices < BAD_VERTEX_ID); // if it fails, grow up the BAD_VERTEX_ID value
-	printf("\t[ ] Copying %d Vertices\n", nbVertices);
+	printf("\t- Copying %d Vertices\n", nbVertices);
 
 	vertices_.reserve(nbVertices);
 	for (uint curVertex = 0; curVertex < nbVertices; ++curVertex)
 		vertices_.push_back(new Vertex(parVRMesh.vertices[curVertex], curVertex));
 	assert(vertices_.size() == nbVertices);
-	printf("\t[+] Vertices copied\n");
 
 	uint nbFaces = parVRMesh.faces.size();
 	assert(nbFaces > 0);
-	printf("\t[ ] Copying %d Faces\n", nbFaces);
+	printf("\t- Copying %d Faces\n", nbFaces);
 	for (uint curFace = 0; curFace < nbFaces; ++curFace)
 	{
 		Vertex* v0 = vertices_[parVRMesh.faces[curFace].vertices[0]];
@@ -39,11 +38,9 @@ Mesh::Mesh(const Com::Mesh& parVRMesh)
 		Vertex* v2 = vertices_[parVRMesh.faces[curFace].vertices[2]];
 		faces_.push_back(new Face(v0, v1, v2));
 	}
-	printf("\t[+] Faces copied\n");
 
+	printf("\t- Generating adjacency\n");
 	GenerateAdjacency_();
-
-	printf("[+] Mesh constructed\n");
 }
 // ----------------------------------------------------------------------------
 Mesh::~Mesh()
@@ -55,8 +52,6 @@ void Mesh::GenerateAdjacency_()
 	assert(vertices_.size() > 0);
 	assert(faces_.size() > 0);
 
-	printf("\t[ ] Generating adjacency\n");
-
 	// incident face
 	for (uint curFace = 0; curFace < faces_.size(); ++curFace)
 	{
@@ -66,21 +61,95 @@ void Mesh::GenerateAdjacency_()
 		face->V1()->AddIncidentFace(face);
 		face->V2()->AddIncidentFace(face);
 	}
+}
+// ----------------------------------------------------------------------------
+void Mesh::MergeCloseVertices_(	const std::vector<double>& parNNDists,
+								const std::vector<Vertex*> parNNs,
+								double parMergeDist)
+{
+	assert(parNNDists.size() == vertices_.size());
+	assert(parNNs.size() == vertices_.size());
+	assert(parNNDists.size() == parNNs.size());
 
-	printf("\t[+] Adjacency generated\n");
+	typedef std::map<Vertex*,Vertex*> MapType;
+	typedef MapType::iterator MapItType;
+	MapType mergeDstVertices;
+	for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
+	{
+		if (parNNDists[curVertex] > parMergeDist) // FIXME: Use variance
+			continue;
+
+		Vertex* v0 = vertices_[curVertex];
+		assert(v0);
+		while (v0->DeleteMe())
+		{
+			MapItType it = mergeDstVertices.find(v0);
+			assert(it != mergeDstVertices.end());
+			v0 = it->second;
+		}
+		assert(!v0->DeleteMe());
+
+		Vertex* v1 = parNNs[curVertex];
+		assert(v1);
+		while (v1->DeleteMe())
+		{
+			MapItType it = mergeDstVertices.find(v1);
+			assert(it != mergeDstVertices.end());
+			v1 = it->second;
+		}
+		assert(!v1->DeleteMe());
+
+		if (v0 == v1)
+			continue;
+
+		v1->ReplaceThisInIncidentFacesWith(v0);
+		v1->RemoveDegeneratedFaces();
+		v0->AddIncidentFaces(v1->IncidentFaces());
+		v0->RemoveDegeneratedFaces();
+
+		v1->SetDeleteMe();
+		mergeDstVertices.insert(std::make_pair(v1, v0));
+	}
+}
+// ----------------------------------------------------------------------------
+void Mesh::MarkIsolatedVerticesAndFacesToDelete_(	const std::vector<double>& parNNDists,
+													double parIsolateDist)
+{
+	assert(parNNDists.size() == vertices_.size());
+
+	for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
+	{
+		if (parNNDists[curVertex] < parIsolateDist)
+			continue;
+
+		Vertex* v0 = vertices_[curVertex];
+		v0->SetDeleteMe();
+		v0->SetDeleteMeOnRelatedFaces();
+	}
+}
+// ----------------------------------------------------------------------------
+void Mesh::MarkDegeneratedFacesToDelete_()
+{
+	for (uint curFace = 0; curFace < faces_.size(); ++curFace)
+	{
+		Face& face = *faces_[curFace];
+		assert(face.DeleteMe() || !face.IsDegenerated()); // vertices merge fail
+
+		if (face.HasZeroAreaSurface())
+			face.SetDeleteMe();
+	}
 }
 // ----------------------------------------------------------------------------
 void Mesh::Clean()
 {
-	printf("\t[ ] Building 3d-tree\n");
+	printf("\t- Building 3d-tree\n");
 	std::vector<const Vertex*> verticesPtr;
 	for (size_t curVertex = 0; curVertex < vertices_.size(); ++curVertex)
 		verticesPtr.push_back(vertices_[curVertex]);
 	Com::ThreeDNode<Vertex>* tree = static_cast<Com::ThreeDNode<Vertex>*>( Com::ThreeDNode<Vertex>::BuildTree(verticesPtr, 0, 1000) );
 	assert(tree);
-	printf("\t[+] 3d-Tree built\n");
 
-	printf("\t[ ] Searching nearest neighbours\n");
+	printf("\t- Searching nearest neighbours\n");
 	double meanAccum = 0.0;
 	std::vector<double> distances;
 	std::vector<Vertex*> nearestVertices;
@@ -100,83 +169,30 @@ void Mesh::Clean()
 	}
 	double meanDist = meanAccum / double(vertices_.size());
 	assert(meanDist >= 0.0);
-	printf("\t[+] Nearest neighbours found\n");
 
-	printf("\t[ ] Merging vertices\n");
-	typedef std::map<Vertex*,Vertex*> MapType;
-	typedef MapType::iterator MapItType;
-	MapType mergeDstVertices;
-	uint nbVerticesToDelete = 0;
-	for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
-	{
-		if (distances[curVertex] < 0.03 * meanDist) // FIXME: Use variance
-		{
-			Vertex* v0 = vertices_[curVertex];
-			assert(v0);
-			while (v0->DeleteMe())
-			{
-				MapItType it = mergeDstVertices.find(v0);
-				assert(it != mergeDstVertices.end());
-				v0 = it->second;
-			}
-			assert(!v0->DeleteMe());
+	printf("\t- Merging closes vertices\n");
+	MergeCloseVertices_(distances, nearestVertices, 0.03 * meanDist); // FIXME: Tweak dist value
 
-			Vertex* v1 = nearestVertices[curVertex];
-			assert(v1);
-			while (v1->DeleteMe()) // FIXME: Factore me !
-			{
-				MapItType it = mergeDstVertices.find(v1);
-				assert(it != mergeDstVertices.end());
-				v1 = it->second;
-			}
-			assert(!v1->DeleteMe());
+	printf("\t- Remove isolated vertices and faces\n");
+	MarkIsolatedVerticesAndFacesToDelete_(distances, 20.0 * meanDist); // FIXME: Tweak dist value
 
-			if (v0 == v1)
-				continue;
+	printf("\t- Removing degenerated faces\n");
+	MarkDegeneratedFacesToDelete_();
 
-			v1->ReplaceThisInIncidentFacesWith(v0);
-			v1->RemoveDegeneratedFaces();
-			v0->AddIncidentFaces(v1->IncidentFaces());
-			v0->RemoveDegeneratedFaces();
-
-			v1->SetDeleteMe();
-			mergeDstVertices.insert(std::make_pair(v1, v0));
-		}
-		else if (distances[curVertex] > 20 * meanDist)
-		{
-			Vertex* v0 = vertices_[curVertex];
-			v0->SetDeleteMe();
-			v0->SetDeleteMeOnRelatedFaces();
-			nbVerticesToDelete++;
-		}
-	}
-
-	// Degenerated faces removal (line)
-	for (uint curFace = 0; curFace < faces_.size(); ++curFace)
-	{
-		Face& face = *faces_[curFace];
-		assert(face.DeleteMe() || !face.IsDegenerated()); // vertices merge fail
-
-		if (face.HasZeroAreaSurface())
-			face.SetDeleteMe();
-	}
 	DeleteFacesIFN();
 
-	// unreferenced vertices
 	SetDeleteUnusedVerticesAndReassignVerticesId();
 	DeleteVerticesIFN();
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
+#if 1
 	for (uint curFace = 0; curFace < faces_.size(); ++curFace)
 		assert( !faces_[curFace]->DeleteMe() &&
 				!faces_[curFace]->IsDegenerated() &&
 				!faces_[curFace]->HasZeroAreaSurface());
 	for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
 		assert(!vertices_[curVertex]->DeleteMe());
-	// FIXME: clean unreferenced vertices check
 #endif
-
-	printf("\t[+] Vertices merged (nbVerticesToDelete: %d)\n", nbVerticesToDelete);
 }
 // ----------------------------------------------------------------------------
 struct VertexDeleteCmp
@@ -184,7 +200,7 @@ struct VertexDeleteCmp
 	bool operator()(Vertex* parA, Vertex* parB)
 	{
 		if (parA->DeleteMe() == parB->DeleteMe())
-			return parA < parB;
+			return parA < parB; // strict ordering
 		return !(parA->DeleteMe());
 	}
 };
@@ -271,7 +287,7 @@ void Mesh::DeleteFacesIFN()
 // ----------------------------------------------------------------------------
 void Mesh::SetDeleteUnusedVerticesAndReassignVerticesId()
 {
-	printf("[ ] Reassigning Vertex Id...\n");
+	printf("- Marking unreferenced vertices and reassigning Vertex Id...\n");
 
 	std::set<Vertex*> usedVertices;
 	for (uint curFace = 0; curFace < faces_.size(); ++curFace)
@@ -306,8 +322,6 @@ void Mesh::SetDeleteUnusedVerticesAndReassignVerticesId()
 			}
 		}
 	}
-
-	printf("[+] Vertex Id reassigned...\n");
 }
 // ----------------------------------------------------------------------------
 void Mesh::ExportToVRMesh(Com::Mesh& parDstMesh) const
@@ -337,7 +351,7 @@ void Mesh::ExportToVRMesh(Com::Mesh& parDstMesh) const
 // ----------------------------------------------------------------------------
 void Mesh::ComputeInitialQuadrics()
 {
-	printf("[ ] Computing initial quadrics\n");
+	printf("- Computing initial quadrics\n");
 
 #ifdef _DEBUG
 	for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
@@ -390,15 +404,13 @@ void Mesh::ComputeInitialQuadrics()
 		}
 		vertex.SetQuadric(quadric);
 	}
-
-	printf("[+] Initial quadrics computed\n");
 }
 // ----------------------------------------------------------------------------
 void Mesh::SelectAndComputeVertexPairs()
 {
 	assert(pairsHeap_.Size() == 0);
 
-	printf("[ ] Selecting and computing valid pairs\n");
+	printf("- Selecting and computing valid pairs\n");
 
 	std::set<PairType> edges;
 	for (uint curFace = 0; curFace < faces_.size(); ++curFace)
@@ -425,9 +437,6 @@ void Mesh::SelectAndComputeVertexPairs()
 		newPair->V0()->AddPair(newPair);
 		newPair->V1()->AddPair(newPair);
 	}
-
-	printf("[+] Valid pairs selected and computed\n");
-
 	assert(pairsHeap_.Size() >= edges.size()); // there is at least all edges
 }
 // ---------------------------------------------------------------------------
@@ -458,8 +467,7 @@ void Mesh::Simplify(uint parMaxFaces)
 	assert(!HasZeroAreaSurfaceFaces());
 	assert(faces_.size() > parMaxFaces);
 
-	printf("[ ] Simplifying mesh...\n");
-	printf("\t nbPairs: %d\n", pairsHeap_.Size());
+	printf("- Simplifying mesh (pairs count : %d)...\n", pairsHeap_.Size());
 
 	uint curNbFaces = faces_.size();
 	while (!pairsHeap_.Empty() && (curNbFaces > parMaxFaces))
@@ -492,11 +500,8 @@ void Mesh::Simplify(uint parMaxFaces)
 	}
 
 	assert(NbValidFaces_() <= parMaxFaces);
-	//assert(!HasZeroAreaSurfaceFaces()); // FIXME: Need post-clean
 
 	SetDeleteUnusedVerticesAndReassignVerticesId();
-
-	printf("[+] Mesh Simplified\n");
 }
 // ============================================================================
 // ----------------------------------------------------------------------------
