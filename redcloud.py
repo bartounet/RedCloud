@@ -19,7 +19,7 @@ from scripts import osmbundler
 from scripts import plyMerger
 from scripts import ply2npts
 from scripts import daeToKmz
-
+from scripts import plyCut
 
 def Usage() :
 	print("Usage : ./redcloud.py <Dossier Photos> <Dossier de sortie>");
@@ -90,7 +90,8 @@ def stepPoissonReconstruction():
         print "File "" Skip PoissonReconstruction..."
     else:
         plyMerger.plyFusion(modelsDir, plyMerge)
-        ply2npts.ply2npts(plyMerge, nptsFile)
+        plyCut.plyCut(plyMerge, plyMergeCut, cutCoef)
+        ply2npts.ply2npts(plyMergeCut, nptsFile)
         subprocess.call([poissonReconExecutable, "--in" , nptsFile, "--out", plyPoisson, "--depth",  str(poissonDepth), "--manifold"])
         os.remove(nptsFile)
 
@@ -98,22 +99,25 @@ def stepSimplify():
     if (os.path.exists(plySimplify)):
         print "Skip Simplify..."
     else:
-        subprocess.call([simplifierExecutable, plyPoisson, plySimplify, numberOfFaces])
+        subprocess.call([simplifierExecutable, plyPoisson, plySimplify, str(numberOfFaces)])
     if (os.path.exists(plySimplyRecolor)):
         print "Skip recolor..."
     else:
-        subprocess.call([recolorExecutable, "-v" , plyMerge, plySimplify, plySimplyRecolor])
+        subprocess.call([recolorExecutable, "-v" , plyMergeCut, plySimplify, plySimplyRecolor])
 
 def stepCreateKMZ():
     if not(os.path.exists(kmzPath)):
         os.mkdir(kmzPath)
     if not(os.path.exists(kmzFileDir)):
         os.mkdir(kmzFileDir)
-    subprocess.call([texturerExecutable, plyMerge, plySimplyRecolor, kmzFileDir])
+    subprocess.call([texturerExecutable, plyMergeCut, plySimplyRecolor, kmzFileDir])
     im = Image.open(daeTexturePPM)
     im.save(daeTexturePNG)
     os.remove(daeTexturePPM)
-    daeToKmz.doDaeToKmz(daeModel, daeTexturePNG, outGeo, kmzPath)
+    if (numberOfFaces > 20000):
+        print "WARNNING: KMZ will not be create, numberOfFaces: ", numberOfFaces, "should be lower than 20000!"
+    else:
+        daeToKmz.doDaeToKmz(daeModel, daeTexturePNG, outGeo, kmzPath)
 
 def printKiKoo(title):
     kikoo = 51
@@ -149,7 +153,7 @@ outGeo = os.path.join(redCouldDir, "geoData.txt")
 pmvsDir = os.path.join(resultDir, "pmvs")
 modelsDir = os.path.join(pmvsDir, "models")
 plyMerge = os.path.join(redCouldDir, "merge.ply")
-plyCut = os.path.join(redCouldDir, "cut.ply")
+plyMergeCut = os.path.join(redCouldDir, "cut.ply")
 nptsFile = os.path.join(redCouldDir, "cut.npts")
 
 poissonReconExecutable = os.path.join(binDirPath, "PoissonRecon")
@@ -172,9 +176,16 @@ daeTexturePNG = os.path.join(kmzFileDir, "texture.png")
 ### OPTION:
 maxPhotoDimension = 20000
 maxSiftPoints = 2000
-PMVSLevel = 1
 CMVSNbClusters = 10
-PMVSNbCPU = 8
+
+PMVSlevel = 1
+PMVScsize = 2
+PMVSthreshold = 0.7
+PMVSwsize = 7
+PMVSminImageNum = 3
+PMVSCPU = 8
+
+cutCoef = 0.5
 poissonDepth = 10
 numberOfFaces = 300000
 
