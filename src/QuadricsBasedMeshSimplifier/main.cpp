@@ -51,8 +51,12 @@ int main(int argc, char **argv)
 	mesh.ComputeInitialQuadrics();
 	mesh.SelectAndComputeVertexPairs();
 	mesh.Simplify(20000);
-
-	//assert(!mesh.HasZeroAreaSurfaceFaces()); // FIXME: Post CLEAN !
+#if 0
+	printf("[ ] Mesh post-clean\n");
+	mesh.Clean(false, false, true, true);
+	printf("[+] Mesh post-cleaned\n");
+	assert(!mesh.HasZeroAreaSurfaceFaces()); // FIXME: Post CLEAN !
+#endif
 
 	Com::Mesh dstMesh;
 	mesh.ExportToVRMesh(dstMesh);

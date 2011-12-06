@@ -116,15 +116,12 @@ void Vertex::RemoveIncidentFaceIFN(Face* parFace)
 		incidentFaces_.erase(faceIt);
 }
 // ----------------------------------------------------------------------------
-
 void Vertex::SetDeleteMeOnRelatedFaces()
 {
-	for (uint currFace = 0; currFace < incidentFaces_.size(); ++currFace)
-		incidentFaces_[currFace]->SetDeleteMe();
+	for (uint curFace = 0; curFace < incidentFaces_.size(); ++curFace)
+		incidentFaces_[curFace]->SetDeleteMe();
 }
-
 // ----------------------------------------------------------------------------
-
 uint Vertex::RemoveDegeneratedFaces()
 {
 	FaceListType facesToDelete;
