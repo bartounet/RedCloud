@@ -9,7 +9,7 @@
 
 void Usage(const char* parProgName)
 {
-	printf("Usage: ./%s <MESH_IN.ply> <MESH_OUT.ply>\n", parProgName);
+	printf("Usage: ./%s <MESH_IN.ply> <MESH_OUT.ply> numberOfFaces\n", parProgName);
 	exit(1);
 }
 
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
  #endif
 #endif
 
-	if (argc != 3)
+	if (argc != 4)
 		Usage(argv[0]);
 
 	printf("- Loading '%s' mesh file\n", argv[1]);
@@ -47,7 +47,10 @@ int main(int argc, char **argv)
 
 	mesh.ComputeInitialQuadrics();
 	mesh.SelectAndComputeVertexPairs();
-	mesh.Simplify(20000);
+	int numberOfFaces = atoi (argv[3]);
+	mesh.Simplify(numberOfFaces);
+
+	//assert(!mesh.HasZeroAreaSurfaceFaces()); // FIXME: Post CLEAN !
 #if 0
 	printf("[ ] Mesh post-clean\n");
 	mesh.Clean(false, false, true, true);

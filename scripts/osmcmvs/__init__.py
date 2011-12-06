@@ -114,11 +114,11 @@ class OsmCmvs():
 		
         logging.info("Finished!")
     
-    def doCMVS(self, level):
+    def doCMVS(self, PMVSlevel, PMVScsize, PMVSthreshold, PMVSwsize, PMVSminImageNum, PMVSCPU):
       os.chdir(os.path.join(self.workDir,"pmvs"))
       subprocess.call([self.cmvsExecutable, "./", str(self.clusterToCompute)])
       print "--------------------------------------"
-      subprocess.call([self.genOptionExecutable, "./", "level="+str(level)])
+      subprocess.call([self.genOptionExecutable, "./", str(PMVSlevel), str(PMVScsize), str(PMVSthreshold), str(PMVSwsize),str(PMVSminImageNum),str(PMVSCPU)])
       print "--------------------------------------"
       #find all the option-XXX files and run PMVS2 on it
       # three conditions are checked in the list comprehension below:

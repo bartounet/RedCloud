@@ -157,7 +157,7 @@ std::vector<Face*>& World::getAtIndex(float x, float y, float z)
     : points_(points),
       //gridSize_ (0.025),
       //maxFaceDist_ (0.0175),
-      gridSize_ (1),
+      gridSize_ (10),
       maxFaceDist_ (0.5),
       min_ (min),
       max_ (max)
