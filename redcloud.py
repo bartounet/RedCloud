@@ -83,7 +83,7 @@ def stepCMVS():
     else:
         cmvsManager = osmcmvs.OsmCmvs(resultDir, binDirPath, CMVSNbClusters)
         cmvsManager.doBundle2PMVS()
-        cmvsManager.doCMVS(PMVSLevel, PMVSNbCPU)
+        cmvsManager.doCMVS(PMVSlevel, PMVScsize, PMVSthreshold, PMVSwsize, PMVSminImageNum, PMVSCPU)
 
 def stepPoissonReconstruction():
     if (os.path.exists(plyPoisson)):
