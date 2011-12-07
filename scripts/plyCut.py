@@ -26,8 +26,11 @@ def plyCut(plyInput, plyOutput, ratio):
             #print line
             vertexStr = line.split(' ')
             vertex = []
-            for string in vertexStr:
-                vertex.append(float(string))
+            vertex.append(float(vertexStr[0]))
+            vertex.append(float(vertexStr[1]))
+            vertex.append(float(vertexStr[2]))
+            vertex.append(line)
+            
             xTotal += vertex[0]
             yTotal += vertex[1]
             zTotal += vertex[2]
@@ -58,10 +61,7 @@ def plyCut(plyInput, plyOutput, ratio):
     val = (ratio/0.341)
     vertexCut = []
     for vertex in vertexs:
-        if (vertex[0] > ((standarDerivation**2) * val)): 
-            #print vertex[0]
-            lol = 1    
-        else:
+        if (vertex[0] < ((standarDerivation**2) * val)):
             vertexCut.append(vertex)
           
     print "Nb inital Vertexs:",len(vertexs)
@@ -86,17 +86,12 @@ property uchar diffuse_blue
 end_header\n''')
           
     for i in range(0, nbMaxVertex):
-        vertex = vertexCut[i]
-        vertex.pop(0)
-        vertexStr = ' '.join([str(val) for val in vertex[:6]])
-        vertexStr += ' '.join([str(int(val)) for val in vertex[5:]])
-        
-        if (i != nbMaxVertex):
-            vertexStr += "\n"
-        plyOutputFile.write(vertexStr)
+        plyOutputFile.write(vertexCut[i][4])
          
     plyOutputFile.close()
     print "Gaussian Cut Finnish!"
+
+
 
 # ==========================================================
 # ----------------------------------------------------------
