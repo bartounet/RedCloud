@@ -121,7 +121,7 @@ def stepCreateKMZ():
     if (numberOfFaces > 20000):
         print "WARNNING: KMZ will not be create, numberOfFaces: ", numberOfFaces, "should be lower than 20000!"
     else:
-        daeToKmz.doDaeToKmz(daeModel, daeTexturePNG, outGeo, kmzPath, redCouldDir)
+        daeToKmz.doDaeToKmz(daeModel, daeTexturePNG, outGeo, kmzPath, redCouldDir, dataSetName)
 
 def printKiKoo(title):
     kikoo = 51
@@ -143,6 +143,8 @@ photoDir, resultDir = getArgs();
 if (not os.path.exists(resultDir)):
     os.mkdir(resultDir)
 
+dataSetName = os.path.basename(resultDir)
+print dataSetName
 distrPath = os.path.dirname(os.path.abspath(sys.argv[0]) )
 binDirPath =  os.path.join(distrPath, "bin")
 redCouldDir = os.path.join(resultDir, "RedClouds")
@@ -180,7 +182,7 @@ daeTexturePNG = os.path.join(kmzFileDir, "texture.png")
 ### OPTION:
 maxPhotoDimension = 20000
 maxSiftPoints = 2000
-CMVSNbClusters = 10
+CMVSNbClusters = 15
 
 PMVSlevel = 1
 PMVScsize = 2

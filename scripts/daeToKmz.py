@@ -23,7 +23,7 @@ def create_zip(path, relname, archname):
         archive.write(path, relname)
     archive.close()
     
-def doDaeToKmz(daeModel, daeTexture, geofile, kmzPath, resDir):
+def doDaeToKmz(daeModel, daeTexture, geofile, kmzPath, resDir, dataSetName):
     if (not os.path.exists(kmzPath)):
         os.mkdir(kmzPath)
 
@@ -86,8 +86,8 @@ def doDaeToKmz(daeModel, daeTexture, geofile, kmzPath, resDir):
     ''')
 
     f.close()
-    
-    kmzArchivePath = os.path.join(resDir, "Model.kmz")
+    dataSetName += ".kmz"
+    kmzArchivePath = os.path.join(resDir, dataSetName)
     create_zip(kmzPath, "", kmzArchivePath)
     
 
