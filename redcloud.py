@@ -22,7 +22,7 @@ from scripts import daeToKmz
 from scripts import plyCut
 
 def Usage() :
-	print("Usage : ./redcloud.py <Dossier Photos> <Dossier de sortie>");
+	print("Usage : ./redcloud.py <Photos directory> <Output directory>");
 	sys.exit(1);
 
 def getArgs() :
@@ -66,7 +66,7 @@ def stepMatchFeature():
 
 def stepBundleAdjustment():
     if (not os.path.exists(os.path.join(bundleDir, "bundle.out"))):
-        bundleManager.doBundleAdjustment()
+        bundleManager.doBundleAdjustment(BundlerinitPair)
     else:
         print "Skip BundleAdjustment..."
 
@@ -182,6 +182,9 @@ daeTexturePNG = os.path.join(kmzFileDir, "texture.png")
 ### OPTION:
 maxPhotoDimension = 20000
 maxSiftPoints = 2000
+
+BundlerInitPair = 10
+
 CMVSNbClusters = 15
 
 PMVSlevel = 1
@@ -203,18 +206,12 @@ if not(os.path.exists(photoDir)):
     exit(1) 
 print "--Photos directory: ", photoDir
 
-if (not os.path.exists(resultDir)):
-    os.mkdir(resultDir)
-    print "--Result directory (created): ", resultDir
-else:
-    print "--Result directory (already exist): ", resultDir
-    
 # initialize OsmBundler manager class
 print resultDir
 
 bundleManager = osmbundler.OsmBundler(photoDir, resultDir, binDirPath, maxPhotoDimension)
 
-steps =[
+steps = [
 stepPreparePhotos,
 stepMatchFeature,
 stepBundleAdjustment,

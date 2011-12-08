@@ -256,7 +256,7 @@ class OsmBundler():
         self.matchingEngine.match()
         os.chdir(self.currentDir)
     
-    def doBundleAdjustment(self):
+    def doBundleAdjustment(self, initPair):
         # just run Bundler here
         logging.info("\nPerforming bundle adjustment...")
         print self.bundlerExecutable
@@ -271,7 +271,7 @@ class OsmBundler():
 
         bundlerOutputFile = open("bundle/out", "w")
         #TODO: Find a better init_pair than random...
-        for i in range(3, 11):
+        for i in range(initPair, 50):
             print "Try init bundle adjustment with picture 1 and picture ", i
             subprocess.call([self.bundlerExecutable, "list.txt", "--options_file", "options.txt",  "--init_pair1", "1",   "--init_pair2", str(i)], **dict(stdout=bundlerOutputFile))
             if (os.path.exists("bundle/bundle.out")):
