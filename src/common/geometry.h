@@ -47,6 +47,11 @@ struct Vertex : public VertexPOD
 		g = 0;
 		b = 0;
 	}
+
+	Vec4 Pos() const // FIXME: Copy at each access
+	{
+		return Vec4(double(x), double(y), double(z), 1.0);
+	}
 };
 // ----------------------------------------------------------------------------
 // Bart: As we only work with triangles I would prefer another form, but we have
