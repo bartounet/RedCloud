@@ -38,6 +38,12 @@ def getArgs() :
 
     return (photoDir, resultDir);
 
+# service function: get path of an executable (.exe suffix is added if we are on Windows)
+def getBinPath(binaryName):
+    if (sys.platform == "win32"):
+        binaryName += ".exe"
+    return binaryName
+
 def do(step):
     stepName = step.__name__
     printKiKoo(stepName)
@@ -50,6 +56,13 @@ def do(step):
     benchmarkFile = open(os.path.join(redCouldDir, "Benchmark.txt"), 'a+')
     benchmarkFile.write(str("-" + stepName + ": " + execTime + "\n"))
     benchmarkFile.close
+
+def stepCheckingBinary():
+    for bin, path in bins.iteritems():
+        if not(os.path.isfile(path)):
+            print "!! Binary:", path, "Not found... ABORD!"
+            exit()
+    print "All binary are present"
 
 def stepPreparePhotos():
     if (os.path.exists(pmvsDir)):
@@ -93,18 +106,18 @@ def stepPoissonReconstruction():
         plyCut.plyCut(plyMerge, plyMergeCut, cutCoef)
         ply2npts.ply2npts(plyMergeCut, nptsFile)
         print "## Starting PoissonRecon"
-        subprocess.call([poissonReconExecutable, "--in" , nptsFile, "--out", plyPoisson, "--depth",  str(poissonDepth), "--manifold"])
+        subprocess.call([bins["binPoissonRecon"], "--in" , nptsFile, "--out", plyPoisson, "--depth",  str(poissonDepth), "--manifold"])
         os.remove(nptsFile)
 
 def stepSimplify():
     if (os.path.exists(plySimplify)):
         print "File:", plySimplify, "Skip Simplify..."
     else:
-        subprocess.call([simplifierExecutable, plyPoisson, plySimplify, str(numberOfFaces)])
+        subprocess.call([bins["binSimplifier"], plyPoisson, plySimplify, str(numberOfFaces)])
     if (os.path.exists(plySimplyRecolor)):
         print "File:", plySimplyRecolor, "Skip Recolor..."
     else:
-        subprocess.call([recolorExecutable, "-v" , plyMergeCut, plySimplify, plySimplyRecolor])
+        subprocess.call([bins["binRecolor"], "-v" , plyMergeCut, plySimplify, plySimplyRecolor])
     if not(os.path.exists(kmzPath)):
         os.mkdir(kmzPath)
     if not(os.path.exists(kmzFileDir)):
@@ -112,7 +125,7 @@ def stepSimplify():
     if (os.path.exists(daeModel)):
         print "File:", daeModel, "Skip Texturer..."
     else:
-        subprocess.call([texturerExecutable, plyMergeCut, plySimplyRecolor, kmzFileDir])
+        subprocess.call([bins["binTexturer"], plyMergeCut, plySimplyRecolor, kmzFileDir])
         im = Image.open(daeTexturePPM)
         im.save(daeTexturePNG)
         os.remove(daeTexturePPM)
@@ -151,33 +164,49 @@ redCouldDir = os.path.join(resultDir, "RedClouds")
 if (not os.path.exists(redCouldDir)):
     os.mkdir(redCouldDir)
 
+bins = {}
+bins["binSift"] = "SiftGPU"
+bins["binKeyMatchFull"] = "KeyMatchFull"
+bins["binBundler"] = "bundler" 
 bundleDir = os.path.join(resultDir, "bundle")
 bundlerOut = os.path.join(bundleDir, "bundle.out")
 bundlerOutTmp = os.path.join(bundleDir, "bundleTmp.out")
 outGeo = os.path.join(redCouldDir, "geoData.txt")
 
+bins["binCmvs"] = "cmvs"
+bins["binGenOption"] = "genOption"
+bins["binPmvs2"] = "pmvs2"
+bins["binRadialUndistort"] = "RadialUndistort"
+bins["binBundle2PMVS"] = "Bundle2PMVS"
+bins["binBundle2Vis"] = "Bundle2Vis"
+bins["binJhead"] = "jhead"
 pmvsDir = os.path.join(resultDir, "pmvs")
 modelsDir = os.path.join(pmvsDir, "models")
 plyMerge = os.path.join(redCouldDir, "merge.ply")
 plyMergeCut = os.path.join(redCouldDir, "cut.ply")
 nptsFile = os.path.join(redCouldDir, "cut.npts")
 
-poissonReconExecutable = os.path.join(binDirPath, "PoissonRecon")
+bins["binPoissonRecon"] = "PoissonRecon"
 plyPoisson = os.path.join(redCouldDir, "poisson.ply")
 
-simplifierExecutable = os.path.join(binDirPath, "qbms_release")
+bins["binSimplifier"] = "qbms_release"
 plySimplify = os.path.join(redCouldDir, "simplify.ply")
 
-recolorExecutable = os.path.join(binDirPath, "vr_release")
+bins["binRecolor"] = "vr_release"
 plySimplyRecolor = os.path.join(redCouldDir, "plySimplyRecolor.ply")
 
-texturerExecutable = os.path.join(binDirPath, "texturer_release")
+bins["binTexturer"] = "texturer_release"
 kmzPath = os.path.join(redCouldDir, "kmz")
 kmzFileDir = os.path.join(kmzPath, "files")
 daeModel = os.path.join(kmzFileDir, "model.dae")
 daeTexturePPM = os.path.join(kmzFileDir, "texture.ppm")
 daeTexturePNG = os.path.join(kmzFileDir, "texture.png")
 
+for bin, path in bins.iteritems():
+    binPath = getBinPath(path)
+    bins[bin] = os.path.join(binDirPath, binPath)
+    
+print bins
 
 ### OPTION:
 maxPhotoDimension = 20000
@@ -198,20 +227,17 @@ cutCoef = 0.5
 poissonDepth = 10
 numberOfFaces = 20000
 
-
-
 print "## Checking parameters:"
 if not(os.path.exists(photoDir)):
     print ("*-ERROR: no photos directory at: ", photoDir)
     exit(1) 
 print "--Photos directory: ", photoDir
 
-# initialize OsmBundler manager class
 print resultDir
 
-bundleManager = osmbundler.OsmBundler(photoDir, resultDir, binDirPath, maxPhotoDimension)
 
 steps = [
+stepCheckingBinary,
 stepPreparePhotos,
 stepMatchFeature,
 stepBundleAdjustment,
@@ -221,6 +247,9 @@ stepPoissonReconstruction,
 stepSimplify,
 stepCreateKMZ,
 ]
+
+# initialize OsmBundler manager class
+bundleManager = osmbundler.OsmBundler(photoDir, resultDir, binDirPath, maxPhotoDimension)
 
 for step in steps:
     do(step)
