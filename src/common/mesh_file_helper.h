@@ -15,6 +15,7 @@ namespace MeshFileHelper
 // ----------------------------------------------------------------------------
 bool LoadMeshFromPlyFile(Mesh& parMesh, char* parFilename);
 bool SaveMeshToPlyFile(const Mesh& parMesh, char* parFilename, bool parOnlyPos);
+bool SaveMeshToDaeFile(const Mesh& parMesh, std::vector<std::vector<Vec2> > texCoords, uint textureSize, const char* parFilename);
 void DeepCopyMesh(Mesh& parMeshDst, const Mesh& parMeshSrc);
 // ----------------------------------------------------------------------------
 }
