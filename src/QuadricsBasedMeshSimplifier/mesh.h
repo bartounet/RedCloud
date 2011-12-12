@@ -36,6 +36,8 @@ public:
 
 public:
 	bool HasZeroAreaSurfaceFaces() const; // can be slow
+	uint NbValidFaces() const;
+	std::vector<Face*>& Faces();
 
 private:
 	void GenerateAdjacency_();

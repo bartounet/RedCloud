@@ -257,6 +257,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\texturer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\vertex.cpp"
 				>
 			</File>
@@ -292,6 +296,10 @@
 			</File>
 			<File
 				RelativePath=".\quadric.h"
+				>
+			</File>
+			<File
+				RelativePath=".\texturer.h"
 				>
 			</File>
 			<File

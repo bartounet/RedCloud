@@ -453,6 +453,16 @@ uint Mesh::NbValidFaces_() const
 	return nbValidFaces;
 }
 // ---------------------------------------------------------------------------
+uint Mesh::NbValidFaces() const
+{
+	return NbValidFaces_();
+}
+// ---------------------------------------------------------------------------
+std::vector<Face*>& Mesh::Faces()
+{
+	return faces_;
+}
+// ---------------------------------------------------------------------------
 bool Mesh::HasZeroAreaSurfaceFaces() const
 {
 	for (uint curFace = 0; curFace < faces_.size(); ++curFace)

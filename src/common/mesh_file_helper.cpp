@@ -3,6 +3,7 @@
 #include "ply.h"
 #include <assert.h>
 #include <stdlib.h>
+#include <fstream>
 
 
 // ----------------------------------------------------------------------------
@@ -100,6 +101,183 @@ bool LoadMeshFromPlyFile(Mesh& parMesh, char* parFilename)
 	ply_close(plyFile);
 
 	return true;
+}
+// ----------------------------------------------------------------------------
+bool SaveMeshToDaeFile(const Mesh& parMesh, std::vector<std::vector<Vec2> > texCoords, uint textureSize, const char* parFilename)
+{
+	std::ofstream fichier(parFilename, std::ios::out | std::ios::trunc);
+
+    if (fichier)
+    {
+        fichier << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
+        fichier << "<COLLADA xmlns=\"http://www.collada.org/2005/11/COLLADASchema\" version=\"1.4.1\">" << std::endl;
+        fichier << "    <asset>" << std::endl;
+        fichier << "        <contributor>" << std::endl;
+        fichier << "            <author>VCGLab</author>" << std::endl;
+        fichier << "            <authoring_tool>VCGLib | MeshLab</authoring_tool>" << std::endl;
+        fichier << "        </contributor>" << std::endl;
+        fichier << "        <up_axis>Z_UP</up_axis>" << std::endl;
+        fichier << "        <created>jeu. 10. nov. 12:48:09 2011</created>" << std::endl;
+        fichier << "        <modified>jeu. 10. nov. 12:48:09 2011</modified>" << std::endl;
+        fichier << "    </asset>" << std::endl;
+        fichier << "    <library_images>" << std::endl;
+        fichier << "        <image id=\"texture0\" name=\"texture0\">" << std::endl;
+        fichier << "            <init_from>texture.png</init_from>" << std::endl;
+        fichier << "        </image>" << std::endl;
+        fichier << "    </library_images>" << std::endl;
+        fichier << "    <library_materials>" << std::endl;
+        fichier << "        <material id=\"material0\" name=\"material0\">" << std::endl;
+        fichier << "            <instance_effect url=\"#material0-fx\"/>" << std::endl;
+        fichier << "        </material>" << std::endl;
+        fichier << "    </library_materials>" << std::endl;
+        fichier << "    <library_effects>" << std::endl;
+        fichier << "        <effect id=\"material0-fx\">" << std::endl;
+        fichier << "            <profile_COMMON>" << std::endl;
+        fichier << "                <newparam sid=\"texture0-surface\">" << std::endl;
+        fichier << "                    <surface type=\"2D\">" << std::endl;
+        fichier << "                        <init_from>texture0</init_from>" << std::endl;
+        fichier << "                        <format>R8G8B8</format>" << std::endl;
+        fichier << "                    </surface>" << std::endl;
+        fichier << "                </newparam>" << std::endl;
+        fichier << "                <newparam sid=\"texture0-sampler\">" << std::endl;
+        fichier << "                    <sampler2D>" << std::endl;
+        fichier << "                        <source>texture0-surface</source>" << std::endl;
+        fichier << "                        <minfilter>LINEAR</minfilter>" << std::endl;
+        fichier << "                        <magfilter>LINEAR</magfilter>" << std::endl;
+        fichier << "                    </sampler2D>" << std::endl;
+        fichier << "                </newparam>" << std::endl;
+        fichier << "                <technique sid=\"common\">" << std::endl;
+        fichier << "                    <blinn>" << std::endl;
+        fichier << "                        <emission>" << std::endl;
+        fichier << "                            <color>0 0 0 1</color>" << std::endl;
+        fichier << "                        </emission>" << std::endl;
+        fichier << "                        <ambient>" << std::endl;
+        fichier << "                            <color>0 0 0 1</color>" << std::endl;
+        fichier << "                        </ambient>" << std::endl;
+        fichier << "                        <diffuse>" << std::endl;
+        fichier << "                            <texture texture=\"texture0\" texcoord=\"UVSET0\"/>" << std::endl;
+        fichier << "                        </diffuse>" << std::endl;
+        fichier << "                        <specular>" << std::endl;
+        fichier << "                            <color>0 0 0 1</color>" << std::endl;
+        fichier << "                        </specular>" << std::endl;
+        fichier << "                        <shininess>" << std::endl;
+        fichier << "                            <float>0.3</float>" << std::endl;
+        fichier << "                        </shininess>" << std::endl;
+        fichier << "                        <reflective>" << std::endl;
+        fichier << "                            <color>0 0 0 1</color>" << std::endl;
+        fichier << "                        </reflective>" << std::endl;
+        fichier << "                        <reflectivity>" << std::endl;
+        fichier << "                            <float>0.5</float>" << std::endl;
+        fichier << "                        </reflectivity>" << std::endl;
+        fichier << "                        <transparent>" << std::endl;
+        fichier << "                            <color>0 0 0 1</color>" << std::endl;
+        fichier << "                        </transparent>" << std::endl;
+        fichier << "                        <transparency>" << std::endl;
+        fichier << "                            <float>0</float>" << std::endl;
+        fichier << "                        </transparency>" << std::endl;
+        fichier << "                        <index_of_refraction>" << std::endl;
+        fichier << "                            <float>0</float>" << std::endl;
+        fichier << "                        </index_of_refraction>" << std::endl;
+        fichier << "                    </blinn>" << std::endl;
+        fichier << "                </technique>" << std::endl;
+        fichier << "            </profile_COMMON>" << std::endl;
+        fichier << "        </effect>" << std::endl;
+        fichier << "    </library_effects>" << std::endl;
+        fichier << "    <library_geometries>" << std::endl;
+        fichier << "        <geometry id=\"shape0-lib\" name=\"shape0\">" << std::endl;
+        fichier << "            <mesh>" << std::endl;
+        fichier << "                <source id=\"shape0-lib-positions\" name=\"position\">" << std::endl;
+
+        fichier << "                    <float_array id=\"shape0-lib-positions-array\" count=\"" << parMesh.vertices.size() * 3 << "\">";
+        for (uint i = 0; i < parMesh.vertices.size(); i++)
+            fichier << parMesh.vertices[i].x << " " << parMesh.vertices[i].y << " " << parMesh.vertices[i].z << " ";
+        fichier << "</float_array>" << std::endl;
+
+        fichier << "                    <technique_common>" << std::endl;
+        fichier << "                        <accessor count=\"" << parMesh.vertices.size() << "\" source=\"#shape0-lib-positions-array\" stride=\"3\">" << std::endl;
+        fichier << "                            <param name=\"X\" type=\"float\"/>" << std::endl;
+        fichier << "                            <param name=\"Y\" type=\"float\"/>" << std::endl;
+        fichier << "                            <param name=\"Z\" type=\"float\"/>" << std::endl;
+        fichier << "                        </accessor>" << std::endl;
+        fichier << "                    </technique_common>" << std::endl;
+        fichier << "                </source>" << std::endl;
+        fichier << "                <source id=\"shape0-lib-normals\" name=\"normal\">" << std::endl;
+
+        fichier << "                    <float_array id=\"shape0-lib-normals-array\" count=\"" << parMesh.faces.size() * 3 << "\">";
+        for (uint i = 0; i < parMesh.faces.size(); i++)
+            fichier << parMesh.faces[i].vertices[0] << " " << parMesh.faces[i].vertices[1] << " " << parMesh.faces[i].vertices[2] << " ";
+        fichier << "</float_array>" << std::endl;
+
+        fichier << "                    <technique_common>" << std::endl;
+        fichier << "                        <accessor count=\"" << parMesh.faces.size() << "\" source=\"#shape0-lib-normals-array\" stride=\"3\">" << std::endl;
+        fichier << "                            <param name=\"X\" type=\"float\"/>" << std::endl;
+        fichier << "                            <param name=\"Y\" type=\"float\"/>" << std::endl;
+        fichier << "                            <param name=\"Z\" type=\"float\"/>" << std::endl;
+        fichier << "                        </accessor>" << std::endl;
+        fichier << "                    </technique_common>" << std::endl;
+        fichier << "                </source>" << std::endl;
+        fichier << "                <source id=\"shape0-lib-map\" name=\"map\">" << std::endl;
+
+        fichier << "                    <float_array id=\"shape0-lib-map-array\" count=\"" << texCoords.size() * 6 << "\">";
+        for (uint i = 0; i < texCoords.size(); i++)
+        {
+            fichier << texCoords[i][0].x / textureSize << " " << 1 - texCoords[i][0].y / textureSize << " " ;
+            fichier << texCoords[i][1].x / textureSize << " " << 1 - texCoords[i][1].y / textureSize << " " ;
+            fichier << texCoords[i][2].x / textureSize << " " << 1 - texCoords[i][2].y / textureSize << " " ;
+        }
+        fichier << "</float_array>" << std::endl;
+
+        fichier << "                    <technique_common>" << std::endl;
+        fichier << "                        <accessor count=\"" << texCoords.size() * 3 << "\" source=\"#shape0-lib-map-array\" stride=\"2\">" << std::endl;
+        fichier << "                            <param name=\"U\" type=\"float\"/>" << std::endl;
+        fichier << "                            <param name=\"V\" type=\"float\"/>" << std::endl;
+        fichier << "                        </accessor>" << std::endl;
+        fichier << "                    </technique_common>" << std::endl;
+        fichier << "                </source>" << std::endl;
+        fichier << "                <vertices id=\"shape0-lib-vertices\">" << std::endl;
+        fichier << "                    <input semantic=\"POSITION\" source=\"#shape0-lib-positions\"/>" << std::endl;
+        fichier << "                </vertices>" << std::endl;
+        fichier << "                <triangles count=\"" << parMesh.faces.size() << "\" material=\"material0\">" << std::endl;
+        fichier << "                    <input offset=\"0\" semantic=\"VERTEX\" source=\"#shape0-lib-vertices\"/>" << std::endl;
+        fichier << "                    <input offset=\"1\" semantic=\"NORMAL\" source=\"#shape0-lib-normals\"/>" << std::endl;
+        fichier << "                    <input offset=\"2\" semantic=\"TEXCOORD\" source=\"#shape0-lib-map\"/>" << std::endl;
+        fichier << "                    <p>";
+
+        for (size_t i = 0; i < parMesh.faces.size(); i++)
+        {
+            fichier << parMesh.faces[i].vertices[0] << " " << i << " " << i * 3 << " ";
+            fichier << parMesh.faces[i].vertices[1] << " " << i << " " << i * 3 + 1 << " ";
+            fichier << parMesh.faces[i].vertices[2] << " " << i << " " << i * 3 + 2 << " ";
+        }
+
+        fichier <<"</p>"<< std::endl;
+        fichier << "                </triangles>" << std::endl;
+        fichier << "            </mesh>" << std::endl;
+        fichier << "        </geometry>" << std::endl;
+        fichier << "    </library_geometries>" << std::endl;
+        fichier << "    <library_visual_scenes>" << std::endl;
+        fichier << "        <visual_scene id=\"VisualSceneNode\" name=\"VisualScene\">" << std::endl;
+        fichier << "            <node id=\"node\" name=\"node\">" << std::endl;
+        fichier << "                <instance_geometry url=\"#shape0-lib\">" << std::endl;
+        fichier << "                    <bind_material>" << std::endl;
+        fichier << "                        <technique_common>" << std::endl;
+        fichier << "                            <instance_material symbol=\"material0\" target=\"#material0\">" << std::endl;
+        fichier << "                                <bind_vertex_input semantic=\"UVSET0\" input_semantic=\"TEXCOORD\"/>" << std::endl;
+        fichier << "                            </instance_material>" << std::endl;
+        fichier << "                        </technique_common>" << std::endl;
+        fichier << "                    </bind_material>" << std::endl;
+        fichier << "                </instance_geometry>" << std::endl;
+        fichier << "            </node>" << std::endl;
+        fichier << "        </visual_scene>" << std::endl;
+        fichier << "    </library_visual_scenes>" << std::endl;
+        fichier << "    <scene>" << std::endl;
+        fichier << "        <instance_visual_scene url=\"#VisualSceneNode\"/>" << std::endl;
+        fichier << "    </scene>" << std::endl;
+        fichier << "</COLLADA>" << std::endl;
+
+        return true;
+    }
+    return false;
 }
 // ----------------------------------------------------------------------------
 bool SaveMeshToPlyFile(const Mesh& parMesh, char* parFilename, bool parOnlyPos)
