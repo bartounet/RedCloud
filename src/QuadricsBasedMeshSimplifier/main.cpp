@@ -3,13 +3,14 @@
 #include "../common/geometry.h"
 #include "../common/mesh_file_helper.h"
 #include "mesh.h"
+#include "texturer.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 
 void Usage(const char* parProgName)
 {
-	printf("Usage: ./%s <MESH_IN.ply> <MESH_OUT.ply> numberOfFaces\n", parProgName);
+	printf("Usage: ./%s <MESH_IN.ply> <POINTS_CLOUD_IN.ply> <OUT_FOLDER> numberOfFaces textureSize\n", parProgName);
 	exit(1);
 }
 
@@ -25,7 +26,7 @@ int main(int argc, char **argv)
  #endif
 #endif
 
-	if (argc != 4)
+	if (argc != 6)
 		Usage(argv[0]);
 
 	printf("- Loading '%s' mesh file\n", argv[1]);
@@ -47,7 +48,7 @@ int main(int argc, char **argv)
 
 	mesh.ComputeInitialQuadrics();
 	mesh.SelectAndComputeVertexPairs();
-	int numberOfFaces = atoi (argv[3]);
+	int numberOfFaces = atoi (argv[4]);
 	mesh.Simplify(numberOfFaces);
 
 	//assert(!mesh.HasZeroAreaSurfaceFaces()); // FIXME: Post CLEAN !
@@ -66,8 +67,30 @@ int main(int argc, char **argv)
 	printf("\t- Faces reduction: %.2f percent\n",
 		100.f * (1.f - (float)dstMesh.faces.size() / (float)srcMesh.faces.size()));
 
-	printf("- Saving '%s' mesh file (vertices: %d, faces: %d)\n", argv[2], dstMesh.vertices.size(), dstMesh.faces.size());
-	Com::MeshFileHelper::SaveMeshToPlyFile(dstMesh, argv[2], true);
+
+
+	printf("- Generate texture\n");
+	Texturer texturer(atoi(argv[5]));
+
+	printf("\t- Create mapping\n");
+	texturer.CreateMapping(mesh.NbValidFaces());
+
+	printf("\t- Loading '%s' points cloud file\n", argv[2]);
+	Com::Mesh pointsCloud;
+	result = Com::MeshFileHelper::LoadMeshFromPlyFile(pointsCloud, argv[2]);
+	assert(result);
+	printf("\t- Filling texture\n");
+	texturer.Fill(mesh.Faces (), pointsCloud);
+
+	printf("\t- Dumping texture\n");
+	std::string textureName = std::string(argv[3]) + "texture.ppm";
+	result = texturer.DumpTexture(textureName);
+	assert(result);
+
+	printf("- Saving mesh file (vertices: %d, faces: %d)\n", dstMesh.vertices.size(), dstMesh.faces.size());
+	std::string outDae = std::string(argv[3]) + "model.dae";
+	Com::MeshFileHelper::SaveMeshToDaeFile(dstMesh, texturer.GetTexCoords(), atoi(argv[5]), outDae.c_str());
+
 
 	exit(0);	// FIXME: As long as mesh destructor (and its attribute) is empty,
 				// we avoid a massive call to empty destructor. But it leak...
