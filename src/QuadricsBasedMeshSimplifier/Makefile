@@ -8,6 +8,7 @@ quadric.o\
 vertex.o\
 vertex_pair.o\
 vertex_pair_heap.o\
+texturer.o\
 ../common/mesh_file_helper.o\
 ../common/ply.o\
 
