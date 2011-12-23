@@ -79,7 +79,7 @@ def stepMatchFeature():
 
 def stepBundleAdjustment():
     if (not os.path.exists(os.path.join(bundleDir, "bundle.out"))):
-        bundleManager.doBundleAdjustment(BundlerinitPair)
+        bundleManager.doBundleAdjustment(BundlerInitPair)
     else:
         print "Skip BundleAdjustment..."
 
@@ -113,23 +113,15 @@ def stepSimplify():
     if (os.path.exists(plySimplify)):
         print "File:", plySimplify, "Skip Simplify..."
     else:
-        subprocess.call([bins["binSimplifier"], plyPoisson, plySimplify, str(numberOfFaces)])
-    if (os.path.exists(plySimplyRecolor)):
-        print "File:", plySimplyRecolor, "Skip Recolor..."
-    else:
-        subprocess.call([bins["binRecolor"], "-v" , plyMergeCut, plySimplify, plySimplyRecolor])
-    if not(os.path.exists(kmzPath)):
-        os.mkdir(kmzPath)
-    if not(os.path.exists(kmzFileDir)):
-        os.mkdir(kmzFileDir)
-    if (os.path.exists(daeModel)):
-        print "File:", daeModel, "Skip Texturer..."
-    else:
-        subprocess.call([bins["binTexturer"], plyMergeCut, plySimplyRecolor, kmzFileDir])
+        if not(os.path.exists(kmzPath)):
+            os.mkdir(kmzPath)
+        if not(os.path.exists(kmzFileDir)):
+            os.mkdir(kmzFileDir)    
+        subprocess.call([bins["binSimplifier"], plyPoisson, plyMergeCut, kmzFileDir, str(numberOfFaces), str(textureSize)])
         im = Image.open(daeTexturePPM)
         im.save(daeTexturePNG)
         os.remove(daeTexturePPM)
-
+        
 def stepCreateKMZ():
     if (numberOfFaces > 20000):
         print "WARNNING: KMZ will not be create, numberOfFaces: ", numberOfFaces, "should be lower than 20000!"
@@ -195,9 +187,9 @@ plySimplify = os.path.join(redCouldDir, "simplify.ply")
 bins["binRecolor"] = "vr_release"
 plySimplyRecolor = os.path.join(redCouldDir, "plySimplyRecolor.ply")
 
-bins["binTexturer"] = "texturer_release"
+#bins["binTexturer"] = "texturer_release"
 kmzPath = os.path.join(redCouldDir, "kmz")
-kmzFileDir = os.path.join(kmzPath, "files")
+kmzFileDir = os.path.join(kmzPath, "files/")
 daeModel = os.path.join(kmzFileDir, "model.dae")
 daeTexturePPM = os.path.join(kmzFileDir, "texture.ppm")
 daeTexturePNG = os.path.join(kmzFileDir, "texture.png")
@@ -205,14 +197,12 @@ daeTexturePNG = os.path.join(kmzFileDir, "texture.png")
 for bin, path in bins.iteritems():
     binPath = getBinPath(path)
     bins[bin] = os.path.join(binDirPath, binPath)
-    
-print bins
 
 ### OPTION:
 maxPhotoDimension = 20000
 maxSiftPoints = 2000
 
-BundlerInitPair = 10
+BundlerInitPair = 2
 
 CMVSNbClusters = 15
 
@@ -224,8 +214,9 @@ PMVSminImageNum = 3
 PMVSCPU = 8
 
 cutCoef = 0.5
-poissonDepth = 10
+poissonDepth = 12
 numberOfFaces = 20000
+textureSize = 2048
 
 print "## Checking parameters:"
 if not(os.path.exists(photoDir)):
