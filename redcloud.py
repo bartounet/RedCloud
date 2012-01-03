@@ -109,9 +109,15 @@ def stepPoissonReconstruction():
         subprocess.call([bins["binPoissonRecon"], "--in" , nptsFile, "--out", plyPoisson, "--depth",  str(poissonDepth), "--manifold"])
         os.remove(nptsFile)
 
+def stepHDRecolor():
+    if (os.path.exists(plyRecolorHD)):
+        print "File:", plyRecolorHD, "Skip HDRecolor..."
+    else:
+		subprocess.call([bins["binRecolor"], "-v" , plyMergeCut, plyPoisson, plyRecolorHD])
+
 def stepSimplify():
-    if (os.path.exists(plySimplify)):
-        print "File:", plySimplify, "Skip Simplify..."
+    if (os.path.exists(daeModel)):
+        print "File:", daeModel, "Skip Simplify..."
     else:
         if not(os.path.exists(kmzPath)):
             os.mkdir(kmzPath)
@@ -185,7 +191,7 @@ bins["binSimplifier"] = "qbms_release"
 plySimplify = os.path.join(redCouldDir, "simplify.ply")
 
 bins["binRecolor"] = "vr_release"
-plySimplyRecolor = os.path.join(redCouldDir, "plySimplyRecolor.ply")
+plyRecolorHD = os.path.join(redCouldDir, "recolorHD.ply")
 
 #bins["binTexturer"] = "texturer_release"
 kmzPath = os.path.join(redCouldDir, "kmz")
@@ -235,6 +241,7 @@ stepBundleAdjustment,
 stepGeoscale,
 stepCMVS,
 stepPoissonReconstruction,
+stepHDRecolor,
 stepSimplify,
 stepCreateKMZ,
 ]
