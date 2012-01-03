@@ -1,10 +1,50 @@
-#! /usr/bin/python
-
 import numpy as np
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
-import sys
 import os
+
+def extractBundlerData(fileName):
+	f = open(fileName, "r")
+	
+	f.readline()
+	[nbCam, nbPoint] = map(float, f.readline().split())
+	nbCam = (int)(nbCam)
+	nbPoint = (int)(nbPoint)
+	
+	camsF = np.zeros( (nbCam, 3) )
+	camsR = np.zeros( (3, 3, nbCam) )
+	camsT = np.zeros( (nbCam, 3) )
+	camsP = np.zeros( (nbCam, 3) )
+	CamsNbPoint = np.zeros(nbCam)
+	
+	# read cams infos
+	for i in range(nbCam):
+		f.readline()
+		camsR[0, :, i] = map(float, f.readline().split())
+		camsR[1, :, i] = map(float, f.readline().split())
+		camsR[2, :, i] = map(float, f.readline().split())
+		camsT[i, :] = map(float, f.readline().split())
+		camsP[i, :] = np.transpose(- np.dot(np.transpose(camsR[:, :, i]), np.transpose(camsT[i, :])))
+		
+	for i in range(nbPoint):
+		f.readline()
+		f.readline()	
+		camsList = map(float, f.readline().split())
+		for cam in range((int)(camsList[0])):
+			CamsNbPoint[(int)(camsList[cam * 4 + 1])] += 1
+
+	goodCams = []
+	for i in range(nbCam):
+		if CamsNbPoint[i] > 20:
+			goodCams.append(i)
+
+	goodCamsP = np.zeros( (len(goodCams), 3) )
+	for i in range(len(goodCams)):
+		goodCamsP[i, :] = camsP[goodCams[i], :]
+		
+	return goodCamsP, goodCams
+	
+
 
 def get_exif_data(image):
 	"""Returns a dictionary from the exif data of an PIL Image item. Also converts the GPS Tags"""
@@ -76,36 +116,14 @@ def get_lon_lat_alt(exif_data):
 			
 	return lon,lat, alt
 
-# EXTRACTION DES DONNEES GPS DES IMAGES 'CAMERA'
-
-
-#function [GPS, Ngps] = extractDonneesGPS(dirgps)
-def extractDonneesGPS(dirgps, goodCams):
-
-#Creation d'une structure List contenant la liste des fichiers jpg du
-#dossier dirgps
-#List_gps = dir(fullfile(dirgps,'*.jpg'));
+def extractPhotosData(dirgps, goodCams):
 	gpsList = [f for f in os.listdir(dirgps) if (f.lower().find(".jpg") != -1)]
-	
 	gpsList.sort()
-	
-	print gpsList
 
-#Nombre d'images 'camera'
-#Ngps = length(List_gps);
-	Ngps = len(gpsList)
-
-#Initialisation d'une matrice GPS contenant la longitude (en degre), la
-#latitude (en degre) et la hauteur (en metre) de chaque image 'camera'
-#GPS = [];
 	GPS = np.zeros( (len(goodCams), 3) )
-
-#Lecture des Ngps images 'camera' avec la fonction imfinfo()
 	for i in range(len(goodCams)):
 		img = Image.open(dirgps + "/" + gpsList[goodCams[i]])
 		exif_data = get_exif_data(img)
 		GPS[i, :] = get_lon_lat_alt(exif_data)
 		
-	return GPS, len(goodCams)
-
-#print extractDonneesGPS(sys.argv[1])
+	return GPS

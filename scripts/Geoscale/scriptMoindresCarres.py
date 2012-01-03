@@ -21,9 +21,10 @@ Determination de P_BA_Bg par les moindres carres
 Definition du cardinal de I (=nbre total de couples de points)
 """
 
-def moindresCarres(N, OgC_Bg, t) :
+def moindresCarres(OgC_Bg, t) :
+	N = len(OgC_Bg)
 	Nt = N*(N-1)/2
-#Calcul de At des (ci_A)1, (ci_A)2, (ci_A)3 pour i=1..Nt
+# Calcul de At des (ci_A)1, (ci_A)2, (ci_A)3 pour i=1..Nt
 	At = np.zeros((Nt, 3))
 	k = 0
 	for i in xrange(N) :
@@ -31,10 +32,10 @@ def moindresCarres(N, OgC_Bg, t) :
 			At[k,:] = t[i,:] - t[j,:]
 			k = k + 1
 
-#Determination de A
+# Determination de A
 	A = blkdiag(At, At, At)
 
-#Determination de y
+# Determination de y
 	y = np.zeros((3*Nt, 1))
 	k = 0
 	for i in xrange(N) :
@@ -43,18 +44,14 @@ def moindresCarres(N, OgC_Bg, t) :
 			y[Nt+k] = OgC_Bg[i, 1] - OgC_Bg[j, 1]
 			y[2*Nt+k] = OgC_Bg[i, 2] - OgC_Bg[j,2]
 			k = k + 1
+	Nt = N*(N-1)/2
 
 #Resolution du systeme au sens des moindres carres
 	x, _, _, _ = np.linalg.lstsq(A,y)
-	print x
 	
 #Determination de la matrice de passage
 	P_BA_Bg = np.array([[x[0, 0], x[1, 0], x[2, 0]],
 						[x[3, 0], x[4, 0], x[5, 0]],
 						[x[6, 0], x[7, 0], x[8, 0]]])
-						
-	print P_BA_Bg
 	
-	print "check :"
-	print (str)(np.transpose(np.dot(P_BA_Bg, (np.transpose(t[0, 0:3]))))) + " = " + (str)(OgC_Bg[0, :])
 	return P_BA_Bg
