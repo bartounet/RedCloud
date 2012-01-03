@@ -63,7 +63,8 @@ def doDaeToKmz(daeModel, daeTexture, geofile, kmzPath, resDir, dataSetName):
       </Location> 
       <Orientation> 
         <tilt>0.0</tilt> 
-        <roll>0.0</roll> 
+        <roll>0.0</roll>
+        <heading>-90.0</heading>
       </Orientation> 
       <Scale> 
         <x>''' + str(scale) + '''</x> 
