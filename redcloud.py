@@ -83,13 +83,6 @@ def stepBundleAdjustment():
     else:
         print "Skip BundleAdjustment..."
 
-def stepGeoscale():
-    if (os.path.exists(outGeo)):
-        print "File:", outGeo, "already exist, Skip Geoscale..."
-    else:
-        shutil.copyfile(bundlerOut, bundlerOutTmp)
-        geoscale.doGeoscale(photoDir, bundlerOut, bundlerOut, outGeo)
-
 def stepCMVS():
     if (os.path.exists(pmvsDir)):
         print "Folder:",pmvsDir,"already exist, Skip CMVS..."
@@ -98,12 +91,23 @@ def stepCMVS():
         cmvsManager.doBundle2PMVS()
         cmvsManager.doCMVS(PMVSlevel, PMVScsize, PMVSthreshold, PMVSwsize, PMVSminImageNum, PMVSCPU)
 
+def stepMergeCut():
+    if (os.path.exists(plyMergeCut)):
+        print "File:", plyMergeCut, "already exist, Skip stepMergeCut..."
+    else:
+        plyMerger.plyFusion(modelsDir, plyMerge)
+        plyCut.plyCut(plyMerge, plyMergeCut, cutCoef)
+
+def stepGeoscale():
+    if (os.path.exists(outGeo)):
+        print "File:", outGeo, "already exist, Skip Geoscale..."
+    else:
+        geoscale.doGeoscale(photoDir, bundlerOut, outGeo, plyMergeCut, "lol.ply")
+
 def stepPoissonReconstruction():
     if (os.path.exists(plyPoisson)):
         print "File:", plyPoisson, "Skip PoissonReconstruction..."
     else:
-        plyMerger.plyFusion(modelsDir, plyMerge)
-        plyCut.plyCut(plyMerge, plyMergeCut, cutCoef)
         ply2npts.ply2npts(plyMergeCut, nptsFile)
         print "## Starting PoissonRecon"
         subprocess.call([bins["binPoissonRecon"], "--in" , nptsFile, "--out", plyPoisson, "--depth",  str(poissonDepth), "--manifold"])
@@ -238,8 +242,9 @@ stepCheckingBinary,
 stepPreparePhotos,
 stepMatchFeature,
 stepBundleAdjustment,
-stepGeoscale,
 stepCMVS,
+stepMergeCut,
+stepGeoscale,
 stepPoissonReconstruction,
 stepHDRecolor,
 stepSimplify,
