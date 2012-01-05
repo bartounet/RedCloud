@@ -19,7 +19,7 @@ def doGeoscale(PhotoFolder, bundlerOut, outGeo, plyIn, plyOut):
 	bundlerCams_rp = re.repositionnement(photosCams_local, bundlerCams_scaled)
 	rotation = mc.moindresCarres(photosCams_local, bundlerCams_rp)
 
-	translation = tools.computeTranslation(photosCams_local, bundlerCams_rp, rotation)
+	translation = tools.computeTranslation(bundlerCams_scaled, photosCams_local, rotation)
 
 	tools.applyTransformation(plyIn, plyOut, rotation, translation, scalling)
 	tools.writeGeoData(center_earth, outGeo)
