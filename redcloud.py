@@ -102,13 +102,13 @@ def stepGeoscale():
     if (os.path.exists(outGeo)):
         print "File:", outGeo, "already exist, Skip Geoscale..."
     else:
-        geoscale.doGeoscale(photoDir, bundlerOut, outGeo, plyMergeCut, "lol.ply")
+        geoscale.doGeoscale(photoDir, bundlerOut, outGeo, plyMergeCut, plyGeoPos)
 
 def stepPoissonReconstruction():
     if (os.path.exists(plyPoisson)):
         print "File:", plyPoisson, "Skip PoissonReconstruction..."
     else:
-        ply2npts.ply2npts(plyMergeCut, nptsFile)
+        ply2npts.ply2npts(plyGeoPos, nptsFile)
         print "## Starting PoissonRecon"
         subprocess.call([bins["binPoissonRecon"], "--in" , nptsFile, "--out", plyPoisson, "--depth",  str(poissonDepth), "--manifold"])
         os.remove(nptsFile)
@@ -117,7 +117,7 @@ def stepHDRecolor():
     if (os.path.exists(plyRecolorHD)):
         print "File:", plyRecolorHD, "Skip HDRecolor..."
     else:
-		subprocess.call([bins["binRecolor"], "-v" , plyMergeCut, plyPoisson, plyRecolorHD])
+		subprocess.call([bins["binRecolor"], "-v" , plyGeoPos, plyPoisson, plyRecolorHD])
 
 def stepSimplify():
     if (os.path.exists(daeModel)):
@@ -127,7 +127,7 @@ def stepSimplify():
             os.mkdir(kmzPath)
         if not(os.path.exists(kmzFileDir)):
             os.mkdir(kmzFileDir)    
-        subprocess.call([bins["binSimplifier"], plyPoisson, plyMergeCut, kmzFileDir, str(numberOfFaces), str(textureSize)])
+        subprocess.call([bins["binSimplifier"], plyPoisson, plyGeoPos, kmzFileDir, str(numberOfFaces), str(textureSize)])
         im = Image.open(daeTexturePPM)
         im.save(daeTexturePNG)
         os.remove(daeTexturePPM)
@@ -186,6 +186,7 @@ pmvsDir = os.path.join(resultDir, "pmvs")
 modelsDir = os.path.join(pmvsDir, "models")
 plyMerge = os.path.join(redCouldDir, "merge.ply")
 plyMergeCut = os.path.join(redCouldDir, "cut.ply")
+plyGeoPos = os.path.join(redCouldDir, "geoPos.ply")
 nptsFile = os.path.join(redCouldDir, "cut.npts")
 
 bins["binPoissonRecon"] = "PoissonRecon"
@@ -224,7 +225,7 @@ PMVSminImageNum = 3
 PMVSCPU = 8
 
 cutCoef = 0.5
-poissonDepth = 12
+poissonDepth = 9
 numberOfFaces = 20000
 textureSize = 2048
 
