@@ -5,7 +5,7 @@ from sift import Sift
 className = "SiftGPU"
 class SiftGPU(Sift):
     
-    win32Executable = "siftWin32.exe"
+    win32Executable = "SiftGPU.exe"
     linuxExecutable = "SiftGPU"
     
     def __init__(self, distrDir):

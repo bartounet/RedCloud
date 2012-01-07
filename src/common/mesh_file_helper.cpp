@@ -103,7 +103,7 @@ bool LoadMeshFromPlyFile(Mesh& parMesh, char* parFilename)
 	return true;
 }
 // ----------------------------------------------------------------------------
-bool SaveMeshToDaeFile(const Mesh& parMesh, std::vector<std::vector<Vec2> > texCoords, uint textureSize, const char* parFilename)
+bool SaveMeshToDaeFile(const Mesh& parMesh, std::vector<std::vector<Vec2> > texCoords, uint textureSize, const char* parFilename, std::vector<const Com::Vec4>& vertexNormals)
 {
 	std::ofstream fichier(parFilename, std::ios::out | std::ios::trunc);
 
@@ -203,13 +203,13 @@ bool SaveMeshToDaeFile(const Mesh& parMesh, std::vector<std::vector<Vec2> > texC
         fichier << "                </source>" << std::endl;
         fichier << "                <source id=\"shape0-lib-normals\" name=\"normal\">" << std::endl;
 
-        fichier << "                    <float_array id=\"shape0-lib-normals-array\" count=\"" << parMesh.faces.size() * 3 << "\">";
-        for (uint i = 0; i < parMesh.faces.size(); i++)
-            fichier << parMesh.faces[i].vertices[0] << " " << parMesh.faces[i].vertices[1] << " " << parMesh.faces[i].vertices[2] << " ";
-        fichier << "</float_array>" << std::endl;
+        fichier << "                    <float_array id=\"shape0-lib-normals-array\" count=\"" << vertexNormals.size() * 3 << "\">";
+        for (uint i = 0; i < vertexNormals.size(); i++)
+			fichier << vertexNormals[i].x << " " << vertexNormals[i].y << " " << vertexNormals[i].z << " ";
+		fichier << "</float_array>" << std::endl;
 
         fichier << "                    <technique_common>" << std::endl;
-        fichier << "                        <accessor count=\"" << parMesh.faces.size() << "\" source=\"#shape0-lib-normals-array\" stride=\"3\">" << std::endl;
+        fichier << "                        <accessor count=\"" << vertexNormals.size() << "\" source=\"#shape0-lib-normals-array\" stride=\"3\">" << std::endl;
         fichier << "                            <param name=\"X\" type=\"float\"/>" << std::endl;
         fichier << "                            <param name=\"Y\" type=\"float\"/>" << std::endl;
         fichier << "                            <param name=\"Z\" type=\"float\"/>" << std::endl;
@@ -245,9 +245,9 @@ bool SaveMeshToDaeFile(const Mesh& parMesh, std::vector<std::vector<Vec2> > texC
 
         for (size_t i = 0; i < parMesh.faces.size(); i++)
         {
-            fichier << parMesh.faces[i].vertices[0] << " " << i << " " << i * 3 << " ";
-            fichier << parMesh.faces[i].vertices[1] << " " << i << " " << i * 3 + 1 << " ";
-            fichier << parMesh.faces[i].vertices[2] << " " << i << " " << i * 3 + 2 << " ";
+            fichier << parMesh.faces[i].vertices[0] << " " << parMesh.faces[i].vertices[0] << " " << i * 3 << " ";
+            fichier << parMesh.faces[i].vertices[1] << " " << parMesh.faces[i].vertices[1] << " " << i * 3 + 1 << " ";
+            fichier << parMesh.faces[i].vertices[2] << " " << parMesh.faces[i].vertices[2] << " " << i * 3 + 2 << " ";
         }
 
         fichier <<"</p>"<< std::endl;

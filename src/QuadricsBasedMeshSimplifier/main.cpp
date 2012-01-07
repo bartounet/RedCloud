@@ -87,9 +87,13 @@ int main(int argc, char **argv)
 	result = texturer.DumpTexture(textureName);
 	assert(result);
 
+	printf("\t- Generate vertex normals\n");
+	std::vector<const Com::Vec4> vertexNormals = std::vector<const Com::Vec4>();
+	mesh.ComputeNormals(vertexNormals);
+
 	printf("- Saving mesh file (vertices: %d, faces: %d)\n", dstMesh.vertices.size(), dstMesh.faces.size());
 	std::string outDae = std::string(argv[3]) + "model.dae";
-	Com::MeshFileHelper::SaveMeshToDaeFile(dstMesh, texturer.GetTexCoords(), atoi(argv[5]), outDae.c_str());
+	Com::MeshFileHelper::SaveMeshToDaeFile(dstMesh, texturer.GetTexCoords(), atoi(argv[5]), outDae.c_str(), vertexNormals);
 
 
 	exit(0);	// FIXME: As long as mesh destructor (and its attribute) is empty,
