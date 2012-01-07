@@ -88,7 +88,7 @@ int main(int argc, char **argv)
 	assert(result);
 
 	printf("\t- Generate vertex normals\n");
-	std::vector<const Com::Vec4> vertexNormals = std::vector<const Com::Vec4>();
+	std::vector<Com::Vec4> vertexNormals = std::vector<Com::Vec4>();
 	mesh.ComputeNormals(vertexNormals);
 
 	printf("- Saving mesh file (vertices: %d, faces: %d)\n", dstMesh.vertices.size(), dstMesh.faces.size());

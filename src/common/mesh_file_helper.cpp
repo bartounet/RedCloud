@@ -103,7 +103,7 @@ bool LoadMeshFromPlyFile(Mesh& parMesh, char* parFilename)
 	return true;
 }
 // ----------------------------------------------------------------------------
-bool SaveMeshToDaeFile(const Mesh& parMesh, std::vector<std::vector<Vec2> > texCoords, uint textureSize, const char* parFilename, std::vector<const Com::Vec4>& vertexNormals)
+bool SaveMeshToDaeFile(const Mesh& parMesh, std::vector<std::vector<Vec2> > texCoords, uint textureSize, const char* parFilename, std::vector<Com::Vec4>& vertexNormals)
 {
 	std::ofstream fichier(parFilename, std::ios::out | std::ios::trunc);
 

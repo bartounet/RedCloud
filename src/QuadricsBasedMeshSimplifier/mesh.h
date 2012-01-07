@@ -33,7 +33,7 @@ public:
 	void SetDeleteUnusedVerticesAndReassignVerticesId();
 	void DeleteFacesIFN();
 	void DeleteVerticesIFN();
-	void ComputeNormals(std::vector<const Com::Vec4>& parNormals);
+	void ComputeNormals(std::vector<Com::Vec4>& parNormals);
 
 public:
 	bool HasZeroAreaSurfaceFaces() const; // can be slow

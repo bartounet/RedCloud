@@ -349,7 +349,7 @@ void Mesh::ExportToVRMesh(Com::Mesh& parDstMesh) const
 	}
 }
 // ----------------------------------------------------------------------------
-void Mesh::ComputeNormals(std::vector<const Com::Vec4>& parNormals)
+void Mesh::ComputeNormals(std::vector<Com::Vec4>& parNormals)
 {
 	assert(parNormals.size() == 0);
 	for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
