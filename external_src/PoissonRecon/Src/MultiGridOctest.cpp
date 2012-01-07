@@ -277,7 +277,7 @@ else{
 	if( PolygonMesh.set ) DumpOutput2(comments[commentNum++],"#         Got Polygons in: %9.1f (s), %9.1f (MB)\n",Time()-t,tree.maxMemoryUsage);
 	else                  DumpOutput2(comments[commentNum++],"#        Got Triangles in: %9.1f (s), %9.1f (MB)\n",Time()-t,tree.maxMemoryUsage);
 	DumpOutput2(comments[commentNum++],"#              Total Time: %9.1f (s)\n",Time()-tt);
-	PlyWritePolygons(Out.value,&mesh,PLY_BINARY_NATIVE,center,scale,comments,commentNum);
+	PlyWritePolygons(Out.value,&mesh,PLY_ASCII,center,scale,comments,commentNum);
 
 	return 1;
 }
