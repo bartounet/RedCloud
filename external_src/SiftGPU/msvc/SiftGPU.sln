@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+# Visual C++ Express 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SiftGPU", "SiftGPU\SiftGPU.vcxproj", "{594562D3-609A-47BC-B7E2-789C4E794CC3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestBase", "TestWin\TestBase.vcxproj", "{57496D03-A005-4650-B041-8E70DDA4A591}"
@@ -14,6 +14,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Speed", "TestWin\Speed.vcxproj", "{7FF72B39-F50E-4ED5-9A50-DCD60EF03604}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SiftGPU_Server", "ServerSiftGPU\SiftGPU_Server.vcxproj", "{65C987E1-F62C-4461-9E2C-BE1E8A770C51}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mySiftGPU", "TestWin\mySiftGPU.vcxproj", "{8BE64A39-336F-4885-92E2-3C2BDE8BA251}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +81,14 @@ Global
 		{65C987E1-F62C-4461-9E2C-BE1E8A770C51}.Release|Win32.Build.0 = Release|Win32
 		{65C987E1-F62C-4461-9E2C-BE1E8A770C51}.Release|x64.ActiveCfg = Release|x64
 		{65C987E1-F62C-4461-9E2C-BE1E8A770C51}.Release|x64.Build.0 = Release|x64
+		{8BE64A39-336F-4885-92E2-3C2BDE8BA251}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8BE64A39-336F-4885-92E2-3C2BDE8BA251}.Debug|Win32.Build.0 = Debug|Win32
+		{8BE64A39-336F-4885-92E2-3C2BDE8BA251}.Debug|x64.ActiveCfg = Debug|x64
+		{8BE64A39-336F-4885-92E2-3C2BDE8BA251}.Debug|x64.Build.0 = Debug|x64
+		{8BE64A39-336F-4885-92E2-3C2BDE8BA251}.Release|Win32.ActiveCfg = Release|Win32
+		{8BE64A39-336F-4885-92E2-3C2BDE8BA251}.Release|Win32.Build.0 = Release|Win32
+		{8BE64A39-336F-4885-92E2-3C2BDE8BA251}.Release|x64.ActiveCfg = Release|x64
+		{8BE64A39-336F-4885-92E2-3C2BDE8BA251}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
