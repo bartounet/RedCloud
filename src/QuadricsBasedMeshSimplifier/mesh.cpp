@@ -349,6 +349,57 @@ void Mesh::ExportToVRMesh(Com::Mesh& parDstMesh) const
 	}
 }
 // ----------------------------------------------------------------------------
+void Mesh::ComputeNormals(std::vector<const Com::Vec4>& parNormals)
+{
+	assert(parNormals.size() == 0);
+	for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
+	{
+		Vertex& vertex = *vertices_[curVertex];
+		//assert(!vertex.DeleteMe());
+		if (vertex.DeleteMe())
+			continue;
+		Com::Vec4 normal = Com::Vec4(0, 0, 0, 1);
+
+		// for each incident faces, compute the plane
+		for (uint curFace = 0; curFace < vertex.IncidentFaces().size(); ++curFace)
+		{
+			const Face* face = vertex.IncidentFaces()[curFace];
+			//assert(!face->DeleteMe());
+			//assert(!face->HasZeroAreaSurface());
+			if (face->DeleteMe() || face->HasZeroAreaSurface())
+				continue;
+
+			const Vertex& v0 = *face->V0();
+			const Vertex& v1 = *face->V1();
+			const Vertex& v2 = *face->V2();
+
+			Com::Vec4 edge1(v0.Pos(), v1.Pos());
+			//assert(edge1.Length() > 0.0); // no degenerated edge ?
+			if (edge1.Length() == 0.0)
+				continue;
+			Com::Vec4 edge2(v0.Pos(), v2.Pos());
+			//assert(edge2.Length() > 0.0); // no degenerated edge ?
+			if (edge2.Length() == 0.0)
+				continue;
+
+			Com::Vec4 normalFace = Com::Vec4::CrossProduct(edge1, edge2);
+			double length = normalFace.Length();
+			if (length == 0.0f)
+				continue;
+			normalFace = Com::Vec4::Normalize(normalFace);
+			normal.x += normalFace.x;
+			normal.y += normalFace.y;
+			normal.z += normalFace.z;
+			normal.w += normalFace.w;
+		}
+		double length = normal.Length();
+		if (length == 0.0f)
+			continue;
+		normal = Com::Vec4::Normalize(normal);
+		parNormals.push_back(normal);
+	}
+}
+// ----------------------------------------------------------------------------
 void Mesh::ComputeInitialQuadrics()
 {
 	printf("- Computing initial quadrics\n");
