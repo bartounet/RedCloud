@@ -114,9 +114,8 @@ class OsmBundler():
             # directory with images
             photos=[f for f in os.listdir(self.photosArg) if os.path.isfile(os.path.join(self.photosArg, f)) and os.path.splitext(f)[1].lower()==".jpg"]
             if len(photos)<3: raise Exception, "The directory with images should contain at least 3 .jpg photos"
-            print photos
+            print "#", len(photos), "photos"
             photos.sort()
-            print photos
             for photo in photos:
                 photoInfo = dict(dirname=self.photosArg, basename=photo)
                 self._preparePhoto(photoInfo)
