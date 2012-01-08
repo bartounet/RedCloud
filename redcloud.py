@@ -44,6 +44,28 @@ def getBinPath(binaryName):
         binaryName += ".exe"
     return binaryName
 
+def parseOptionFile(filename):
+    options = {}
+    commentChar = '#'
+    optionChar = '='
+    f = open(filename)
+    for line in f:
+        # First, remove comments:
+        if commentChar in line:
+            # split on comment char, keep only the part before
+            line, comment = line.split(commentChar, 1)
+        # Second, find lines with an option=value:
+        if optionChar in line:
+            # split on option char:
+            option, value = line.split(optionChar, 1)
+            # strip spaces:
+            option = option.strip()
+            value = value.strip()
+            # store in dictionary:
+            options[option] = float(value)
+    f.close()
+    return options
+
 def do(step):
     stepName = step.__name__
     printKiKoo(stepName)
@@ -79,7 +101,7 @@ def stepMatchFeature():
 
 def stepBundleAdjustment():
     if (not os.path.exists(os.path.join(bundleDir, "bundle.out"))):
-        bundleManager.doBundleAdjustment(BundlerInitPair)
+        bundleManager.doBundleAdjustment(int(options['BundlerInitPair']))
     else:
         print "Skip BundleAdjustment..."
 
@@ -87,16 +109,16 @@ def stepCMVS():
     if (os.path.exists(pmvsDir)):
         print "Folder:",pmvsDir,"already exist, Skip CMVS..."
     else:
-        cmvsManager = osmcmvs.OsmCmvs(resultDir, binDirPath, CMVSNbClusters)
+        cmvsManager = osmcmvs.OsmCmvs(resultDir, binDirPath, options['CMVSNbClusters'])
         cmvsManager.doBundle2PMVS()
-        cmvsManager.doCMVS(PMVSlevel, PMVScsize, PMVSthreshold, PMVSwsize, PMVSminImageNum, PMVSCPU)
+        cmvsManager.doCMVS(options['PMVSlevel'], options['PMVScsize'], options['PMVSthreshold'], options['PMVSwsize'], options['PMVSminImageNum'], options['PMVSCPU'])
 
 def stepMergeCut():
     if (os.path.exists(plyMergeCut)):
         print "File:", plyMergeCut, "already exist, Skip stepMergeCut..."
     else:
         plyMerger.plyFusion(modelsDir, plyMerge)
-        plyCut.plyCut(plyMerge, plyMergeCut, cutCoef)
+        plyCut.plyCut(plyMerge, plyMergeCut, options['cutCoef'])
 
 def stepGeoscale():
     if (os.path.exists(outGeo)):
@@ -110,7 +132,7 @@ def stepPoissonReconstruction():
     else:
         ply2npts.ply2npts(plyGeoPos, nptsFile)
         print "## Starting PoissonRecon"
-        subprocess.call([bins["binPoissonRecon"], "--in" , nptsFile, "--out", plyPoisson, "--depth",  str(poissonDepth), "--manifold"])
+        subprocess.call([bins["binPoissonRecon"], "--in" , nptsFile, "--out", plyPoisson, "--depth",  str(options['poissonDepth']), "--manifold"])
         os.remove(nptsFile)
 
 def stepHDRecolor():
@@ -126,17 +148,19 @@ def stepSimplify():
         if not(os.path.exists(kmzPath)):
             os.mkdir(kmzPath)
         if not(os.path.exists(kmzFileDir)):
-            os.mkdir(kmzFileDir)    
-        subprocess.call([bins["binSimplifier"], plyPoisson, plyGeoPos, kmzFileDir, str(numberOfFaces), str(textureSize)])
+            os.mkdir(kmzFileDir)
+        if (options['numberOfFaces'] > 20000):
+			print "WARNNING: The 3D Model for the KMZ will not be accepted by googleEarth, numberOfFaces: ", options['numberOfFaces'], "should be lower than 20000!"    
+        subprocess.call([bins["binSimplifier"], plyPoisson, plyGeoPos, kmzFileDir, str(options['numberOfFaces']), str(options['textureSize'])])
         im = Image.open(daeTexturePPM)
         im.save(daeTexturePNG)
         os.remove(daeTexturePPM)
         
 def stepCreateKMZ():
-    if (numberOfFaces > 20000):
-        print "WARNNING: KMZ will not be create, numberOfFaces: ", numberOfFaces, "should be lower than 20000!"
+    if (os.path.exists(kmzArchivePath)):
+        print "File:", kmzArchivePath, "Skip Simplify..."
     else:
-        daeToKmz.doDaeToKmz(daeModel, daeTexturePNG, outGeo, kmzPath, redCouldDir, dataSetName)
+        daeToKmz.doDaeToKmz(daeModel, daeTexturePNG, outGeo, kmzPath, redCouldDir, kmzArchivePath)
 
 def printKiKoo(title):
     kikoo = 51
@@ -198,45 +222,26 @@ plySimplify = os.path.join(redCouldDir, "simplify.ply")
 bins["binRecolor"] = "vr_release"
 plyRecolorHD = os.path.join(redCouldDir, "recolorHD.ply")
 
-#bins["binTexturer"] = "texturer_release"
 kmzPath = os.path.join(redCouldDir, "kmz")
 kmzFileDir = os.path.join(kmzPath, "files/")
 daeModel = os.path.join(kmzFileDir, "model.dae")
 daeTexturePPM = os.path.join(kmzFileDir, "texture.ppm")
 daeTexturePNG = os.path.join(kmzFileDir, "texture.png")
+kmzArchive = dataSetName + ".kmz"
+kmzArchivePath = os.path.join(redCouldDir, kmzArchive)
 
 for bin, path in bins.iteritems():
     binPath = getBinPath(path)
     bins[bin] = os.path.join(binDirPath, binPath)
 
-### OPTION:
-maxPhotoDimension = 20000
-maxSiftPoints = 2000
-
-BundlerInitPair = 2
-
-CMVSNbClusters = 15
-
-PMVSlevel = 1
-PMVScsize = 2
-PMVSthreshold = 0.7
-PMVSwsize = 7
-PMVSminImageNum = 3
-PMVSCPU = 8
-
-cutCoef = 0.5
-poissonDepth = 9
-numberOfFaces = 20000
-textureSize = 2048
+options = parseOptionFile('option.txt')
 
 print "## Checking parameters:"
 if not(os.path.exists(photoDir)):
     print ("*-ERROR: no photos directory at: ", photoDir)
     exit(1) 
-print "--Photos directory: ", photoDir
-
-print resultDir
-
+print "Photos: ", photoDir
+print "Results: ", resultDir
 
 steps = [
 stepCheckingBinary,
@@ -253,7 +258,7 @@ stepCreateKMZ,
 ]
 
 # initialize OsmBundler manager class
-bundleManager = osmbundler.OsmBundler(photoDir, resultDir, binDirPath, maxPhotoDimension)
+bundleManager = osmbundler.OsmBundler(photoDir, resultDir, binDirPath,  options['maxPhotoDimension'])
 
 for step in steps:
     do(step)

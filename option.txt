@@ -1,0 +1,44 @@
+####################################
+# Options File for RedCloud script #
+####################################
+
+# You can change all the value defined here at your own risk
+# line with '#' will be ignored
+
+######################################################################
+
+# Max size of Photo, if photos are higher than the value, they will be rescale
+# Smaller value increase the computation
+maxPhotoDimension = 20000
+
+# Sometime the initial pair of picture took by bundler doesn't provide enought information
+# to determine the cameras position
+# If the bundler doesn't success to position the camera you should try to change this value
+# (exemple BundlerInitPair = 10)
+BundlerInitPair = 2
+
+# This parameter determine the number of picture to be clusterise by CMVS
+# If you running out of RAM on PMVS step you could try to reduce it
+CMVSNbClusters = 15
+
+# The following parameter are describes on pmvs documentation: http://grail.cs.washington.edu/software/pmvs/documentation.html
+PMVSlevel = 1
+PMVScsize = 2
+PMVSthreshold = 0.7
+PMVSwsize = 7
+PMVSminImageNum = 3
+PMVSCPU = 8
+
+# This value if a pseudo ratio for cuting/cleannin the cloud point (merge.ply)
+# smaller is the number, smaller will be your cut.ply
+cutCoef = 0.5
+
+# This define the depth of the reconstruction by the poisson algorithm
+# the computational time increase expotionaly with the value, but the quality will be better
+poissonDepth = 11
+
+# This is for the mesh size wish will be use to create the Google Earth KMZ
+# The defaults Value are the maximum allowed size by Google
+numberOfFaces = 20000
+textureSize = 2048
+
