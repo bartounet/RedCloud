@@ -23,7 +23,7 @@ def create_zip(path, relname, archname):
         archive.write(path, relname)
     archive.close()
     
-def doDaeToKmz(daeModel, daeTexture, geofile, kmzPath, resDir, dataSetName):
+def doDaeToKmz(daeModel, daeTexture, geofile, kmzPath, resDir, kmzArchivePath):
     if (not os.path.exists(kmzPath)):
         os.mkdir(kmzPath)
 
@@ -53,7 +53,7 @@ def doDaeToKmz(daeModel, daeTexture, geofile, kmzPath, resDir, dataSetName):
     <Placemark>
       <name>RedClouds</name>
       <description>3D reconstruction With: 
-       x Photos</description>
+       RedClouds project</description>
     <Model id="Model"> 
       <altitudeMode>absolute</altitudeMode> 
       <Location> 
@@ -87,8 +87,6 @@ def doDaeToKmz(daeModel, daeTexture, geofile, kmzPath, resDir, dataSetName):
     ''')
 
     f.close()
-    dataSetName += ".kmz"
-    kmzArchivePath = os.path.join(resDir, dataSetName)
     create_zip(kmzPath, "", kmzArchivePath)
     
 
