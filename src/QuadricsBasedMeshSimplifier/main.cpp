@@ -11,6 +11,7 @@
 void Usage(const char* parProgName)
 {
 	printf("Usage: ./%s <MESH_IN.ply> <POINTS_CLOUD_IN.ply> <OUT_FOLDER> numberOfFaces textureSize\n", parProgName);
+	printf("Usage: ./%s <MESH_IN.ply> <MESH_OUT.ply> --clean\n", parProgName);
 	exit(1);
 }
 
@@ -26,7 +27,7 @@ int main(int argc, char **argv)
  #endif
 #endif
 
-	if (argc != 6)
+	if (((argc != 6) && (argc != 4)) || ((argc == 4) && (strcmp(argv[3], "--clean"))))
 		Usage(argv[0]);
 
 	printf("- Loading '%s' mesh file\n", argv[1]);
@@ -38,6 +39,14 @@ int main(int argc, char **argv)
 
 	printf("- Cleaning mesh\n");
 	mesh.Clean();
+
+	if (argc == 4)
+	{
+		Com::Mesh dstMesh;
+		mesh.ExportToVRMesh(dstMesh);
+		Com::MeshFileHelper::SaveMeshToPlyFile(dstMesh, argv[2], true);
+		exit(0);
+	}
 
 	printf("- Checking zero area faces\n");
 	if (mesh.HasZeroAreaSurfaceFaces())
