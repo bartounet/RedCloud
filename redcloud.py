@@ -234,6 +234,10 @@ for bin, path in bins.iteritems():
     binPath = getBinPath(path)
     bins[bin] = os.path.join(binDirPath, binPath)
 
+if not(os.path.exists('option.txt')):
+	print ("*-ERROR: no option.txt file")
+	exit(1)
+
 options = parseOptionFile('option.txt')
 
 print "## Checking parameters:"
