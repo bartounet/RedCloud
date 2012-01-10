@@ -4,6 +4,7 @@
 #include "../common/mesh_file_helper.h"
 #include "mesh.h"
 #include "texturer.h"
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
