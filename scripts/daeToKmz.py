@@ -46,12 +46,12 @@ def doDaeToKmz(daeModel, daeTexture, geofile, kmzPath, resDir, kmzArchivePath):
     
     kmlPath = os.path.join(kmzPath, "doc.kml")
     f = open(kmlPath, 'w')
-    
+    dataSetName = os.path.basename(kmzArchivePath)
     f.write('''<?xml version="1.0" encoding="UTF-8"?>
     <kml xmlns="http://www.opengis.net/kml/2.2"
      xmlns:gx="http://www.google.com/kml/ext/2.2">   <!-- required when using gx-prefixed elements -->
     <Placemark>
-      <name>RedClouds</name>
+      <name>RedClouds -''' + dataSetName +'''</name>
       <description>3D reconstruction With: 
        RedClouds project</description>
     <Model id="Model"> 
