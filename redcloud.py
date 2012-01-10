@@ -139,7 +139,8 @@ def stepHDRecolor():
     if (os.path.exists(plyRecolorHD)):
         print "File:", plyRecolorHD, "Skip HDRecolor..."
     else:
-		subprocess.call([bins["binRecolor"], "-v" , plyGeoPos, plyPoisson, plyRecolorHD])
+		subprocess.call([bins["binSimplifier"], plyPoisson, plyPoissonClean, "--clean" ])
+		subprocess.call([bins["binRecolor"], "-v" , plyGeoPos, plyPoissonClean, plyRecolorHD])
 
 def stepSimplify():
     if (os.path.exists(daeModel)):
@@ -215,6 +216,7 @@ nptsFile = os.path.join(redCouldDir, "cut.npts")
 
 bins["binPoissonRecon"] = "PoissonRecon"
 plyPoisson = os.path.join(redCouldDir, "poisson.ply")
+plyPoissonClean = os.path.join(redCouldDir, "poisson.ply")
 
 bins["binSimplifier"] = "qbms_release"
 plySimplify = os.path.join(redCouldDir, "simplify.ply")
