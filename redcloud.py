@@ -139,7 +139,8 @@ def stepHDRecolor():
     if (os.path.exists(plyRecolorHD)):
         print "File:", plyRecolorHD, "Skip HDRecolor..."
     else:
-		subprocess.call([bins["binRecolor"], "-v" , plyGeoPos, plyPoisson, plyRecolorHD])
+		subprocess.call([bins["binSimplifier"], plyPoisson, plyPoissonClean, "--clean" ])
+		subprocess.call([bins["binRecolor"], "-v" , plyGeoPos, plyPoissonClean, plyRecolorHD])
 
 def stepSimplify():
     if (os.path.exists(daeModel)):
@@ -170,13 +171,14 @@ def printKiKoo(title):
     space /= 2
     print str("##"+" "*(space)+title+" "*(space + modulo)+"##")
     print "#"*kikoo
+    sys.stdout.flush()
 
 ###############################################################################
 ## START
 ###############################################################################
 begin = time.time()
 
-printKiKoo("RedClouds Starting :)")
+printKiKoo("RedCloud Starting :)")
 
 photoDir, resultDir = getArgs();
 if (not os.path.exists(resultDir)):
@@ -186,7 +188,7 @@ dataSetName = os.path.basename(resultDir)
 print dataSetName
 distrPath = os.path.dirname(os.path.abspath(sys.argv[0]) )
 binDirPath =  os.path.join(distrPath, "bin")
-redCouldDir = os.path.join(resultDir, "RedClouds")
+redCouldDir = os.path.join(resultDir, "RedCloud")
 if (not os.path.exists(redCouldDir)):
     os.mkdir(redCouldDir)
 
@@ -215,6 +217,7 @@ nptsFile = os.path.join(redCouldDir, "cut.npts")
 
 bins["binPoissonRecon"] = "PoissonRecon"
 plyPoisson = os.path.join(redCouldDir, "poisson.ply")
+plyPoissonClean = os.path.join(redCouldDir, "poissonClean.ply")
 
 bins["binSimplifier"] = "qbms_release"
 plySimplify = os.path.join(redCouldDir, "simplify.ply")
@@ -234,6 +237,10 @@ for bin, path in bins.iteritems():
     binPath = getBinPath(path)
     bins[bin] = os.path.join(binDirPath, binPath)
 
+if not(os.path.exists('option.txt')):
+	print ("*-ERROR: no option.txt file")
+	exit(1)
+
 options = parseOptionFile('option.txt')
 
 print "## Checking parameters:"
@@ -242,6 +249,7 @@ if not(os.path.exists(photoDir)):
     exit(1) 
 print "Photos: ", photoDir
 print "Results: ", resultDir
+sys.stdout.flush()
 
 steps = [
 stepCheckingBinary,
@@ -266,5 +274,5 @@ for step in steps:
 end = time.time() - begin
 
 print "See results at ", redCouldDir
-printKiKoo("RedClouds - FINNISH :)")
+printKiKoo("RedCloud - FINNISH :)")
 

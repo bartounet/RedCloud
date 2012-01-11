@@ -49,6 +49,7 @@ private:
 	void MarkIsolatedVerticesAndFacesToDelete_(	const std::vector<double>& parNNDists,
 												double parIsolateDist);
 	void MarkDegeneratedFacesToDelete_();
+	void GaussianClean(float coef);
 
 private:
 	std::vector<Vertex*> vertices_;

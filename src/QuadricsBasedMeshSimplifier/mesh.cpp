@@ -1,6 +1,7 @@
 
 #include "mesh.h"
 #include "vertex_pair.h"
+#include <math.h>
 #include <assert.h>
 #include <stdio.h>
 #include <algorithm>
@@ -140,6 +141,56 @@ void Mesh::MarkDegeneratedFacesToDelete_()
 	}
 }
 // ----------------------------------------------------------------------------
+void Mesh::GaussianClean(float coef)
+{
+	float xTotal = 0;
+	float yTotal = 0;
+	float zTotal = 0;
+	int nbVertex = 0;
+	for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
+	{
+		Vertex& targetVertex = *vertices_[curVertex];
+		xTotal += targetVertex.Pos().x;
+		yTotal += targetVertex.Pos().y;
+		zTotal += targetVertex.Pos().z;
+		nbVertex += 1;
+	}
+
+	float xMoy = xTotal / nbVertex;
+	float yMoy = yTotal / nbVertex;
+	float zMoy = zTotal / nbVertex;
+
+	std::vector<float> distances;
+	float dists = 0;
+	for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
+	{
+		Vertex& targetVertex = *vertices_[curVertex];
+		float dist = pow(targetVertex.Pos().x - xMoy, 2) + pow(targetVertex.Pos().y - yMoy, 2) + pow(targetVertex.Pos().z - zMoy, 2);
+		distances.push_back(dist);
+		dists += dist;
+	}
+
+	float standarDerivation = sqrt(dists / vertices_.size());
+    //printf("\t-  standarDerivation:%f\n", standarDerivation);
+
+   assert(vertices_.size() == distances.size());
+
+	int cpt = 0;
+	//printf("\t-  pow(standarDerivation, 2) * val:%f\n", pow(standarDerivation, 2) * val);
+    for (uint curVertex = 0; curVertex < vertices_.size(); ++curVertex)
+	{
+		if (distances[curVertex] > (pow(standarDerivation, 2) * coef))
+		{
+			cpt++;
+			Vertex* v0 = vertices_[curVertex];
+			v0->SetDeleteMe();
+			v0->SetDeleteMeOnRelatedFaces();
+		}
+	}
+	printf("\t-  vertex delete: %i\n", cpt);
+}
+
+// ----------------------------------------------------------------------------
 void Mesh::Clean()
 {
 	printf("\t- Building 3d-tree\n");
@@ -173,8 +224,11 @@ void Mesh::Clean()
 	printf("\t- Merging closes vertices\n");
 	MergeCloseVertices_(distances, nearestVertices, 0.03 * meanDist); // FIXME: Tweak dist value
 
-	printf("\t- Remove isolated vertices and faces\n");
-	MarkIsolatedVerticesAndFacesToDelete_(distances, 20.0 * meanDist); // FIXME: Tweak dist value
+	//printf("\t- Remove isolated vertices and faces\n");
+	//MarkIsolatedVerticesAndFacesToDelete_(distances, 20.0 * meanDist); // FIXME: Tweak dist value
+
+	printf("\t- GaussianClean\n");
+	GaussianClean(2); // No Tweak dist value (almost)
 
 	printf("\t- Removing degenerated faces\n");
 	MarkDegeneratedFacesToDelete_();
