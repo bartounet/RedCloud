@@ -1,6 +1,7 @@
 #include "logwidget.h"
 #include <QVBoxLayout>
 #include <QDebug>
+#include <QTextCursor>
 
 LogWidget::LogWidget(QWidget *parent) :
 	QDialog(parent)
@@ -24,14 +25,13 @@ void LogWidget::setCurrentProcess(QProcess *p)
 	if (p)
 	{
 		QString error(p->readAllStandardError());
-		qDebug() << error;
 		mError.setText(error);
 		mOutput.setText(QString(p->readAllStandardOutput()));
 		if (p->state() != QProcess::NotRunning)
 		{
-			connect(p, SIGNAL(readyReadStandardOutput()), this, SLOT(refreshLogs()));
+			connect(p, SIGNAL(readyReadStandardOutput()), this, SLOT(refreshStandardLogs()));
+			connect(p, SIGNAL(readyReadStandardError()), this, SLOT(refreshErrorLogs()));
 			connect(p, SIGNAL(finished(int)), this, SLOT(stopRefreshing()));
-//			connect(&mRefresh, SIGNAL(timeout()), this, SLOT(refreshLogs()));
 		}
 	}
 
@@ -39,7 +39,7 @@ void LogWidget::setCurrentProcess(QProcess *p)
 	//mRefresh.start(500);
 }
 
-void LogWidget::refreshLogs()
+void LogWidget::refreshStandardLogs()
 {
 	if (mCurrentProcess)
 	{
@@ -47,10 +47,29 @@ void LogWidget::refreshLogs()
 		QString output;
 		while (mCurrentProcess->canReadLine())
 			output += mCurrentProcess->readLine();
-		qDebug() << "Refresh";
-		qDebug() << output;
 		mOutput.setText(mOutput.toPlainText() + output);
+		QTextCursor curs(mOutput.textCursor());
+		curs.movePosition(QTextCursor::End);
+		mOutput.setTextCursor(curs);
 		mOutput.repaint();
+
+	}
+}
+
+void LogWidget::refreshErrorLogs()
+{
+	if (mCurrentProcess)
+	{
+		mCurrentProcess->setReadChannel(QProcess::StandardError);
+		QString error;
+		while (mCurrentProcess->canReadLine())
+			error += mCurrentProcess->readLine();
+		mError.setText(mError.toPlainText() + error);
+		QTextCursor curs(mOutput.textCursor());
+		curs.movePosition(QTextCursor::End);
+		mError.setTextCursor(curs);
+		mError.repaint();
+
 	}
 }
 
@@ -63,5 +82,4 @@ void LogWidget::stopRefreshing()
 		mError.setText(mError.toPlainText() + error);
 		mOutput.setText(mOutput.toPlainText() + output);
 	}
-	mRefresh.stop();
 }

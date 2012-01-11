@@ -19,11 +19,11 @@ private:
 	QTextEdit mError;
 	QTextEdit mOutput;
 	QProcess* mCurrentProcess;
-	QTimer mRefresh;
 signals:
 
 public slots:
-	void refreshLogs();
+	void refreshStandardLogs();
+	void refreshErrorLogs();
 	void stopRefreshing();
 };
 

@@ -54,6 +54,12 @@ UploadWatcher::UploadWatcher(QWidget *parent) :
 	setLayout(layout);
 }
 
+UploadWatcher::~UploadWatcher()
+{
+	if (mProcess.state() == QProcess::Running)
+		mProcess.kill();
+}
+
 void UploadWatcher::onNewProcess(QString name, QStringList arguments)
 {
 	for (int curItem = 0; curItem < mTree.topLevelItemCount(); ++curItem)
@@ -151,7 +157,11 @@ void UploadWatcher::deleteResult()
 	int code = confirmation.exec();
 	if (code == QMessageBox::No)
 		return;
-	QTreeWidgetItem *curr = mTree.takeTopLevelItem(mTree.indexOfTopLevelItem(mTree.currentItem()));
+	int index = mTree.indexOfTopLevelItem(mTree.currentItem());
+	if (index == 0 && mProcess.state() == QProcess::Running)
+		mProcess.kill();
+
+	QTreeWidgetItem *curr = mTree.takeTopLevelItem(index);
 	QString pathToRemove = QDir::currentPath() + "/results/" + curr->text(0);
 	if (!removeDir(pathToRemove) && QDir(pathToRemove).exists())
 	{
@@ -195,7 +205,7 @@ void UploadWatcher::showModel()
 	if (!mTree.currentItem())
 		return;
 
-	QString resultfolder = QDir::currentPath() + "/results/" + mTree.currentItem()->text(0) + "/RedClouds";
+	QString resultfolder = QDir::currentPath() + "/results/" + mTree.currentItem()->text(0) + "/RedCloud";
 	if (!QDir(resultfolder).exists())
 	{
 		QMessageBox fail(QMessageBox::Critical, "Directory does not exist",

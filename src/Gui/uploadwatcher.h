@@ -32,6 +32,7 @@ private:
 	QFile mSavedResults;
 public:
     explicit UploadWatcher(QWidget *parent = 0);
+	~UploadWatcher();
 signals:
 	void processEnded();
 public slots:

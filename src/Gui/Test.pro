@@ -6,9 +6,9 @@
 
 QT       += core gui
 
-TARGET = RedCloudGui
+TARGET = RedCloudGui_Beta
 TEMPLATE = app
-
+RC_FILE += RedCloud.rc
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -26,3 +26,6 @@ HEADERS  += mainwindow.h \
     s_options.h
 
 FORMS    +=
+
+OTHER_FILES += \
+    RedCloud.rc
