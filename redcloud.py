@@ -171,6 +171,7 @@ def printKiKoo(title):
     space /= 2
     print str("##"+" "*(space)+title+" "*(space + modulo)+"##")
     print "#"*kikoo
+    sys.stdout.flush()
 
 ###############################################################################
 ## START
@@ -248,6 +249,7 @@ if not(os.path.exists(photoDir)):
     exit(1) 
 print "Photos: ", photoDir
 print "Results: ", resultDir
+sys.stdout.flush()
 
 steps = [
 stepCheckingBinary,

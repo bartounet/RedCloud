@@ -180,7 +180,7 @@ class OsmBundler():
         elif (self.matchingEngine.featureExtractionNeeded):
             self.extractFeatures(photo)
         os.remove(outputFileNamePgm)
-
+        sys.stdout.flush()
 
     def _getPhotoCopyName(self, photo):
         # cut off the extension
