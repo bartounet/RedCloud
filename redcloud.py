@@ -216,7 +216,7 @@ nptsFile = os.path.join(redCouldDir, "cut.npts")
 
 bins["binPoissonRecon"] = "PoissonRecon"
 plyPoisson = os.path.join(redCouldDir, "poisson.ply")
-plyPoissonClean = os.path.join(redCouldDir, "poisson.ply")
+plyPoissonClean = os.path.join(redCouldDir, "poissonClean.ply")
 
 bins["binSimplifier"] = "qbms_release"
 plySimplify = os.path.join(redCouldDir, "simplify.ply")
