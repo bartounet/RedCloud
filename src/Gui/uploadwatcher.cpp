@@ -105,12 +105,10 @@ void UploadWatcher::onProcessEnded(int status)
 
 void UploadWatcher::getPossibleActions(QTreeWidgetItem* current, QTreeWidgetItem* old)
 {
+	mToolBar.clear();
 	if (!current)
 		return;
-	mToolBar.clear();
-	int index = mTree.indexOfTopLevelItem(current);
-	if (index != 0 || mProcess.state() == QProcess::NotRunning)
-		mToolBar.addAction(mActions.at(int(MODEL)));
+	mToolBar.addAction(mActions.at(int(MODEL)));
 	mToolBar.addAction(mActions.at(int(PICTURES)));
 	mToolBar.addAction(mActions.at(int(DELETE)));
 }
