@@ -178,7 +178,7 @@ def printKiKoo(title):
 ###############################################################################
 begin = time.time()
 
-printKiKoo("RedClouds Starting :)")
+printKiKoo("RedCloud Starting :)")
 
 photoDir, resultDir = getArgs();
 if (not os.path.exists(resultDir)):
@@ -188,7 +188,7 @@ dataSetName = os.path.basename(resultDir)
 print dataSetName
 distrPath = os.path.dirname(os.path.abspath(sys.argv[0]) )
 binDirPath =  os.path.join(distrPath, "bin")
-redCouldDir = os.path.join(resultDir, "RedClouds")
+redCouldDir = os.path.join(resultDir, "RedCloud")
 if (not os.path.exists(redCouldDir)):
     os.mkdir(redCouldDir)
 
@@ -274,5 +274,5 @@ for step in steps:
 end = time.time() - begin
 
 print "See results at ", redCouldDir
-printKiKoo("RedClouds - FINNISH :)")
+printKiKoo("RedCloud - FINNISH :)")
 
