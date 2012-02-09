@@ -42,3 +42,7 @@ poissonDepth = 11
 numberOfFaces = 20000
 textureSize = 2048
 
+
+# if noGPS = 1 geoscale and kmzCreation will be disable
+noGPS = 1
+
