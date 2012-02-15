@@ -9,6 +9,7 @@
 #include <QLineEdit>
 #include <QButtonGroup>
 #include <QProcess>
+#include <QCheckBox>
 #include "s_options.h"
 #include "optionswidget.h"
 
@@ -28,7 +29,7 @@ class UploadWidget : public QWidget
 private :
 	s_options getOptions();
 
-	void createOptionsFile(s_options& opt);
+	void createOptionsFile(s_options& opt, bool noGPS);
 
 	QPushButton	mChooseDirectory;
 	QLabel mChosenDirectory;
@@ -40,6 +41,7 @@ private :
 	QPushButton mCustomParameters;
 	QPushButton mUpload;
 	OptionsWidget mCustomOptions;
+	QCheckBox mWithGPS;
 
 public:
 	explicit UploadWidget(QWidget *parent = 0);

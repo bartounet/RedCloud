@@ -1,4 +1,4 @@
-#include "uploadwidget.h"
+	#include "uploadwidget.h"
 #include <QFileDialog>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -60,11 +60,15 @@ UploadWidget::UploadWidget(QWidget *parent) :
 	dimlayout->addLayout(buttongroup);
 	dimlayout->addWidget(&mCustomParameters, 1, Qt::AlignBottom);
 
+	mWithGPS.setText("Include GPS positions");
+	mWithGPS.setChecked(true);
+
 	QVBoxLayout *layout = new QVBoxLayout();
 	layout->addLayout(dirlayout);
 	layout->addWidget(&mFiles);
 	layout->addLayout(setlayout);
 	layout->addLayout(dimlayout);
+	layout->addWidget(&mWithGPS, 1, Qt::AlignLeft);
 	layout->addWidget(&mUpload, 1, Qt::AlignHCenter);
 
 	setLayout(layout);
@@ -106,7 +110,7 @@ void UploadWidget::onGo()
 	arguments << mChosenDirectory.text() << curPath + "/results/" + mSetNameEdit.text();
 	mUpload.setEnabled(false);
 	s_options opt = getOptions();
-	createOptionsFile(opt);
+	createOptionsFile(opt, mWithGPS.isChecked());
 	emit processToAdd(mSetNameEdit.text(), arguments);
 }
 
@@ -127,7 +131,7 @@ s_options UploadWidget::getOptions()
 }
 
 
-void UploadWidget::createOptionsFile(s_options& opt)
+void UploadWidget::createOptionsFile(s_options& opt, bool noGPS)
 {
 	QFile option(QDir::currentPath() + "/option.txt");
 	option.open(QFile::WriteOnly);
@@ -144,5 +148,6 @@ void UploadWidget::createOptionsFile(s_options& opt)
 	option.write(QString("poissonDepth = %1\n").arg(opt.PoissonDepth).toAscii());
 	option.write(QString("numberOfFaces = %1\n").arg(opt.NumberOfFaces).toAscii());
 	option.write(QString("textureSize  = %1\n").arg(opt.TextureSize ).toAscii());
+	option.write(QString("noGPS  = %1\n").arg(int(noGPS)).toAscii());
 	option.close();
 }
